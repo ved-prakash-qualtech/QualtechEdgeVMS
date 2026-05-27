@@ -1,0 +1,20 @@
+[
+  {
+    "id": "CHQ-102",
+    "timestamp": "22 May 2026 10:15:22",
+    "makerName": "Nisha.M (Procurement)",
+    "module": "Contracts",
+    "changeDetails": "Publish revised SLA Master Clause #14 (Liability limits)",
+    "securityImpact": "Legal Risk Allocation",
+    "status": "Pending"
+  },
+  {
+    "id": "APP-60320",
+    "vendorId": "VND-2025-00029",
+    "vendorName": "ABC Infotech Private Limited",
+    "performedBy": "Saurabh Anand",
+    "action": "Approved",
+    "remarks": "",
+    "timestamp": "2026-05-22T08:37:10.595Z"
+  }
+]

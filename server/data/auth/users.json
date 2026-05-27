@@ -1,0 +1,44 @@
+[
+  {
+    "userId": "USR-1001",
+    "username": "super_admin",
+    "password": "admin123",
+    "fullName": "Super Administrator",
+    "email": "superadmin@qualtechedge.com",
+    "role": "SUPER_ADMIN",
+    "status": "Active",
+    "dashboardRoute": "/dashboard",
+    "twoFactorEnabled": true,
+    "defaultOtp": "123456",
+    "profileImage": "/assets/profiles/super_admin.png",
+    "lastLogin": "27/5/2026, 1:39:35 pm"
+  },
+  {
+    "userId": "USR-1002",
+    "username": "tenant_admin",
+    "password": "admin123",
+    "fullName": "Tenant Administrator",
+    "email": "tenantadmin@qualtechedge.com",
+    "role": "TENANT_ADMIN",
+    "status": "Active",
+    "dashboardRoute": "/dashboard",
+    "twoFactorEnabled": true,
+    "defaultOtp": "123456",
+    "profileImage": "/assets/profiles/tenant_admin.png",
+    "lastLogin": "25/5/2026, 5:50:00 pm"
+  },
+  {
+    "userId": "USR-1003",
+    "username": "vendor",
+    "password": "admin123",
+    "fullName": "Vendor User",
+    "email": "vendor@abcinfotech.com",
+    "role": "VENDOR",
+    "status": "Active",
+    "dashboardRoute": "/vendor/dashboard",
+    "twoFactorEnabled": true,
+    "defaultOtp": "123456",
+    "profileImage": "/assets/profiles/vendor.png",
+    "lastLogin": "26/5/2026, 3:01:01 pm"
+  }
+]

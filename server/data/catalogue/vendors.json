@@ -1,0 +1,27 @@
+[
+  {
+    "vendorId": "VND-2025-00029",
+    "vendorName": "ABC Infotech Private Limited",
+    "status": "Active"
+  },
+  {
+    "vendorId": "VND-2026-88001",
+    "vendorName": "HDFC Bank Limited",
+    "status": "Active"
+  },
+  {
+    "vendorId": "VND-2025-00031",
+    "vendorName": "Tech Solutions Pvt Ltd",
+    "status": "Active"
+  },
+  {
+    "vendorId": "VND-2025-00032",
+    "vendorName": "Office Supplies Co",
+    "status": "Active"
+  },
+  {
+    "vendorId": "VND-2025-00033",
+    "vendorName": "Secure Facilities Ltd",
+    "status": "Active"
+  }
+]

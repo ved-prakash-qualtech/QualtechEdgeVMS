@@ -1,0 +1,313 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Users, UserCheck, Clock, XCircle, Eye, Edit2, Trash2, Loader2 } from 'lucide-react';
+import axios from 'axios';
+import { Card } from '../../components/Card/Card';
+import { Button } from '../../components/Button/Button';
+import { Input } from '../../components/Input/Input';
+import { DataTable } from '../../components/DataTable/DataTable';
+import styles from './VendorList.module.css';
+
+export const VendorList: React.FC = () => {
+  const navigate = useNavigate();
+  const [vendors, setVendors] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Search & Filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterCategory, setFilterCategory] = useState('All');
+  const [filterStatus, setFilterStatus] = useState('All');
+  const [filterDate, setFilterDate] = useState('');
+
+  // Fetch vendors from Express API
+  const fetchVendors = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get('/api/vendors');
+      setVendors(res.data);
+    } catch (err) {
+      console.error('Error fetching vendors:', err);
+      alert('Failed to load vendors from server database.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchVendors();
+  }, []);
+
+  const handleDelete = async (vendorId: string) => {
+    const confirmDelete = window.confirm(`Are you sure you want to delete vendor record: ${vendorId}?`);
+    if (confirmDelete) {
+      try {
+        await axios.delete(`/api/vendors/${vendorId}`);
+        alert('Vendor record deleted successfully.');
+        fetchVendors();
+      } catch (err) {
+        console.error('Error deleting vendor:', err);
+        alert('Failed to delete vendor record.');
+      }
+    }
+  };
+
+  // Dynamically compute KPI metrics
+  const totalVendors = vendors.length;
+  const activeVendors = vendors.filter(v => v.status === 'Active').length;
+  const pendingApproval = vendors.filter(v => v.status === 'Pending Approval').length;
+  const rejectedVendors = vendors.filter(v => v.status === 'Rejected').length;
+
+  // Filter vendor list locally
+  const filteredVendors = vendors.filter(vendor => {
+    // 1. Search Query (name, id, PAN, GSTIN)
+    const matchesSearch = 
+      (vendor.vendorId || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (vendor.basicDetails?.legalName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (vendor.basicDetails?.panNumber || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (vendor.basicDetails?.gstin || '').toLowerCase().includes(searchQuery.toLowerCase());
+
+    // 2. Category Filter
+    const matchesCategory = filterCategory === 'All' 
+      ? true 
+      : vendor.businessDetails?.vendorCategory === filterCategory;
+
+    // 3. Status Filter
+    const matchesStatus = filterStatus === 'All'
+      ? true
+      : vendor.status === filterStatus;
+
+    // 4. Onboarding Date Filter (Created on/after input date)
+    let matchesDate = true;
+    if (filterDate && vendor.createdAt) {
+      const vendorDate = new Date(vendor.createdAt).toISOString().split('T')[0];
+      matchesDate = vendorDate >= filterDate;
+    }
+
+    return matchesSearch && matchesCategory && matchesStatus && matchesDate;
+  });
+
+  const columns = [
+    { 
+      header: 'Vendor ID', 
+      accessor: (row: any) => <span style={{ fontWeight: '600', color: '#0f172a' }}>{row.vendorId}</span> 
+    },
+    { 
+      header: 'Vendor Name', 
+      accessor: (row: any) => row.basicDetails?.legalName || '-' 
+    },
+    { 
+      header: 'PAN', 
+      accessor: (row: any) => <code style={{ fontSize: '12px' }}>{row.basicDetails?.panNumber || '-'}</code> 
+    },
+    { 
+      header: 'GSTIN', 
+      accessor: (row: any) => <code style={{ fontSize: '12px' }}>{row.basicDetails?.gstin || '-'}</code> 
+    },
+    { 
+      header: 'Category', 
+      accessor: (row: any) => row.businessDetails?.vendorCategory || '-' 
+    },
+    { 
+      header: 'Status', 
+      accessor: (row: any) => {
+        const status = row.status || 'Draft';
+        if (status === 'Active') return <span className={styles.statusActive}>{status}</span>;
+        if (status === 'Pending Approval') return <span className={styles.statusPending}>{status}</span>;
+        if (status === 'Rejected') return <span className={styles.statusRejected}>{status}</span>;
+        return <span className={styles.statusPending}>{status}</span>;
+      } 
+    },
+    { 
+      header: 'Onboarding Date', 
+      accessor: (row: any) => {
+        if (!row.createdAt) return '-';
+        return new Date(row.createdAt).toLocaleDateString('en-IN', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        });
+      } 
+    },
+    { 
+      header: 'Actions', 
+      align: 'center' as const,
+      accessor: (row: any) => (
+        <div className={styles.actionsCell}>
+          <button 
+            className={styles.actionBtn} 
+            onClick={() => navigate(`/vendors/add?id=${row.vendorId}&view=true`)} 
+            title="View Details"
+          >
+            <Eye size={16} />
+          </button>
+          <button 
+            className={styles.actionBtn} 
+            onClick={() => navigate(`/vendors/add?id=${row.vendorId}`)} 
+            title="Edit Details"
+          >
+            <Edit2 size={16} />
+          </button>
+          <button 
+            className={styles.actionBtn} 
+            onClick={() => handleDelete(row.vendorId)} 
+            title="Delete Record" 
+            style={{ color: 'var(--color-danger)' }}
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      ) 
+    },
+  ];
+
+  return (
+    <div className={styles.container}>
+      <header className={styles.pageHeader}>
+        <div>
+          <h1 className={styles.title}>Vendor List</h1>
+          <p className={styles.breadcrumbs}>Home / Vendors / Vendor List</p>
+        </div>
+      </header>
+
+      {/* Dynamic KPI Cards */}
+      <div className={styles.kpiGrid}>
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiHeader}>
+            <div>
+              <span className={styles.kpiLabel}>Total Vendors</span>
+              <div className={styles.kpiValue}>{totalVendors}</div>
+            </div>
+            <div className={styles.kpiIconWrapper} style={{ backgroundColor: '#eff6ff', color: '#1d4ed8' }}>
+              <Users size={24} />
+            </div>
+          </div>
+        </Card>
+
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiHeader}>
+            <div>
+              <span className={styles.kpiLabel}>Active Vendors</span>
+              <div className={styles.kpiValue} style={{ color: '#16a34a' }}>{activeVendors}</div>
+            </div>
+            <div className={styles.kpiIconWrapper} style={{ backgroundColor: '#dcfce7', color: '#16a34a' }}>
+              <UserCheck size={24} />
+            </div>
+          </div>
+        </Card>
+
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiHeader}>
+            <div>
+              <span className={styles.kpiLabel}>Pending Approval</span>
+              <div className={styles.kpiValue} style={{ color: '#f59e0b' }}>{pendingApproval}</div>
+            </div>
+            <div className={styles.kpiIconWrapper} style={{ backgroundColor: '#fef3c7', color: '#f59e0b' }}>
+              <Clock size={24} />
+            </div>
+          </div>
+        </Card>
+
+        <Card className={styles.kpiCard}>
+          <div className={styles.kpiHeader}>
+            <div>
+              <span className={styles.kpiLabel}>Rejected Vendors</span>
+              <div className={styles.kpiValue} style={{ color: '#dc2626' }}>{rejectedVendors}</div>
+            </div>
+            <div className={styles.kpiIconWrapper} style={{ backgroundColor: '#fee2e2', color: '#dc2626' }}>
+              <XCircle size={24} />
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <Card className={styles.tableCard}>
+        {/* Table Toolbar Search & Filters */}
+        <div className={styles.tableToolbar} style={{ flexDirection: 'column', alignItems: 'stretch', gap: '16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className={styles.searchWrap}>
+              <Input 
+                placeholder="Search vendor name, ID, PAN, GSTIN..." 
+                fullWidth={false} 
+                className={styles.searchInput}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <Button onClick={() => navigate('/vendors/add')} icon={<Plus size={16} />}>
+              Add Vendor
+            </Button>
+          </div>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', borderTop: '1px solid var(--color-border)', paddingTop: '16px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: '600', color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Category</label>
+              <select 
+                value={filterCategory} 
+                onChange={(e) => setFilterCategory(e.target.value)} 
+                style={{ padding: '8px 12px', border: '1px solid var(--color-border)', borderRadius: '6px', fontSize: '13px', backgroundColor: '#fff', minWidth: '160px', outline: 'none' }}
+              >
+                <option value="All">All Categories</option>
+                <option value="IT Services">IT Services</option>
+                <option value="Facilities">Facilities</option>
+                <option value="Consulting">Consulting</option>
+                <option value="Supplies">Supplies</option>
+                <option value="Legal">Legal</option>
+              </select>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: '600', color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Status</label>
+              <select 
+                value={filterStatus} 
+                onChange={(e) => setFilterStatus(e.target.value)}
+                style={{ padding: '8px 12px', border: '1px solid var(--color-border)', borderRadius: '6px', fontSize: '13px', backgroundColor: '#fff', minWidth: '160px', outline: 'none' }}
+              >
+                <option value="All">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Pending Approval">Pending Approval</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Pending Amendment">Pending Amendment</option>
+              </select>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: '600', color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Registered On/After</label>
+              <input 
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                style={{ padding: '7px 12px', border: '1px solid var(--color-border)', borderRadius: '6px', fontSize: '13px', backgroundColor: '#fff', outline: 'none' }}
+              />
+            </div>
+            {(filterCategory !== 'All' || filterStatus !== 'All' || filterDate !== '') && (
+              <button 
+                onClick={() => { setFilterCategory('All'); setFilterStatus('All'); setFilterDate(''); }}
+                style={{ alignSelf: 'flex-end', padding: '8px 12px', background: 'transparent', border: 'none', color: 'var(--color-danger)', fontSize: '13px', cursor: 'pointer', fontWeight: '600' }}
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+        </div>
+
+        {loading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '64px' }}>
+            <Loader2 size={32} className="animate-spin" style={{ color: 'var(--color-primary)' }} />
+            <span style={{ marginLeft: '12px', fontSize: '14px', color: 'var(--color-text-secondary)' }}>Loading vendors...</span>
+          </div>
+        ) : (
+          <DataTable 
+            columns={columns} 
+            data={filteredVendors} 
+            keyExtractor={(row) => row.vendorId} 
+          />
+        )}
+        
+        <div className={styles.pagination}>
+          <span className={styles.pageInfo}>Showing 1 to {filteredVendors.length} of {filteredVendors.length} entries</span>
+          <div className={styles.pageControls}>
+            <button className={styles.pageBtnActive}>1</button>
+            <button className={styles.pageBtnNext}>&gt;</button>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+};

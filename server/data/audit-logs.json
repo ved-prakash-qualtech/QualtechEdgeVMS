@@ -1,0 +1,79 @@
+[
+  {
+    "id": "AUD-88102",
+    "timestamp": "22 May 2026 14:10:00",
+    "actor": "Saurabh Anand",
+    "role": "Procurement Maker",
+    "tenant": "Qualtech Corporate",
+    "action": "Created Vendor registration VND-2026-88001 (HDFC Bank Limited)",
+    "ipAddress": "127.0.0.1",
+    "status": "Success",
+    "severity": "Low"
+  },
+  {
+    "id": "AUD-88091",
+    "timestamp": "22 May 2026 13:12:45",
+    "actor": "Saurabh.S",
+    "role": "Procurement Checker",
+    "tenant": "Qualtech Corporate",
+    "action": "Approved Vendor VND-2025-00029 following successful bank-account verification",
+    "ipAddress": "192.168.1.104",
+    "status": "Success",
+    "severity": "Medium"
+  },
+  {
+    "id": "AUD-88072",
+    "timestamp": "22 May 2026 12:45:10",
+    "actor": "System Auto-Job",
+    "role": "AI Agent Sync",
+    "tenant": "Qualtech Corporate",
+    "action": "Triggered OCR scan for GST certification upload (DOC-104)",
+    "ipAddress": "10.0.4.12",
+    "status": "Success",
+    "severity": "Low"
+  },
+  {
+    "id": "AUD-88050",
+    "timestamp": "22 May 2026 10:30:18",
+    "actor": "Ramesh.K",
+    "role": "Finance Executive",
+    "tenant": "Qualtech Corporate",
+    "action": "Attempted to modify payment terms for VND-003 without Maker approval",
+    "ipAddress": "192.168.2.19",
+    "status": "Denied",
+    "severity": "High"
+  },
+  {
+    "id": "AUD-88029",
+    "timestamp": "22 May 2026 09:15:00",
+    "actor": "Amit.P",
+    "role": "Compliance Officer",
+    "tenant": "Qualtech Corporate",
+    "action": "Overrode sanctions mismatch alarm on PEP-Check for ABC Infotech",
+    "ipAddress": "192.168.1.22",
+    "status": "Override",
+    "severity": "Critical"
+  },
+  {
+    "id": "AUD-84779",
+    "timestamp": "22/5/2026, 2:07:10 pm",
+    "actor": "Saurabh Anand",
+    "role": "Procurement Checker",
+    "tenant": "Qualtech Corporate",
+    "action": "Approved Vendor onboarding for VND-2025-00029 (ABC Infotech Private Limited)",
+    "ipAddress": "127.0.0.1",
+    "status": "Success",
+    "severity": "High"
+  },
+  {
+    "id": "AUD-50809",
+    "timestamp": "25/5/2026, 5:47:56 pm",
+    "actor": "Saurabh.S",
+    "role": "Security Checker",
+    "tenant": "Qualtech Corporate",
+    "action": "Four-eye checker Rejected executed for security action: Override MSME 45-day payment limit for VND-003",
+    "ipAddress": "127.0.0.1",
+    "status": "Success",
+    "severity": "High"
+  }
+]

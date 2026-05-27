@@ -1,0 +1,97 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.uomGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .uomGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0b1f5f;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.uomRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.uomCode {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.uomName {
+  font-size: 14px;
+  color: var(--color-text-primary);
+  margin-left: 12px;
+}
+
+.conversionItem {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  padding: 12px;
+  border-radius: var(--border-radius-md);
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.formula {
+  font-weight: 600;
+  color: #0b1f5f;
+  font-size: 14px;
+}
+
+.formulaDesc {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.formLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0b1f5f;
+}
+
+.inputField {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  font-size: 14px;
+  width: 100%;
+}

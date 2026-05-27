@@ -1,0 +1,46 @@
+[
+  {
+    "vendorId": "VND-2025-00029",
+    "vendorName": "ABC Infotech Pvt Ltd",
+    "quotedPrice": 1250000,
+    "leadTime": "5 Days",
+    "kycCompliance": "Clean",
+    "slaScore": "98%",
+    "vendorRiskLevel": "Low",
+    "recommendationTag": "Best Value",
+    "rating": 4.8
+  },
+  {
+    "vendorId": "VND-2025-00045",
+    "vendorName": "Global Security Inc",
+    "quotedPrice": 1380000,
+    "leadTime": "7 Days",
+    "kycCompliance": "Clean",
+    "slaScore": "94%",
+    "vendorRiskLevel": "Low",
+    "recommendationTag": "L2 Provider",
+    "rating": 4.4
+  },
+  {
+    "vendorId": "VND-2024-00781",
+    "vendorName": "Secure Facilities Ltd",
+    "quotedPrice": 1420000,
+    "leadTime": "8 Days",
+    "kycCompliance": "Clean",
+    "slaScore": "90%",
+    "vendorRiskLevel": "Medium",
+    "recommendationTag": "L3 Provider",
+    "rating": 4.1
+  },
+  {
+    "vendorId": "VND-2024-00650",
+    "vendorName": "Tech Solutions Pvt Ltd",
+    "quotedPrice": 1190000,
+    "leadTime": "10 Days",
+    "kycCompliance": "Review Needed",
+    "slaScore": "88%",
+    "vendorRiskLevel": "Medium",
+    "recommendationTag": "L4 Provider",
+    "rating": 3.9
+  }
+]

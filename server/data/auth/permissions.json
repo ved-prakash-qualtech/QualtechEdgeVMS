@@ -1,0 +1,36 @@
+[
+  {
+    "module": "Dashboard",
+    "allowedRoles": [
+      "SUPER_ADMIN",
+      "TENANT_ADMIN"
+    ]
+  },
+  {
+    "module": "Vendor Portal",
+    "allowedRoles": [
+      "SUPER_ADMIN",
+      "VENDOR"
+    ]
+  },
+  {
+    "module": "Admin Panel",
+    "allowedRoles": [
+      "SUPER_ADMIN"
+    ]
+  },
+  {
+    "module": "Purchase Orders",
+    "allowedRoles": [
+      "SUPER_ADMIN",
+      "TENANT_ADMIN"
+    ]
+  },
+  {
+    "module": "Contracts & SLAs",
+    "allowedRoles": [
+      "SUPER_ADMIN",
+      "TENANT_ADMIN"
+    ]
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "vendorId": "VND-2025-00029",
+    "vendorName": "Global Secure Tech",
+    "vendorRiskLevel": "Low",
+    "vendorComplianceScore": 92
+  },
+  {
+    "vendorId": "VND-2025-00089",
+    "vendorName": "Office Supplies Inc",
+    "vendorRiskLevel": "Medium",
+    "vendorComplianceScore": 78
+  },
+  {
+    "vendorId": "VND-2025-00045",
+    "vendorName": "CloudNet Systems",
+    "vendorRiskLevel": "Low",
+    "vendorComplianceScore": 88
+  },
+  {
+    "vendorId": "VND-2024-00992",
+    "vendorName": "Legal Associates",
+    "vendorRiskLevel": "Medium",
+    "vendorComplianceScore": 85
+  },
+  {
+    "vendorId": "VND-2024-00781",
+    "vendorName": "BuildRight Infra",
+    "vendorRiskLevel": "High",
+    "vendorComplianceScore": 64
+  },
+  {
+    "vendorId": "VND-2024-00650",
+    "vendorName": "Tech Solutions Pvt Ltd",
+    "vendorRiskLevel": "Low",
+    "vendorComplianceScore": 95
+  }
+]

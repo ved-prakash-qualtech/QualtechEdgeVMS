@@ -1,0 +1,8 @@
+{
+  "KYC Documents": ["PAN Card", "Aadhaar", "Passport"],
+  "Tax Documents": ["GST Certificate", "TDS Certificate"],
+  "Legal Documents": ["COI", "Agreements"],
+  "Financial Documents": ["Cancelled Cheque", "Bank Statement"],
+  "Compliance Documents": ["MSME", "ISO Certificates"],
+  "Others": ["Others"]
+}

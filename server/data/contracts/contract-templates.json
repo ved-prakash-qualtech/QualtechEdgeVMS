@@ -1,0 +1,34 @@
+[
+  {
+    "templateId": "TMP-MSA-01",
+    "name": "Master Service Agreement",
+    "type": "Master Service Agreement",
+    "recommendedVendorCategory": "IT Services",
+    "description": "Standard agreement for software development, IT outsourcing, consulting and service contracts.",
+    "clauses": ["CLS-RBI", "CLS-NDA", "CLS-PRIVACY"]
+  },
+  {
+    "templateId": "TMP-NDA-01",
+    "name": "Non-Disclosure Agreement",
+    "type": "Non-Disclosure Agreement",
+    "recommendedVendorCategory": "All Categories",
+    "description": "Unilateral or bilateral NDA template for confidential business discussions and trials.",
+    "clauses": ["CLS-NDA"]
+  },
+  {
+    "templateId": "TMP-SLA-01",
+    "name": "SLA Agreement",
+    "type": "SLA Agreement",
+    "recommendedVendorCategory": "Cloud Services",
+    "description": "Service level agreement framework detailing uptime commitments, response times, and penalty terms.",
+    "clauses": ["CLS-PRIVACY", "CLS-PENALTY"]
+  },
+  {
+    "templateId": "TMP-VA-01",
+    "name": "Vendor Agreement",
+    "type": "Vendor Agreement",
+    "recommendedVendorCategory": "Office Supplies",
+    "description": "General vendor services and physical goods supply contract template.",
+    "clauses": ["CLS-NDA", "CLS-ARBITRATION"]
+  }
+]

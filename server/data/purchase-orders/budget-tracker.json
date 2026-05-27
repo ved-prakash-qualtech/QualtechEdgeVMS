@@ -1,0 +1,42 @@
+[
+  {
+    "costCenterCode": "CC-IT-OPS",
+    "costCenterName": "IT Operations",
+    "allocatedBudget": 5000000,
+    "consumedBudget": 2250000,
+    "committedBudget": 1250000,
+    "availableBudget": 500000,
+    "utilizationPct": 70,
+    "fiscalYear": "2026"
+  },
+  {
+    "costCenterCode": "CC-FAC-OPS",
+    "costCenterName": "Facilities Operations",
+    "allocatedBudget": 2000000,
+    "consumedBudget": 800000,
+    "committedBudget": 450000,
+    "availableBudget": 750000,
+    "utilizationPct": 62.5,
+    "fiscalYear": "2026"
+  },
+  {
+    "costCenterCode": "CC-SEC-OPS",
+    "costCenterName": "Security Operations",
+    "allocatedBudget": 3000000,
+    "consumedBudget": 1200000,
+    "committedBudget": 875000,
+    "availableBudget": 925000,
+    "utilizationPct": 69.2,
+    "fiscalYear": "2026"
+  },
+  {
+    "costCenterCode": "CC-MGT-CON",
+    "costCenterName": "Management Consulting",
+    "allocatedBudget": 8000000,
+    "consumedBudget": 3500000,
+    "committedBudget": 2200000,
+    "availableBudget": 2300000,
+    "utilizationPct": 71.2,
+    "fiscalYear": "2026"
+  }
+]

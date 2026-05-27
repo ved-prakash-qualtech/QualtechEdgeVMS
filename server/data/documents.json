@@ -1,0 +1,272 @@
+[
+  {
+    "documentId": "DOC-2025-0001",
+    "documentType": "KYC Documents",
+    "documentName": "PAN Card",
+    "documentCategory": "Identity Proof",
+    "vendor": {
+      "vendorId": "VND-2025-00029",
+      "vendorName": "ABC Infotech Private Limited"
+    },
+    "documentNumber": "AAACA1234A",
+    "issueDate": "2015-06-15",
+    "expiryDate": null,
+    "issuedBy": "Income Tax Department",
+    "remarks": "Standard PAN card copy verified.",
+    "verificationStatus": "Verified",
+    "approvalStatus": "Approved",
+    "uploadedBy": {
+      "userId": "USR-001",
+      "userName": "Saurabh Anand"
+    },
+    "uploadedAt": "2025-05-10T10:30:00Z",
+    "fileDetails": {
+      "originalFileName": "PAN_ABC.pdf",
+      "storedFileName": "DOC_2025_0001_PAN.pdf",
+      "filePath": "/uploads/documents/DOC_2025_0001_PAN.pdf",
+      "fileType": "application/pdf",
+      "fileSizeKB": 185,
+      "fileExtension": ".pdf"
+    },
+    "previewImage": null,
+    "documentUsage": {
+      "usedInKYC": true,
+      "usedInVendorOnboarding": true,
+      "usedInCompliance": false,
+      "usedInContracts": false,
+      "usedInInvoiceVerification": false
+    },
+    "versionHistory": [
+      {
+        "version": 1,
+        "uploadedAt": "2025-05-10T10:30:00Z",
+        "uploadedBy": "Saurabh Anand",
+        "status": "Initial Upload"
+      }
+    ],
+    "auditTrail": [
+      {
+        "action": "Document Uploaded",
+        "performedBy": "Saurabh Anand",
+        "timestamp": "2025-05-10T10:30:00Z"
+      },
+      {
+        "action": "Document Verified",
+        "performedBy": "Saurabh Anand",
+        "timestamp": "2025-05-11T12:00:00Z"
+      }
+    ]
+  },
+  {
+    "documentId": "DOC-2025-0002",
+    "documentType": "Tax Documents",
+    "documentName": "GST Certificate",
+    "documentCategory": "GST Certificate",
+    "vendor": {
+      "vendorId": "VND-2025-00029",
+      "vendorName": "ABC Infotech Private Limited"
+    },
+    "documentNumber": "27AAACA1234A1Z5",
+    "issueDate": "2018-07-01",
+    "expiryDate": null,
+    "issuedBy": "GSTN Authority",
+    "remarks": "Active GSTIN.",
+    "verificationStatus": "Verified",
+    "approvalStatus": "Approved",
+    "uploadedBy": {
+      "userId": "USR-001",
+      "userName": "Saurabh Anand"
+    },
+    "uploadedAt": "2025-05-10T11:00:00Z",
+    "fileDetails": {
+      "originalFileName": "GST_ABC.pdf",
+      "storedFileName": "DOC_2025_0002_GST.pdf",
+      "filePath": "/uploads/documents/DOC_2025_0002_GST.pdf",
+      "fileType": "application/pdf",
+      "fileSizeKB": 310,
+      "fileExtension": ".pdf"
+    },
+    "previewImage": null,
+    "documentUsage": {
+      "usedInKYC": true,
+      "usedInVendorOnboarding": true,
+      "usedInCompliance": true,
+      "usedInContracts": false,
+      "usedInInvoiceVerification": true
+    },
+    "versionHistory": [
+      {
+        "version": 1,
+        "uploadedAt": "2025-05-10T11:00:00Z",
+        "uploadedBy": "Saurabh Anand",
+        "status": "Initial Upload"
+      }
+    ],
+    "auditTrail": [
+      {
+        "action": "Document Uploaded",
+        "performedBy": "Saurabh Anand",
+        "timestamp": "2025-05-10T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "documentId": "DOC-2025-0003",
+    "documentType": "Compliance Documents",
+    "documentName": "MSME Certificate",
+    "documentCategory": "MSME",
+    "vendor": {
+      "vendorId": "VND-2025-00029",
+      "vendorName": "ABC Infotech Private Limited"
+    },
+    "documentNumber": "UDYAM-MH-12-0012345",
+    "issueDate": "2021-04-10",
+    "expiryDate": "2026-06-15",
+    "issuedBy": "Ministry of MSME",
+    "remarks": "Expiring soon. Class: Small.",
+    "verificationStatus": "Verified",
+    "approvalStatus": "Approved",
+    "uploadedBy": {
+      "userId": "USR-001",
+      "userName": "Saurabh Anand"
+    },
+    "uploadedAt": "2025-05-10T11:20:00Z",
+    "fileDetails": {
+      "originalFileName": "MSME_ABC.pdf",
+      "storedFileName": "DOC_2025_0003_MSME.pdf",
+      "filePath": "/uploads/documents/DOC_2025_0003_MSME.pdf",
+      "fileType": "application/pdf",
+      "fileSizeKB": 145,
+      "fileExtension": ".pdf"
+    },
+    "previewImage": null,
+    "documentUsage": {
+      "usedInKYC": false,
+      "usedInVendorOnboarding": true,
+      "usedInCompliance": true,
+      "usedInContracts": false,
+      "usedInInvoiceVerification": false
+    },
+    "versionHistory": [
+      {
+        "version": 1,
+        "uploadedAt": "2025-05-10T11:20:00Z",
+        "uploadedBy": "Saurabh Anand",
+        "status": "Initial Upload"
+      }
+    ],
+    "auditTrail": [
+      {
+        "action": "Document Uploaded",
+        "performedBy": "Saurabh Anand",
+        "timestamp": "2025-05-10T11:20:00Z"
+      }
+    ]
+  },
+  {
+    "documentId": "DOC-2026-0001",
+    "documentType": "KYC Documents",
+    "documentName": "PAN Card",
+    "documentCategory": "Identity Proof",
+    "vendor": {
+      "vendorId": "VND-2026-88001",
+      "vendorName": "HDFC Bank Limited"
+    },
+    "documentNumber": "AAACH1111A",
+    "issueDate": "1994-08-30",
+    "expiryDate": null,
+    "issuedBy": "Income Tax Department",
+    "remarks": "Awaiting Checker Approval",
+    "verificationStatus": "Pending Verification",
+    "approvalStatus": "Pending",
+    "uploadedBy": {
+      "userId": "USR-001",
+      "userName": "Saurabh Anand"
+    },
+    "uploadedAt": "2026-05-22T08:42:00Z",
+    "fileDetails": {
+      "originalFileName": "HDFC_PAN.pdf",
+      "storedFileName": "DOC_2026_0001_PAN.pdf",
+      "filePath": "/uploads/documents/DOC_2026_0001_PAN.pdf",
+      "fileType": "application/pdf",
+      "fileSizeKB": 420,
+      "fileExtension": ".pdf"
+    },
+    "previewImage": null,
+    "documentUsage": {
+      "usedInKYC": true,
+      "usedInVendorOnboarding": true,
+      "usedInCompliance": false,
+      "usedInContracts": false,
+      "usedInInvoiceVerification": false
+    },
+    "versionHistory": [
+      {
+        "version": 1,
+        "uploadedAt": "2026-05-22T08:42:00Z",
+        "uploadedBy": "Saurabh Anand",
+        "status": "Initial Upload"
+      }
+    ],
+    "auditTrail": [
+      {
+        "action": "Document Uploaded",
+        "performedBy": "Saurabh Anand",
+        "timestamp": "2026-05-22T08:42:00Z"
+      }
+    ]
+  },
+  {
+    "documentId": "DOC-2026-0002",
+    "documentType": "KYC Documents",
+    "documentName": "PAN Card",
+    "documentCategory": "Identity Proof",
+    "vendor": {
+      "vendorId": "VND-2026-88001",
+      "vendorName": "HDFC Bank Limited"
+    },
+    "documentNumber": "AAACH1111B",
+    "issueDate": "2024-01-01",
+    "expiryDate": null,
+    "issuedBy": "Income tax dept ",
+    "remarks": "",
+    "verificationStatus": "Pending Verification",
+    "approvalStatus": "Pending",
+    "uploadedBy": {
+      "userId": "USR-001",
+      "userName": "Saurabh Anand"
+    },
+    "uploadedAt": "2026-05-22T09:24:44.006Z",
+    "fileDetails": {
+      "originalFileName": "A_sample_of_Permanent_Account_Number_(PAN)_Card.jpg",
+      "storedFileName": "DOC_2026_5768_DOC.jpg",
+      "filePath": "/uploads/documents/DOC_2026_5768_DOC.jpg",
+      "fileType": "image/jpeg",
+      "fileSizeKB": 51,
+      "fileExtension": ".jpg"
+    },
+    "previewImage": null,
+    "documentUsage": {
+      "usedInKYC": true,
+      "usedInVendorOnboarding": true,
+      "usedInCompliance": false,
+      "usedInContracts": false,
+      "usedInInvoiceVerification": false
+    },
+    "versionHistory": [
+      {
+        "version": 1,
+        "uploadedAt": "2026-05-22T09:24:44.006Z",
+        "uploadedBy": "Saurabh Anand",
+        "status": "Initial Upload"
+      }
+    ],
+    "auditTrail": [
+      {
+        "action": "Document Uploaded",
+        "performedBy": "Saurabh Anand",
+        "timestamp": "2026-05-22T09:24:44.006Z"
+      }
+    ]
+  }
+]

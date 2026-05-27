@@ -1,0 +1,136 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.publishGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .publishGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0b1f5f;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.versionBadge {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background-color: #eaf2ff;
+  padding: 8px 16px;
+  border-radius: var(--border-radius-md);
+  align-self: flex-start;
+  font-family: monospace;
+}
+
+.detailsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: 16px;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.detailLabel {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.detailValue {
+  font-weight: 600;
+  color: #0b1f5f;
+}
+
+.actionPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.publishButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnUat {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btnUat:hover {
+  background-color: #eaf2ff;
+}
+
+.btnProd {
+  background-color: var(--color-success);
+  border: 1px solid var(--color-success);
+  color: white;
+}
+
+.btnProd:hover {
+  opacity: 0.9;
+}
+
+.auditTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.auditTh {
+  padding: 10px 12px;
+  font-weight: 600;
+  color: #0b1f5f;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-background);
+}
+
+.auditTd {
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border);
+  color: #0b1f5f;
+}

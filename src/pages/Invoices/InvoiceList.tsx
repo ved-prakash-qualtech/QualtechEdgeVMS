@@ -1,0 +1,135 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Download, Eye, MoreVertical, Search, Filter } from 'lucide-react';
+import { Card } from '../../components/Card/Card';
+import { Button } from '../../components/Button/Button';
+import { Input } from '../../components/Input/Input';
+import { DataTable } from '../../components/DataTable/DataTable';
+import styles from './InvoiceList.module.css';
+
+// Mock Data for Invoices List
+const invoiceData = [
+  { id: 'INV-2026-9908', vendor: 'ABC Infotech Pvt Ltd', poRef: 'PO-2026-000789', value: '₹14,75,000', status: 'Approved', due: '12 Jun 2026', risk: 'Low (12%)', date: '12 May 2026' },
+  { id: 'INV-2026-9907', vendor: 'Secure Facilities Ltd', poRef: 'PO-2026-000788', value: '₹5,31,000', status: 'Pending Match', due: '10 Jun 2026', risk: 'Medium (45%)', date: '10 May 2026' },
+  { id: 'INV-2026-9906', vendor: 'Global Security', poRef: 'PO-2026-000787', value: '₹10,32,500', status: 'Paid', due: 'Paid', risk: 'Low (8%)', date: '09 May 2026' },
+  { id: 'INV-2026-9905', vendor: 'Fincons Consulting', poRef: 'PO-2026-000786', value: '₹25,96,000', status: 'Draft', due: '08 Jun 2026', risk: 'Low (10%)', date: '08 May 2026' },
+  { id: 'INV-2026-9904', vendor: 'Tech Solutions', poRef: 'PO-2026-000785', value: '₹4,01,200', status: 'Exception', due: '01 Jun 2026', risk: 'High (78%)', date: '01 May 2026' },
+  { id: 'INV-2026-9903', vendor: 'Data Soft', poRef: 'PO-2026-000784', value: '₹1,41,600', status: 'Rejected', due: 'Canceled', risk: 'High (82%)', date: '28 Apr 2026' },
+];
+
+export const InvoiceList: React.FC = () => {
+  const navigate = useNavigate();
+
+  const columns = [
+    { header: 'Invoice Number', accessor: 'id' as keyof typeof invoiceData[0] },
+    { header: 'Vendor Name', accessor: 'vendor' as keyof typeof invoiceData[0] },
+    { header: 'PO Ref', accessor: 'poRef' as keyof typeof invoiceData[0] },
+    { header: 'Grand Total', accessor: 'value' as keyof typeof invoiceData[0] },
+    { header: 'Created Date', accessor: 'date' as keyof typeof invoiceData[0] },
+    { header: 'Due Date', accessor: 'due' as keyof typeof invoiceData[0] },
+    { 
+      header: 'Risk Score', 
+      accessor: (row: any) => {
+        let style = { color: '#16a34a', fontWeight: '600' };
+        if (row.risk.includes('High')) style = { color: '#dc2626', fontWeight: '600' };
+        if (row.risk.includes('Medium')) style = { color: '#d97706', fontWeight: '600' };
+        return <span style={style}>{row.risk}</span>;
+      } 
+    },
+    { 
+      header: 'Status', 
+      accessor: (row: any) => {
+        let className = styles.statusBadge;
+        if (row.status === 'Approved' || row.status === 'Paid') className = styles.statusSuccess;
+        if (row.status === 'Pending Match') className = styles.statusWarning;
+        if (row.status === 'Draft') className = styles.statusDraft;
+        if (row.status === 'Rejected') className = styles.statusDanger;
+        if (row.status === 'Exception') className = styles.statusPurple;
+        return <span className={className}>{row.status}</span>;
+      } 
+    },
+    { 
+      header: 'Actions', 
+      align: 'center' as const,
+      accessor: () => (
+        <div className={styles.actionsCell}>
+          <button className={styles.actionBtn} onClick={() => navigate('/invoices/approvals')}><Eye size={16} /></button>
+          <button className={styles.actionBtn}><MoreVertical size={16} /></button>
+        </div>
+      ) 
+    },
+  ];
+
+  return (
+    <div className={styles.container}>
+      <header className={styles.pageHeader}>
+        <div>
+          <h1 className={styles.title}>Invoice Repository</h1>
+          <p className={styles.breadcrumbs}>Home / Invoices / Invoice List</p>
+        </div>
+        <Button icon={<Plus size={16} />} onClick={() => navigate('/invoices/upload')}>Upload Invoice</Button>
+      </header>
+
+      <Card className={styles.tableCard}>
+        <div className={styles.tabs}>
+          <div className={`${styles.tab} ${styles.activeTab}`}>All Invoices (1,092)</div>
+          <div className={styles.tab}>Pending Match (184)</div>
+          <div className={styles.tab}>Exceptions (38)</div>
+          <div className={styles.tab}>Approved (245)</div>
+          <div className={styles.tab}>Paid (488)</div>
+        </div>
+
+        <div className={styles.tableToolbar}>
+          <div className={styles.filters}>
+            <div className={styles.searchWrap}>
+              <Input 
+                placeholder="Search Invoice number, vendor..." 
+                fullWidth={false} 
+                className={styles.searchInput}
+              />
+              <Search size={16} className={styles.searchIcon} />
+            </div>
+            
+            <select className={styles.filterSelect}>
+              <option>Status: All</option>
+              <option>Draft</option>
+              <option>Pending Match</option>
+              <option>Approved</option>
+              <option>Paid</option>
+              <option>Exception</option>
+            </select>
+
+            <select className={styles.filterSelect}>
+              <option>Risk Level: All</option>
+              <option>Low Risk</option>
+              <option>Medium Risk</option>
+              <option>High Risk</option>
+            </select>
+            
+            <Button variant="ghost" icon={<Filter size={16} />}>More Filters</Button>
+          </div>
+          
+          <Button variant="outline" icon={<Download size={16} />}>Export</Button>
+        </div>
+
+        <DataTable 
+          columns={columns} 
+          data={invoiceData} 
+          keyExtractor={(row) => row.id} 
+        />
+        
+        <div className={styles.pagination}>
+          <span className={styles.pageInfo}>Showing 1 to 6 of 1,092 entries</span>
+          <div className={styles.pageControls}>
+            <button className={styles.pageBtnActive}>1</button>
+            <button className={styles.pageBtn}>2</button>
+            <button className={styles.pageBtn}>3</button>
+            <span>...</span>
+            <button className={styles.pageBtn}>182</button>
+            <button className={styles.pageBtnNext}>&gt;</button>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+};

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "CLS-RBI",
+    "name": "RBI Outsourcing Guidelines Clause",
+    "category": "Regulatory Compliance",
+    "text": "The service provider agrees to comply with the RBI Guidelines on Outsourcing of Financial Services, permitting inspections and audits by the regulator.",
+    "mandatory": true
+  },
+  {
+    "id": "CLS-NDA",
+    "name": "Standard NDA Clause",
+    "category": "Confidentiality",
+    "text": "Both parties agree to hold all proprietary and confidential information in strict confidence and use it solely for the purpose of executing this Agreement.",
+    "mandatory": true
+  },
+  {
+    "id": "CLS-PRIVACY",
+    "name": "Data Privacy & Security Clause",
+    "category": "Data Security",
+    "text": "The vendor shall process personal data in compliance with standard data protection laws and implement robust technical and organizational security controls.",
+    "mandatory": true
+  },
+  {
+    "id": "CLS-ARBITRATION",
+    "name": "Dispute Resolution (Arbitration)",
+    "category": "Legal",
+    "text": "Any dispute arising out of or in connection with this contract shall be referred to and finally resolved by arbitration in Mumbai in accordance with Arbitration rules.",
+    "mandatory": false
+  },
+  {
+    "id": "CLS-GDPR",
+    "name": "GDPR Compliance Clause",
+    "category": "Regulatory Compliance",
+    "text": "Where EU personal data is processed, the parties shall execute Standard Contractual Clauses (SCCs) to ensure adequacy of cross-border transfers.",
+    "mandatory": false
+  },
+  {
+    "id": "CLS-PENALTY",
+    "name": "SLA Penalty Clause",
+    "category": "Service Level",
+    "text": "Failure to meet the designated service levels will trigger penalties, starting from 5% of monthly billing value, capped at 10% of total contract value.",
+    "mandatory": false
+  }
+]

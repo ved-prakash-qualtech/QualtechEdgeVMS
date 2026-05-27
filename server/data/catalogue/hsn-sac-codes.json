@@ -1,0 +1,7 @@
+[
+  { "hsnCode": "84713010", "category": "IT Hardware", "gstSlab": "GST 18%", "uom": "Nos" },
+  { "hsnCode": "48025610", "category": "Office Supplies", "gstSlab": "GST 12%", "uom": "Box" },
+  { "hsnCode": "998530", "category": "Facility Management", "gstSlab": "GST 18%", "uom": "Hr" },
+  { "hsnCode": "998311", "category": "Professional Services", "gstSlab": "GST 18%", "uom": "Hr" },
+  { "hsnCode": "996511", "category": "Logistics", "gstSlab": "GST 5%", "uom": "Nos" }
+]

@@ -1,0 +1,102 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0b1f5f;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comparisonLayout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .comparisonLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.l1l2l3Table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.l1l2l3Table th {
+  padding: 10px 12px;
+  font-weight: 600;
+  color: #0b1f5f;
+  background-color: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.l1l2l3Table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.badgeL1 {
+  background-color: #dcfce7;
+  color: #15803d;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.badgeL2 {
+  background-color: #fef3c7;
+  color: #b45309;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.badgeL3 {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.insightBox {
+  background-color: #f3e8ff;
+  border: 1px solid #e9d5ff;
+  padding: 16px;
+  border-radius: var(--border-radius-md);
+  margin-top: 16px;
+}
+
+.insightHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #6b21a8;
+  margin-bottom: 8px;
+}
+
+.insightDesc {
+  font-size: 12px;
+  color: #581c87;
+  line-height: 1.4;
+}

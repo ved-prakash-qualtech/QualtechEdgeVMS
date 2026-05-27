@@ -1,0 +1,124 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.insightGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.insightCard {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.insightCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.insightCardWarning::before {
+  background-color: var(--color-warning);
+}
+
+.insightCardDanger::before {
+  background-color: var(--color-danger);
+}
+
+.insightCardSuccess::before {
+  background-color: var(--color-success);
+}
+
+.insightHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 12px;
+}
+
+.insightTitleContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.insightIcon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.insightTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0b1f5f;
+}
+
+.matchBadge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+.insightBody {
+  font-size: 13px;
+  color: #0b1f5f;
+  line-height: 1.5;
+}
+
+.detailMatrix {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: 14px;
+  margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .detailMatrix {
+    grid-template-columns: 1fr;
+  }
+}
+
+.matrixItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.matrixLabel {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.matrixValue {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.actionRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
