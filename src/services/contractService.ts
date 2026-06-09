@@ -62,12 +62,17 @@ export interface RiskInsights {
 export interface ContractRecord {
   contractId?: string;
   vendor: Vendor;
+  vendorName?: string;
   contractName: string;
   contractType: string;
   department: string;
   effectiveDate: string;
   expiryDate: string;
   commercialTerms: CommercialTerms;
+  contractValue?: number;
+  currency?: string;
+  paymentTerms?: string;
+  billingFrequency?: string;
   slaAndLegal: SlaAndLegal;
   uploadedDocuments: UploadedDocument[];
   approvalWorkflow?: ApprovalWorkflow;

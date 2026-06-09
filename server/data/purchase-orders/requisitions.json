@@ -11,6 +11,108 @@
       "costCenterName": "Facilities Operations"
     },
     "projectCode": "PROJ-MIGRATION-2026",
+    "category": "Consulting",
+    "itemDetails": {
+      "itemDescription": "Cloud infrastructure support services",
+      "quantity": 1,
+      "unitOfMeasure": "Service / Month"
+    },
+    "budgetDetails": {
+      "allocatedBudget": 2000000,
+      "consumedBudget": 800000,
+      "currentRequisitionValue": 1250000,
+      "availableBudget": -50000
+    },
+    "vendorSelection": {
+      "selectedVendorId": "VND-2025-00029",
+      "selectedVendorName": "ABC Infotech Pvt Ltd",
+      "quotedPrice": 1250000,
+      "leadTime": "5 Days",
+      "kycCompliance": "Clean",
+      "slaScore": "98%",
+      "vendorRiskLevel": "Low"
+    },
+    "linkedContract": {
+      "contractId": "CTR-2026-00045",
+      "contractType": "Master Service Agreement",
+      "contractExpiry": "2026-12-31"
+    },
+    "uploadedDocuments": [],
+    "status": "Pending Approval",
+    "requisitionId": "REQ-2026-00090",
+    "createdDate": "2026-06-03",
+    "lastModified": "3/6/2026, 12:35:57 pm",
+    "approvalWorkflow": {
+      "currentStage": "Department Head Approval",
+      "workflowStep": 1,
+      "approvalStatus": "Pending",
+      "submittedBy": "Saurabh Anand",
+      "submittedOn": "3/6/2026, 12:35:57 pm"
+    }
+  },
+  {
+    "requester": {
+      "employeeId": "EMP-1001",
+      "requesterName": "Saurabh Anand",
+      "department": "IT Services",
+      "designation": "Procurement Manager"
+    },
+    "costCenter": {
+      "costCenterCode": "CC-IT-OPS",
+      "costCenterName": "IT Operations"
+    },
+    "projectCode": "PROJ-MIGRATION-2026",
+    "category": "IT Services",
+    "itemDetails": {
+      "itemDescription": "Cloud infrastructure support services",
+      "quantity": 1,
+      "unitOfMeasure": "Service / Month"
+    },
+    "budgetDetails": {
+      "allocatedBudget": 5000000,
+      "consumedBudget": 2250000,
+      "currentRequisitionValue": 1250000,
+      "availableBudget": 1500000
+    },
+    "vendorSelection": {
+      "selectedVendorId": "VND-2025-00029",
+      "selectedVendorName": "ABC Infotech Pvt Ltd",
+      "quotedPrice": 1250000,
+      "leadTime": "5 Days",
+      "kycCompliance": "Clean",
+      "slaScore": "98%",
+      "vendorRiskLevel": "Low"
+    },
+    "linkedContract": {
+      "contractId": "CTR-2026-00045",
+      "contractType": "Master Service Agreement",
+      "contractExpiry": "2026-12-31"
+    },
+    "uploadedDocuments": [],
+    "status": "Pending Approval",
+    "requisitionId": "REQ-2026-00089",
+    "createdDate": "2026-06-03",
+    "lastModified": "3/6/2026, 12:35:41 pm",
+    "approvalWorkflow": {
+      "currentStage": "Department Head Approval",
+      "workflowStep": 1,
+      "approvalStatus": "Pending",
+      "submittedBy": "Saurabh Anand",
+      "submittedOn": "3/6/2026, 12:35:41 pm"
+    }
+  },
+  {
+    "requester": {
+      "employeeId": "EMP-1001",
+      "requesterName": "Saurabh Anand",
+      "department": "Facilities",
+      "designation": "Procurement Manager"
+    },
+    "costCenter": {
+      "costCenterCode": "CC-FAC-OPS",
+      "costCenterName": "Facilities Operations"
+    },
+    "projectCode": "PROJ-MIGRATION-2026",
     "category": "IT Services",
     "itemDetails": {
       "itemDescription": "Cloud infrastructure support services",
@@ -216,9 +318,9 @@
       }
     ],
     "approvalWorkflow": {
-      "currentStage": "Procurement Head Approval",
+      "currentStage": "Approved",
       "workflowStep": 3,
-      "approvalStatus": "Pending",
+      "approvalStatus": "Approved",
       "submittedBy": "Saurabh Anand",
       "submittedOn": "2026-05-12 10:45 AM"
     },
@@ -228,7 +330,7 @@
       "deliveryRisk": "Low",
       "recommendation": "Vendor recommended based on historical SLA and pricing"
     },
-    "status": "Pending Approval",
+    "status": "Approved",
     "createdDate": "2026-05-12",
     "lastModified": "2026-05-12 10:45 AM"
   },
@@ -273,9 +375,9 @@
     },
     "uploadedDocuments": [],
     "approvalWorkflow": {
-      "currentStage": "Department Head",
+      "currentStage": "Approved",
       "workflowStep": 1,
-      "approvalStatus": "Pending",
+      "approvalStatus": "Approved",
       "submittedBy": "Priya Sharma",
       "submittedOn": "2026-05-11 02:30 PM"
     },
@@ -285,7 +387,7 @@
       "deliveryRisk": "Low",
       "recommendation": "Vendor has moderate SLA deviation but matches historical budget profiles."
     },
-    "status": "Pending Approval",
+    "status": "Approved",
     "createdDate": "2026-05-11",
     "lastModified": "2026-05-11 02:30 PM"
   },

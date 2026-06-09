@@ -636,5 +636,354 @@
         "dateTime": "25/5/2026, 6:04:35 pm"
       }
     ]
+  },
+  {
+    "vendor": {
+      "vendorId": "VND-2025-00029",
+      "vendorName": "Global Secure Tech",
+      "vendorRiskLevel": "Low",
+      "vendorComplianceScore": 92
+    },
+    "contractName": "Global Secure Tech - MSA 2026",
+    "contractType": "Master Service Agreement",
+    "department": "IT Services",
+    "effectiveDate": "2026-06-01",
+    "expiryDate": "2028-05-31",
+    "commercialTerms": {
+      "contractValue": 12000000,
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "billingFrequency": "Monthly"
+    },
+    "slaAndLegal": {
+      "selectedClauses": [
+        "RBI Outsourcing Guidelines Clause",
+        "Standard NDA Clause",
+        "Data Privacy & Security Clause"
+      ],
+      "slaMetrics": {
+        "uptime": "99.95%",
+        "responseTime": "2 Hours",
+        "resolutionTime": "8 Hours"
+      },
+      "penaltyTerms": {
+        "slaBreachPenalty": "5%",
+        "maxPenaltyCap": "10%"
+      }
+    },
+    "uploadedDocuments": [],
+    "contractId": "CTR-2026-45803",
+    "status": "In Review",
+    "createdDate": "2026-06-03",
+    "lastModified": "3/6/2026, 11:46:49 am",
+    "approvalWorkflow": {
+      "currentStage": "Procurement Review",
+      "workflowStep": 1,
+      "approvalStatus": "Pending",
+      "currentApprover": "Procurement Team",
+      "submittedBy": "Saurabh Anand",
+      "submittedOn": "3/6/2026, 11:46:49 am"
+    },
+    "riskInsights": {
+      "portfolioRisk": "High",
+      "legalExposure": 63,
+      "complianceRisk": 27,
+      "financialRisk": 72,
+      "aiAlerts": [
+        "Missing explicit data residency clause",
+        "Penalty cap set to 5% instead of standard 10%"
+      ]
+    },
+    "auditTrail": [
+      {
+        "action": "Contract Created",
+        "user": "Saurabh Anand",
+        "dateTime": "3/6/2026, 11:46:49 am"
+      }
+    ]
+  },
+  {
+    "vendor": {
+      "vendorId": "VND-2025-00029",
+      "vendorName": "Global Secure Tech",
+      "vendorRiskLevel": "Low",
+      "vendorComplianceScore": 92
+    },
+    "contractName": "Global Secure Tech - MSA 2026",
+    "contractType": "Master Service Agreement",
+    "department": "IT Services",
+    "effectiveDate": "2026-06-01",
+    "expiryDate": "2028-05-31",
+    "commercialTerms": {
+      "contractValue": 12000000,
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "billingFrequency": "Monthly"
+    },
+    "slaAndLegal": {
+      "selectedClauses": [
+        "RBI Outsourcing Guidelines Clause",
+        "Standard NDA Clause",
+        "Data Privacy & Security Clause"
+      ],
+      "slaMetrics": {
+        "uptime": "99.95%",
+        "responseTime": "2 Hours",
+        "resolutionTime": "8 Hours"
+      },
+      "penaltyTerms": {
+        "slaBreachPenalty": "5%",
+        "maxPenaltyCap": "10%"
+      }
+    },
+    "uploadedDocuments": [],
+    "contractId": "CTR-2026-36961",
+    "status": "In Review",
+    "createdDate": "2026-06-03",
+    "lastModified": "3/6/2026, 11:48:17 am",
+    "approvalWorkflow": {
+      "currentStage": "Procurement Review",
+      "workflowStep": 1,
+      "approvalStatus": "Pending",
+      "currentApprover": "Procurement Team",
+      "submittedBy": "Saurabh Anand",
+      "submittedOn": "3/6/2026, 11:48:17 am"
+    },
+    "riskInsights": {
+      "portfolioRisk": "Medium",
+      "legalExposure": 69,
+      "complianceRisk": 16,
+      "financialRisk": 65,
+      "aiAlerts": [
+        "Missing explicit data residency clause",
+        "Penalty cap set to 5% instead of standard 10%"
+      ]
+    },
+    "auditTrail": [
+      {
+        "action": "Contract Created",
+        "user": "Saurabh Anand",
+        "dateTime": "3/6/2026, 11:48:17 am"
+      }
+    ]
+  },
+  {
+    "vendor": {
+      "vendorId": "VND-2025-00029",
+      "vendorName": "Global Secure Tech",
+      "vendorRiskLevel": "Low",
+      "vendorComplianceScore": 92
+    },
+    "contractName": "Global Secure Tech - MSA 2026",
+    "contractType": "Master Service Agreement",
+    "department": "IT Services",
+    "effectiveDate": "2026-06-01",
+    "expiryDate": "2028-05-31",
+    "commercialTerms": {
+      "contractValue": 12000000,
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "billingFrequency": "Monthly"
+    },
+    "slaAndLegal": {
+      "selectedClauses": [
+        "RBI Outsourcing Guidelines Clause",
+        "Standard NDA Clause",
+        "Data Privacy & Security Clause"
+      ],
+      "slaMetrics": {
+        "uptime": "99.95%",
+        "responseTime": "2 Hours",
+        "resolutionTime": "8 Hours"
+      },
+      "penaltyTerms": {
+        "slaBreachPenalty": "5%",
+        "maxPenaltyCap": "10%"
+      }
+    },
+    "uploadedDocuments": [],
+    "contractId": "CTR-2026-59112",
+    "vendorName": "Global Secure Tech",
+    "contractValue": 12000000,
+    "currency": "INR",
+    "paymentTerms": "Net 30",
+    "billingFrequency": "Monthly",
+    "riskLevel": "Medium",
+    "uploadedFiles": [],
+    "status": "Pending Approval",
+    "approvalStage": "Procurement Review",
+    "createdDate": "2026-06-03",
+    "lastModified": "3/6/2026, 12:12:33 pm",
+    "approvalWorkflow": {
+      "currentStage": "Procurement Review",
+      "workflowStep": 1,
+      "approvalStatus": "Pending",
+      "currentApprover": "Procurement Team",
+      "submittedBy": "Saurabh Anand",
+      "submittedOn": "3/6/2026, 12:12:33 pm"
+    },
+    "riskInsights": {
+      "portfolioRisk": "Medium",
+      "legalExposure": 53,
+      "complianceRisk": 23,
+      "financialRisk": 64,
+      "aiAlerts": [
+        "Missing explicit data residency clause",
+        "Penalty cap set to 5% instead of standard 10%"
+      ]
+    },
+    "auditTrail": [
+      {
+        "action": "Contract Created",
+        "user": "Saurabh Anand",
+        "dateTime": "3/6/2026, 12:12:33 pm"
+      }
+    ]
+  },
+  {
+    "vendor": {
+      "vendorId": "VND-2025-00029",
+      "vendorName": "Global Secure Tech",
+      "vendorRiskLevel": "Low",
+      "vendorComplianceScore": 92
+    },
+    "contractName": "Global Secure Tech - New 01",
+    "contractType": "Master Service Agreement",
+    "department": "IT Services",
+    "effectiveDate": "2026-06-01",
+    "expiryDate": "2028-05-31",
+    "commercialTerms": {
+      "contractValue": 12000000,
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "billingFrequency": "Monthly"
+    },
+    "slaAndLegal": {
+      "selectedClauses": [
+        "RBI Outsourcing Guidelines Clause",
+        "Standard NDA Clause",
+        "Data Privacy & Security Clause"
+      ],
+      "slaMetrics": {
+        "uptime": "99.95%",
+        "responseTime": "2 Hours",
+        "resolutionTime": "8 Hours"
+      },
+      "penaltyTerms": {
+        "slaBreachPenalty": "5%",
+        "maxPenaltyCap": "10%"
+      }
+    },
+    "uploadedDocuments": [],
+    "contractId": "CTR-2026-87841",
+    "vendorName": "Global Secure Tech",
+    "contractValue": 12000000,
+    "currency": "INR",
+    "paymentTerms": "Net 30",
+    "billingFrequency": "Monthly",
+    "riskLevel": "Medium",
+    "uploadedFiles": [],
+    "status": "Pending Approval",
+    "approvalStage": "Procurement",
+    "createdDate": "2026-06-03",
+    "lastModified": "3/6/2026, 12:33:48 pm",
+    "approvalWorkflow": {
+      "currentStage": "Procurement",
+      "workflowStep": 1,
+      "approvalStatus": "Pending",
+      "currentApprover": "Procurement Team",
+      "submittedBy": "Saurabh Anand",
+      "submittedOn": "3/6/2026, 12:33:48 pm"
+    },
+    "riskInsights": {
+      "portfolioRisk": "Medium",
+      "legalExposure": 54,
+      "complianceRisk": 33,
+      "financialRisk": 61,
+      "aiAlerts": [
+        "Missing explicit data residency clause",
+        "Penalty cap set to 5% instead of standard 10%"
+      ]
+    },
+    "auditTrail": [
+      {
+        "action": "Contract Created",
+        "user": "Saurabh Anand",
+        "dateTime": "3/6/2026, 12:33:48 pm"
+      }
+    ]
+  },
+  {
+    "vendor": {
+      "vendorId": "VND-2025-00029",
+      "vendorName": "Global Secure Tech",
+      "vendorRiskLevel": "Low",
+      "vendorComplianceScore": 92
+    },
+    "contractName": "mobile app",
+    "contractType": "Master Service Agreement",
+    "department": "IT Services",
+    "effectiveDate": "2026-06-08",
+    "expiryDate": "2028-05-31",
+    "commercialTerms": {
+      "contractValue": 12000000,
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "billingFrequency": "Monthly"
+    },
+    "slaAndLegal": {
+      "selectedClauses": [
+        "RBI Outsourcing Guidelines Clause",
+        "Standard NDA Clause",
+        "Data Privacy & Security Clause"
+      ],
+      "slaMetrics": {
+        "uptime": "99.95%",
+        "responseTime": "2 Hours",
+        "resolutionTime": "8 Hours"
+      },
+      "penaltyTerms": {
+        "slaBreachPenalty": "5%",
+        "maxPenaltyCap": "10%"
+      }
+    },
+    "uploadedDocuments": [],
+    "contractId": "CTR-2026-59762",
+    "vendorName": "Global Secure Tech",
+    "contractValue": 12000000,
+    "currency": "INR",
+    "paymentTerms": "Net 30",
+    "billingFrequency": "Monthly",
+    "riskLevel": "Medium",
+    "uploadedFiles": [],
+    "status": "Pending Approval",
+    "approvalStage": "Procurement",
+    "createdDate": "2026-06-08",
+    "lastModified": "8/6/2026, 4:34:05 pm",
+    "approvalWorkflow": {
+      "currentStage": "Procurement",
+      "workflowStep": 1,
+      "approvalStatus": "Pending",
+      "currentApprover": "Procurement Team",
+      "submittedBy": "Saurabh Anand",
+      "submittedOn": "8/6/2026, 4:34:05 pm"
+    },
+    "riskInsights": {
+      "portfolioRisk": "Medium",
+      "legalExposure": 62,
+      "complianceRisk": 18,
+      "financialRisk": 63,
+      "aiAlerts": [
+        "Missing explicit data residency clause",
+        "Penalty cap set to 5% instead of standard 10%"
+      ]
+    },
+    "auditTrail": [
+      {
+        "action": "Contract Created",
+        "user": "Saurabh Anand",
+        "dateTime": "8/6/2026, 4:34:05 pm"
+      }
+    ]
   }
 ]

@@ -1,11 +1,11 @@
 {
   "kpis": {
-    "totalPOs": 7,
-    "posInProgress": 2,
+    "totalPOs": 9,
+    "posInProgress": 4,
     "awaitingApproval": 5,
-    "goodsReceived": 2,
-    "pendingInvoices": 4,
-    "poValueThisMonth": 0.57
+    "goodsReceived": 4,
+    "pendingInvoices": 6,
+    "poValueThisMonth": 0.74
   },
   "statusData": [
     {
@@ -30,7 +30,7 @@
     },
     {
       "name": "Fully Received",
-      "value": 2,
+      "value": 4,
       "color": "#6366F1"
     },
     {
@@ -41,12 +41,16 @@
   ],
   "categoryData": [
     {
+      "category": "IT Services",
+      "value": 0.3
+    },
+    {
       "category": "Consulting",
       "value": 0.22
     },
     {
-      "category": "IT Services",
-      "value": 0.17
+      "category": "Facilities",
+      "value": 0.09
     },
     {
       "category": "Security",
@@ -54,10 +58,6 @@
     },
     {
       "category": "IT Hardware & Infrastructure",
-      "value": 0.04
-    },
-    {
-      "category": "Facilities",
       "value": 0.04
     }
   ],
@@ -89,35 +89,35 @@
     },
     {
       "month": "May",
-      "thisYear": 7,
+      "thisYear": 9,
       "lastYear": 850
     }
   ],
   "topVendors": [
     {
-      "name": "Fincons Consulting",
-      "value": 0.22,
+      "name": "ABC Infotech Pvt Ltd",
+      "value": 0.29,
       "width": "100%"
     },
     {
-      "name": "ABC Infotech Pvt Ltd",
-      "value": 0.17,
-      "width": "77%"
+      "name": "Fincons Consulting",
+      "value": 0.22,
+      "width": "75%"
+    },
+    {
+      "name": "Secure Facilities Ltd",
+      "value": 0.09,
+      "width": "31%"
     },
     {
       "name": "Global Security Inc",
       "value": 0.09,
-      "width": "40%"
-    },
-    {
-      "name": "Secure Facilities Ltd",
-      "value": 0.04,
-      "width": "20%"
+      "width": "30%"
     },
     {
       "name": "Tech Solutions",
       "value": 0.03,
-      "width": "15%"
+      "width": "12%"
     }
   ],
   "approvalQueue": [

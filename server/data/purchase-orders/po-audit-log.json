@@ -71,5 +71,63 @@
     "action": "Requisition Submitted",
     "performedBy": "Saurabh Anand",
     "details": "Requisition with ID REQ-2026-00088 created and routed for Department Head Approval."
+  },
+  {
+    "id": "AUD-PO-93340",
+    "timestamp": "2026-06-03T07:05:41.336Z",
+    "requisitionId": "REQ-2026-00089",
+    "action": "Requisition Submitted",
+    "performedBy": "Saurabh Anand",
+    "details": "Requisition with ID REQ-2026-00089 created and routed for Department Head Approval."
+  },
+  {
+    "id": "AUD-PO-80343",
+    "timestamp": "2026-06-03T07:05:57.382Z",
+    "requisitionId": "REQ-2026-00090",
+    "action": "Requisition Submitted",
+    "performedBy": "Saurabh Anand",
+    "details": "Requisition with ID REQ-2026-00090 created and routed for Department Head Approval."
+  },
+  {
+    "id": "AUD-PO-93195",
+    "timestamp": "2026-06-08T11:13:37.536Z",
+    "poId": "PO-2026-000788",
+    "action": "Goods Receipt Note Created",
+    "performedBy": "Saurabh Anand",
+    "details": "Goods Receipt Note GRN-PO-1006 created for PO PO-2026-000788 with 10 items accepted and 0 items rejected."
+  },
+  {
+    "id": "AUD-PO-85600",
+    "timestamp": "2026-06-08T11:39:06.492Z",
+    "poId": "PO-2026-000789",
+    "action": "Goods Receipt Note Created",
+    "performedBy": "Saurabh Anand",
+    "details": "Goods Receipt Note GRN-PO-1007 created for PO PO-2026-000789 with 1 items accepted and 0 items rejected."
+  },
+  {
+    "id": "AUD-PO-72695",
+    "timestamp": "2026-06-08T11:39:30.034Z",
+    "requisitionId": "REQ-2026-00082",
+    "poId": "PO-2026-000797",
+    "action": "Requisition Final Approved",
+    "performedBy": "Saurabh Anand",
+    "details": "Requisition approved by Procurement Head and PO PO-2026-000797 generated."
+  },
+  {
+    "id": "AUD-PO-87780",
+    "timestamp": "2026-06-08T11:39:33.482Z",
+    "requisitionId": "REQ-2026-00081",
+    "poId": "PO-2026-000798",
+    "action": "Requisition Final Approved",
+    "performedBy": "Saurabh Anand",
+    "details": "Requisition approved by Procurement Head and PO PO-2026-000798 generated."
+  },
+  {
+    "id": "AUD-PO-74336",
+    "timestamp": "2026-06-09T10:54:32.785Z",
+    "poId": "PO-2026-000797",
+    "action": "Goods Receipt Note Created",
+    "performedBy": "Saurabh Anand",
+    "details": "Goods Receipt Note GRN-PO-1008 created for PO PO-2026-000797 with 1 items accepted and 9 items rejected."
   }
 ]

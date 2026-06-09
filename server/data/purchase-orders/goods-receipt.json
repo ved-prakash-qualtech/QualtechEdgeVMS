@@ -1,5 +1,44 @@
 [
   {
+    "grnId": "GRN-PO-1008",
+    "poId": "PO-2026-000797",
+    "receivedDate": "2026-06-09",
+    "receivedQuantity": 10,
+    "acceptedQuantity": 1,
+    "rejectedQuantity": 9,
+    "deliveryCondition": "Good",
+    "inspectionRemarks": "All units inspected.",
+    "grnStatus": "Partially Accepted",
+    "inspectedBy": "Saurabh Anand",
+    "createdDate": "2026-06-09"
+  },
+  {
+    "grnId": "GRN-PO-1007",
+    "poId": "PO-2026-000789",
+    "receivedDate": "2026-06-08",
+    "receivedQuantity": 1,
+    "acceptedQuantity": 1,
+    "rejectedQuantity": 0,
+    "deliveryCondition": "Excellent",
+    "inspectionRemarks": "All units inspected.",
+    "grnStatus": "Fully Accepted",
+    "inspectedBy": "Saurabh Anand",
+    "createdDate": "2026-06-08"
+  },
+  {
+    "grnId": "GRN-PO-1006",
+    "poId": "PO-2026-000788",
+    "receivedDate": "2026-06-08",
+    "receivedQuantity": 10,
+    "acceptedQuantity": 10,
+    "rejectedQuantity": 0,
+    "deliveryCondition": "Excellent",
+    "inspectionRemarks": "All units inspected.",
+    "grnStatus": "Fully Accepted",
+    "inspectedBy": "Saurabh Anand",
+    "createdDate": "2026-06-08"
+  },
+  {
     "grnId": "GRN-PO-1005",
     "poId": "PO-2026-000796",
     "receivedDate": "2026-05-25",

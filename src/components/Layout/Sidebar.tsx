@@ -46,18 +46,12 @@ const NAV_ITEMS = [
   },
   { 
     name: 'Due Diligence & KYC', 
-    path: '/kyc', 
+    path: '/kyc/dashboard', 
     icon: ShieldCheck,
     subItems: [
-      { name: 'KYC Verification', path: '/kyc' },
-      { name: 'Risk Assessment', path: '/kyc/risk' },
-      { name: 'Sanctions Screening', path: '/kyc/sanctions' },
-      { name: 'Blacklist Check', path: '/kyc/blacklist' },
-      { name: 'PEP Check', path: '/kyc/pep' },
-      { name: 'Adverse Media', path: '/kyc/media' },
-      { name: 'Shell Company Check', path: '/kyc/shell' },
-      { name: 'Re-KYC Scheduling', path: '/kyc/schedule' },
-      { name: 'Approvals', path: '/kyc/approvals' },
+      { name: 'KYC Dashboard',       path: '/kyc/dashboard' },
+      { name: 'AI Screening & Risk', path: '/kyc/screening' },
+      { name: 'Reviews & Approvals', path: '/kyc/reviews'   },
     ]
   },
   {
@@ -74,10 +68,7 @@ const NAV_ITEMS = [
       { name: 'UOM Management', path: '/catalogue/uom' },
       { name: 'Rate & Price Reference', path: '/catalogue/rates' },
       { name: 'Quality Standards', path: '/catalogue/quality' },
-      { name: 'Vendor Comparison', path: '/catalogue/comparison' },
-      { name: 'Approval Workflow', path: '/catalogue/approvals' },
-      { name: 'AI Recommendations', path: '/catalogue/ai-recommendations' },
-      { name: 'Catalogue Analytics', path: '/catalogue/analytics' }
+      { name: 'Approval Workflow', path: '/catalogue/approvals' }
     ]
   },
 
@@ -87,7 +78,6 @@ const NAV_ITEMS = [
     icon: FileSignature,
     subItems: [
       { name: 'Dashboard', path: '/contracts/dashboard' },
-      { name: 'Repository', path: '/contracts/repository' },
       { name: 'Create Contract', path: '/contracts/create' },
       { name: 'Clause Library', path: '/contracts/clauses' },
       { name: 'Renewals', path: '/contracts/renewals' },
@@ -101,10 +91,7 @@ const NAV_ITEMS = [
     subItems: [
       { name: 'PO Dashboard', path: '/purchase-orders/dashboard' },
       { name: 'Create Requisition', path: '/purchase-orders/create' },
-      { name: 'PO List', path: '/purchase-orders/list' },
       { name: 'Approvals', path: '/purchase-orders/approvals' },
-      { name: 'Goods Receipt (GRN)', path: '/purchase-orders/grn' },
-      { name: '3-Way Match', path: '/purchase-orders/match' },
     ]
   },
   { 
@@ -114,12 +101,9 @@ const NAV_ITEMS = [
     subItems: [
       { name: 'Invoice Dashboard', path: '/invoices/dashboard' },
       { name: 'Upload Invoice', path: '/invoices/upload' },
-      { name: 'Invoice List', path: '/invoices/list' },
+      { name: 'Goods Receipt (GRN)', path: '/invoices/grn' },
+      { name: '3-Way Match Engine', path: '/invoices/match' },
       { name: 'Approvals', path: '/invoices/approvals' },
-      { name: '3-Way Matching', path: '/invoices/match' },
-      { name: 'GST Validation', path: '/invoices/gst' },
-      { name: 'Exception Management', path: '/invoices/exceptions' },
-      { name: 'Invoice Analytics', path: '/invoices/analytics' },
     ]
   },
   { 
@@ -129,13 +113,7 @@ const NAV_ITEMS = [
     subItems: [
       { name: 'Payments Dashboard', path: '/payments/dashboard' },
       { name: 'Payment Processing', path: '/payments/processing' },
-      { name: 'Payment List', path: '/payments/list' },
       { name: 'Approvals', path: '/payments/approvals' },
-      { name: 'Bank Reconciliation', path: '/payments/recon' },
-      { name: 'MSME Tracking', path: '/payments/msme' },
-      { name: 'TDS & GST', path: '/payments/tax' },
-      { name: 'Failed Payments', path: '/payments/failed' },
-      { name: 'Payment Analytics', path: '/payments/analytics' },
     ]
   },
   { 
@@ -143,16 +121,9 @@ const NAV_ITEMS = [
     path: '/reports', 
     icon: BarChart,
     subItems: [
-      { name: 'Executive Dashboard', path: '/reports/dashboard' },
-      { name: 'Procurement Analytics', path: '/reports/procurement' },
-      { name: 'Vendor Performance Reports', path: '/reports/performance' },
-      { name: 'Spend Analytics', path: '/reports/spend' },
-      { name: 'Invoice & Payment Reports', path: '/reports/finance' },
-      { name: 'Compliance Reports', path: '/reports/compliance' },
-      { name: 'SLA & KPI Reports', path: '/reports/sla' },
-      { name: 'Custom Reports', path: '/reports/builder' },
-      { name: 'Audit Reports', path: '/reports/audit' },
-      { name: 'AI Insights', path: '/reports/insights' },
+      { name: 'MIS Dashboard',           path: '/reports/dashboard'     },
+      { name: 'Performance & Analytics',  path: '/reports/performance'   },
+      { name: 'AI Insights',             path: '/reports/insights'      },
     ]
   },
   { 
@@ -168,21 +139,9 @@ const NAV_ITEMS = [
     path: '/settings', 
     icon: Settings,
     subItems: [
-      { name: 'Organization Settings', path: '/settings/org' },
-      { name: 'User & Role Management', path: '/settings/roles' },
-      { name: 'Approval Workflow', path: '/settings/workflow' },
-      { name: 'Vendor Configuration', path: '/settings/dashboard' },
-      { name: 'Document Settings', path: '/settings/dashboard' },
-      { name: 'Compliance Settings', path: '/settings/security' },
-      { name: 'Notification Settings', path: '/settings/dashboard' },
-      { name: 'Integration Settings', path: '/settings/integrations' },
-      { name: 'Security Settings', path: '/settings/security' },
-      { name: 'Finance & Tax Settings', path: '/settings/org' },
-      { name: 'SLA & KPI Settings', path: '/settings/workflow' },
-      { name: 'AI Engine Settings', path: '/settings/dashboard' },
-      { name: 'Audit & Logs', path: '/settings/security' },
-      { name: 'Master Data Management', path: '/settings/dashboard' },
-      { name: 'System Preferences', path: '/settings/dashboard' }
+      { name: 'General Settings',    path: '/settings/general' },
+      { name: 'Users & Roles',       path: '/settings/users' },
+      { name: 'System Preferences',  path: '/settings/preferences' },
     ]
   },
 ];
@@ -195,11 +154,11 @@ const VENDOR_NAV_ITEMS = [
     subItems: [
       { name: 'Vendor Dashboard', path: '/vendor/dashboard?tab=overview' },
       { name: 'My Documents', path: '/vendor/dashboard?tab=documents' },
-      { name: 'KYC', path: '/vendor/dashboard?tab=documents' },
-      { name: 'Contracts', path: '/vendor/dashboard?tab=pos' },
+      { name: 'KYC', path: '/vendor/dashboard?tab=kyc' },
+      { name: 'Contracts', path: '/vendor/dashboard?tab=contracts' },
       { name: 'Invoices', path: '/vendor/dashboard?tab=invoices' },
       { name: 'Payments', path: '/vendor/dashboard?tab=invoices' },
-      { name: 'Profile', path: '/vendor/dashboard?tab=overview' },
+      { name: 'Profile', path: '/vendor/dashboard?tab=profile' },
       { name: 'Support', path: '/vendor/dashboard?tab=queries' }
     ]
   }
@@ -239,7 +198,7 @@ export const Sidebar: React.FC = () => {
 
   // 2. Filter root level items
   const filteredNavItems = rawItems.filter(item => {
-    if (user?.role === 'ADMIN') {
+    if (['ADMIN', 'PROCUREMENT', 'COMPLIANCE', 'FINANCE'].includes(user?.role || '')) {
       if (item.name === 'Vendor Portal') {
         return false;
       }

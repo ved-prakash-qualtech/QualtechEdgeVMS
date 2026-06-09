@@ -1,0 +1,104 @@
+{
+  "screenings": [
+    {
+      "vendorId": "VND-2026-00029",
+      "vendorName": "ABC Infotech Pvt Ltd",
+      "sanctions": { "result": "Clear", "score": 0, "lastChecked": "2026-05-01", "details": "No matches found in OFAC, UN, EU sanctions lists." },
+      "pep": { "result": "Clear", "score": 0, "lastChecked": "2026-05-01", "details": "No politically exposed persons identified." },
+      "adverseMedia": { "result": "No Findings", "score": 0, "lastChecked": "2026-05-01", "findings": 0, "details": "No adverse news coverage detected." },
+      "blacklist": { "result": "Clear", "score": 0, "lastChecked": "2026-05-01", "details": "Not present in any industry or government blacklist." },
+      "shellCompany": { "result": "Low Risk", "score": 5, "lastChecked": "2026-05-01", "details": "Registered entity with 8+ years of operational history." },
+      "riskScore": 5
+    },
+    {
+      "vendorId": "VND-2026-00031",
+      "vendorName": "Secure Facilities Ltd",
+      "sanctions": { "result": "Clear", "score": 0, "lastChecked": "2026-04-15", "details": "No sanctions matches." },
+      "pep": { "result": "Clear", "score": 0, "lastChecked": "2026-04-15", "details": "No PEP associations found." },
+      "adverseMedia": { "result": "1 Finding", "score": 10, "lastChecked": "2026-04-15", "findings": 1, "details": "Minor regulatory notice in 2024. Case closed." },
+      "blacklist": { "result": "Clear", "score": 0, "lastChecked": "2026-04-15", "details": "No blacklist matches." },
+      "shellCompany": { "result": "Low Risk", "score": 5, "lastChecked": "2026-04-15", "details": "Active operations verified." },
+      "riskScore": 15
+    },
+    {
+      "vendorId": "VND-2026-00034",
+      "vendorName": "Fincons Consulting LLP",
+      "sanctions": { "result": "Clear", "score": 0, "lastChecked": "2025-12-10", "details": "No sanctions matches found." },
+      "pep": { "result": "Match Found", "score": 50, "lastChecked": "2025-12-10", "details": "Director linked to a former state minister. Awaiting enhanced due diligence." },
+      "adverseMedia": { "result": "2 Findings", "score": 20, "lastChecked": "2025-12-10", "findings": 2, "details": "Tax dispute (2023) and delayed regulatory filing (2024)." },
+      "blacklist": { "result": "Clear", "score": 0, "lastChecked": "2025-12-10", "details": "Not blacklisted." },
+      "shellCompany": { "result": "Medium Risk", "score": 20, "lastChecked": "2025-12-10", "details": "Complex shareholding structure identified. Review ongoing." },
+      "riskScore": 90
+    },
+    {
+      "vendorId": "VND-2026-00038",
+      "vendorName": "Global Security Solutions",
+      "sanctions": { "result": "Clear", "score": 0, "lastChecked": "2025-11-20", "details": "No matches." },
+      "pep": { "result": "Clear", "score": 0, "lastChecked": "2025-11-20", "details": "No PEP found." },
+      "adverseMedia": { "result": "No Findings", "score": 0, "lastChecked": "2025-11-20", "findings": 0, "details": "Clean media profile." },
+      "blacklist": { "result": "Clear", "score": 0, "lastChecked": "2025-11-20", "details": "No blacklist entry." },
+      "shellCompany": { "result": "Low Risk", "score": 10, "lastChecked": "2025-11-20", "details": "Verified physical address and staffing." },
+      "riskScore": 10
+    },
+    {
+      "vendorId": "VND-2026-00041",
+      "vendorName": "DataSoft Technologies",
+      "sanctions": { "result": "Clear", "score": 0, "lastChecked": "2026-03-22", "details": "No sanctions matches." },
+      "pep": { "result": "Clear", "score": 0, "lastChecked": "2026-03-22", "details": "No PEP identified." },
+      "adverseMedia": { "result": "No Findings", "score": 0, "lastChecked": "2026-03-22", "findings": 0, "details": "No adverse media." },
+      "blacklist": { "result": "Clear", "score": 0, "lastChecked": "2026-03-22", "details": "Not blacklisted." },
+      "shellCompany": { "result": "Low Risk", "score": 5, "lastChecked": "2026-03-22", "details": "ISO certified company with 200+ employees." },
+      "riskScore": 5
+    },
+    {
+      "vendorId": "VND-2026-00045",
+      "vendorName": "Meridian Trade Co.",
+      "sanctions": { "result": "Match Found", "score": 80, "lastChecked": "2025-09-05", "details": "Entity name partial match on OFAC SDN list. Under investigation." },
+      "pep": { "result": "Match Found", "score": 60, "lastChecked": "2025-09-05", "details": "Beneficial owner linked to politically exposed individual." },
+      "adverseMedia": { "result": "5 Findings", "score": 40, "lastChecked": "2025-09-05", "findings": 5, "details": "Multiple fraud allegations and customs violations reported." },
+      "blacklist": { "result": "Blacklisted", "score": 100, "lastChecked": "2025-09-05", "details": "Listed on MCA debarred entities list." },
+      "shellCompany": { "result": "High Risk", "score": 70, "lastChecked": "2025-09-05", "details": "No physical address. Nominee directors. Possible shell." },
+      "riskScore": 350
+    },
+    {
+      "vendorId": "VND-2026-00047",
+      "vendorName": "TechBridge Pvt Ltd",
+      "sanctions": { "result": "Clear", "score": 0, "lastChecked": "2024-06-01", "details": "No matches found." },
+      "pep": { "result": "Clear", "score": 0, "lastChecked": "2024-06-01", "details": "No PEP associations." },
+      "adverseMedia": { "result": "1 Finding", "score": 10, "lastChecked": "2024-06-01", "findings": 1, "details": "Labour dispute notice in 2023. Resolved." },
+      "blacklist": { "result": "Clear", "score": 0, "lastChecked": "2024-06-01", "details": "Not blacklisted." },
+      "shellCompany": { "result": "Low Risk", "score": 10, "lastChecked": "2024-06-01", "details": "Operational entity, re-KYC required." },
+      "riskScore": 20
+    },
+    {
+      "vendorId": "VND-2026-00052",
+      "vendorName": "NovaChem Industries",
+      "sanctions": { "result": "Match Found", "score": 90, "lastChecked": "2025-10-12", "details": "Listed in EU dual-use export control list." },
+      "pep": { "result": "Clear", "score": 0, "lastChecked": "2025-10-12", "details": "No PEP match." },
+      "adverseMedia": { "result": "3 Findings", "score": 30, "lastChecked": "2025-10-12", "findings": 3, "details": "Environmental violations and CPCB penalty notices." },
+      "blacklist": { "result": "Clear", "score": 0, "lastChecked": "2025-10-12", "details": "Not on domestic blacklists." },
+      "shellCompany": { "result": "Medium Risk", "score": 25, "lastChecked": "2025-10-12", "details": "Multiple subsidiaries, complex ownership." },
+      "riskScore": 145
+    },
+    {
+      "vendorId": "VND-2026-00058",
+      "vendorName": "SwiftLogix Pvt Ltd",
+      "sanctions": { "result": "Clear", "score": 0, "lastChecked": "2026-01-30", "details": "No sanctions matches." },
+      "pep": { "result": "Clear", "score": 0, "lastChecked": "2026-01-30", "details": "No PEP." },
+      "adverseMedia": { "result": "No Findings", "score": 0, "lastChecked": "2026-01-30", "findings": 0, "details": "Clean." },
+      "blacklist": { "result": "Clear", "score": 0, "lastChecked": "2026-01-30", "details": "Not blacklisted." },
+      "shellCompany": { "result": "Low Risk", "score": 5, "lastChecked": "2026-01-30", "details": "Registered logistics operator, 5 years in business." },
+      "riskScore": 5
+    },
+    {
+      "vendorId": "VND-2026-00061",
+      "vendorName": "Apex Construction Ltd",
+      "sanctions": { "result": "Clear", "score": 0, "lastChecked": "2024-05-15", "details": "No sanctions." },
+      "pep": { "result": "Clear", "score": 0, "lastChecked": "2024-05-15", "details": "No PEP." },
+      "adverseMedia": { "result": "2 Findings", "score": 20, "lastChecked": "2024-05-15", "findings": 2, "details": "Delayed project delivery notices and one civil dispute." },
+      "blacklist": { "result": "Clear", "score": 0, "lastChecked": "2024-05-15", "details": "Not blacklisted." },
+      "shellCompany": { "result": "Low Risk", "score": 10, "lastChecked": "2024-05-15", "details": "Construction company with physical assets." },
+      "riskScore": 30
+    }
+  ]
+}

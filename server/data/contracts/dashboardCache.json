@@ -16,7 +16,7 @@
     },
     {
       "name": "Under Review",
-      "value": 67,
+      "value": 72,
       "color": "#F59E0B"
     },
     {
@@ -33,7 +33,7 @@
   "contractValueByCategory": [
     {
       "category": "IT Services",
-      "spend": 45
+      "spend": 54.75
     },
     {
       "category": "Facilities",
@@ -52,7 +52,7 @@
       "spend": 22
     }
   ],
-  "portfolioRisk": "Medium",
+  "portfolioRisk": "High",
   "legalExposure": 58,
   "complianceRisk": 22,
   "financialRisk": 74,
@@ -81,15 +81,15 @@
   "vendorRiskAnalysis": [
     {
       "name": "High Risk",
-      "value": 4
+      "value": 5
     },
     {
       "name": "Medium Risk",
-      "value": 18
+      "value": 19
     },
     {
       "name": "Low Risk",
-      "value": 78
+      "value": 79
     }
   ]
 }

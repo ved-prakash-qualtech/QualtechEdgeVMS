@@ -1,0 +1,149 @@
+{
+  "kpis": {
+    "totalVendors": 587,
+    "activeContracts": 142,
+    "totalSpend": "₹11.3 Cr",
+    "complianceScore": "97.4%",
+    "savingsAchieved": "₹84.6 L",
+    "paymentEfficiency": "8.4 Days",
+    "totalSpendCr": 11.3,
+    "totalVendorsTrend": "+8% vs last Qtr",
+    "activeContractsTrend": "+12 new contracts",
+    "totalSpendTrend": "↓ 4.2% budget variance",
+    "complianceTrend": "Excellent Adherence",
+    "savingsTrend": "↑ 1.8% negotiation yield",
+    "efficiencyTrend": "SLA Turnaround"
+  },
+  "spendTrend": [
+    { "name": "Dec", "budget": 4.5, "actual": 4.2 },
+    { "name": "Jan", "budget": 5.0, "actual": 5.1 },
+    { "name": "Feb", "budget": 5.0, "actual": 4.8 },
+    { "name": "Mar", "budget": 6.5, "actual": 6.2 },
+    { "name": "Apr", "budget": 7.0, "actual": 6.9 },
+    { "name": "May", "budget": 8.0, "actual": 7.5 }
+  ],
+  "spendByCategory": [
+    { "name": "IT Services",      "value": 3.8, "color": "#1d4ed8" },
+    { "name": "Facility Mgmt",    "value": 2.1, "color": "#7c3aed" },
+    { "name": "Security",         "value": 1.5, "color": "#0284c7" },
+    { "name": "Consulting",       "value": 1.2, "color": "#f59e0b" },
+    { "name": "Logistics",        "value": 0.9, "color": "#16a34a" },
+    { "name": "Infrastructure",   "value": 1.8, "color": "#dc2626" }
+  ],
+  "riskDistribution": [
+    { "name": "Low Risk",    "value": 480, "color": "#16a34a" },
+    { "name": "Medium Risk", "value": 95,  "color": "#f59e0b" },
+    { "name": "High Risk",   "value": 12,  "color": "#dc2626" }
+  ],
+  "spendComparison": [
+    { "month": "Q1-25", "budget": 3.5, "actual": 3.2 },
+    { "month": "Q2-25", "budget": 3.8, "actual": 4.0 },
+    { "month": "Q3-25", "budget": 4.2, "actual": 3.9 },
+    { "month": "Q4-25", "budget": 4.5, "actual": 4.8 },
+    { "month": "Q1-26", "budget": 5.2, "actual": 4.9 }
+  ],
+  "savingsTrend": [
+    { "month": "Dec", "savings": 12.5 },
+    { "month": "Jan", "savings": 15.2 },
+    { "month": "Feb", "savings": 14.8 },
+    { "month": "Mar", "savings": 18.6 },
+    { "month": "Apr", "savings": 22.1 },
+    { "month": "May", "savings": 25.4 }
+  ],
+  "categoryMetrics": [
+    { "category": "IT Services",        "spend": "₹3.8 Cr", "budget": "₹4.0 Cr", "savings": "₹20 L",  "slaScore": "94%" },
+    { "category": "Facility Management","spend": "₹2.1 Cr", "budget": "₹2.0 Cr", "savings": "₹12 L",  "slaScore": "88%" },
+    { "category": "Security Services",  "spend": "₹1.5 Cr", "budget": "₹1.6 Cr", "savings": "₹10 L",  "slaScore": "91%" },
+    { "category": "Consulting",         "spend": "₹1.2 Cr", "budget": "₹1.4 Cr", "savings": "₹25 L",  "slaScore": "95%" },
+    { "category": "Logistics",          "spend": "₹0.9 Cr", "budget": "₹0.8 Cr", "savings": "₹5 L",   "slaScore": "86%" }
+  ],
+  "vendorPerformance": {
+    "avgSlaScore": "92.4%",
+    "delayedDeliveries": 8,
+    "qualityIndex": "94.8%",
+    "slaScoreTrend": "↑ 1.5% vs last Qtr",
+    "radarData": [
+      { "subject": "SLA Adherence",  "score": 96, "fullMark": 100 },
+      { "subject": "Quality Index",  "score": 92, "fullMark": 100 },
+      { "subject": "Delivery Time",  "score": 85, "fullMark": 100 },
+      { "subject": "Compliance",     "score": 98, "fullMark": 100 },
+      { "subject": "Responsiveness", "score": 88, "fullMark": 100 }
+    ],
+    "categorySLA": [
+      { "category": "Consulting",   "sla": 95 },
+      { "category": "IT Services",  "sla": 94 },
+      { "category": "Security",     "sla": 91 },
+      { "category": "Facilities",   "sla": 88 },
+      { "category": "Logistics",    "sla": 86 }
+    ],
+    "scorecards": [
+      { "vendorId": "VND-2026-00029", "name": "ABC Infotech Pvt Ltd",    "category": "IT Services",       "sla": "96%", "quality": "98%", "delivery": "95%", "risk": "Low"    },
+      { "vendorId": "VND-2026-00031", "name": "Secure Facilities Ltd",   "category": "Facility Mgmt",     "sla": "88%", "quality": "90%", "delivery": "85%", "risk": "Medium" },
+      { "vendorId": "VND-2026-00038", "name": "Global Security Ltd",     "category": "Security Services", "sla": "91%", "quality": "93%", "delivery": "90%", "risk": "Low"    },
+      { "vendorId": "VND-2026-00034", "name": "Fincons Consulting",      "category": "Consulting",        "sla": "95%", "quality": "94%", "delivery": "92%", "risk": "Low"    },
+      { "vendorId": "VND-2026-00041", "name": "DataSoft Technologies",   "category": "IT Services",       "sla": "94%", "quality": "95%", "delivery": "93%", "risk": "Low"    }
+    ]
+  },
+  "aiInsights": {
+    "spendProjection": "₹12.4 Cr",
+    "slaFailureWarnings": 2,
+    "contractChurnWarnings": 3,
+    "spendForecast": [
+      { "name": "Dec", "actual": 4.5, "projected": null },
+      { "name": "Jan", "actual": 5.0, "projected": null },
+      { "name": "Feb", "actual": 4.8, "projected": null },
+      { "name": "Mar", "actual": 6.2, "projected": 6.2  },
+      { "name": "Apr", "actual": null, "projected": 6.9  },
+      { "name": "May", "actual": null, "projected": 7.5  },
+      { "name": "Jun", "actual": null, "projected": 8.2  }
+    ],
+    "recommendations": [
+      {
+        "id": "REC-001",
+        "type": "savings",
+        "title": "Savings Leakage Detected",
+        "description": "IT Software licenses renewal showed a 12% price hike. Transitioning to ABC Solutions under pre-approved rates could save ₹8,40,000 annually.",
+        "action": "View Trade-off Matrix",
+        "impact": "₹8.4 L savings",
+        "priority": "High"
+      },
+      {
+        "id": "REC-002",
+        "type": "warning",
+        "title": "SLA Breach Prediction",
+        "description": "Consulting deliveries from Fincons are projected to breach milestone-3 deadlines due to resource deficit.",
+        "action": "Open Scorecard",
+        "impact": "2 contracts at risk",
+        "priority": "Medium"
+      },
+      {
+        "id": "REC-003",
+        "type": "compliance",
+        "title": "Compliance Warning",
+        "description": "GST return mismatch detected for 3 facilities vendors, halting ITC claims of ₹4.2 L.",
+        "action": "Initiate Vendor Notice",
+        "impact": "₹4.2 L ITC at risk",
+        "priority": "High"
+      },
+      {
+        "id": "REC-004",
+        "type": "opportunity",
+        "title": "Early Settlement Discount",
+        "description": "Releasing early payouts to ABC Infotech Pvt Ltd secures an invoice rebate of ₹29,500.",
+        "action": "Execute Early Payout",
+        "impact": "₹29,500 rebate",
+        "priority": "Low"
+      },
+      {
+        "id": "REC-005",
+        "type": "warning",
+        "title": "Contract Renewal Warning",
+        "description": "Sourcing agreement with Secure Facilities Ltd expires on 19 Jan 2027. Sourcing rates are projected to increase by 8.5% if not locked in this quarter.",
+        "action": "Draft Renewal Amendment",
+        "impact": "8.5% cost risk",
+        "priority": "Medium"
+      }
+    ]
+  },
+  "uploadedReports": []
+}

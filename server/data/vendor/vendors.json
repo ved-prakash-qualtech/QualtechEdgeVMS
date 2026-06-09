@@ -1,0 +1,16 @@
+[
+  {
+    "vendorId": "VND-001",
+    "vendorName": "Acme Solutions Pvt Ltd",
+    "vendorType": "IT Services",
+    "email": "vendor@acmecloud.com",
+    "phone": "+91-9876543210",
+    "address": "402, Signature Towers, Sector 30, Gurugram, HR, India",
+    "contactPerson": "Rohan Sharma",
+    "status": "Verified Partner",
+    "bankSecurityNode": true,
+    "onboardingDate": "2026-01-10",
+    "lastLogin": "2026-06-03",
+    "lastModified": "4/6/2026, 1:35:03 pm"
+  }
+]

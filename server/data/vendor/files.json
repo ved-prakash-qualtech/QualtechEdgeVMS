@@ -1,0 +1,34 @@
+[
+  {
+    "fileId": "FILE-001",
+    "vendorId": "VND-001",
+    "fileName": "GST_Certificate.pdf",
+    "fileType": "application/pdf",
+    "filePath": "/uploads/vendor/GST_Certificate.pdf",
+    "uploadDate": "2026-01-12"
+  },
+  {
+    "fileId": "FILE-002",
+    "vendorId": "VND-001",
+    "fileName": "PAN_Card.pdf",
+    "fileType": "application/pdf",
+    "filePath": "/uploads/vendor/PAN_Card.pdf",
+    "uploadDate": "2026-01-12"
+  },
+  {
+    "fileId": "FILE-003",
+    "vendorId": "VND-001",
+    "fileName": "MSME_Registration.pdf",
+    "fileType": "application/pdf",
+    "filePath": "/uploads/vendor/MSME_Registration.pdf",
+    "uploadDate": "2026-01-15"
+  },
+  {
+    "fileId": "FILE-004",
+    "vendorId": "VND-001",
+    "fileName": "ISO_27001_InfoSec.pdf",
+    "fileType": "application/pdf",
+    "filePath": "/uploads/vendor/ISO_27001_InfoSec.pdf",
+    "uploadDate": "2025-05-10"
+  }
+]

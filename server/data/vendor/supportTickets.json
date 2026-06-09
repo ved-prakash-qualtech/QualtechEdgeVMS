@@ -1,0 +1,47 @@
+[
+  {
+    "ticketId": "TKT-901",
+    "vendorId": "VND-001",
+    "category": "Finance & Tax",
+    "subject": "TDS Deduction rate query on INV-77981",
+    "description": "Please clarify the TDS rate deduction applied to the paid invoice INV-77981.",
+    "status": "Resolved",
+    "createdDate": "2026-04-12"
+  },
+  {
+    "ticketId": "TKT-942",
+    "vendorId": "VND-001",
+    "category": "Technical Support",
+    "subject": "API endpoint integration credentials",
+    "description": "We need the API credentials to start the automated invoice data sync test.",
+    "status": "Open",
+    "createdDate": "2026-05-21"
+  },
+  {
+    "ticketId": "TKT-7526",
+    "vendorId": "VND-001",
+    "category": "Finance & Tax",
+    "subject": "issue",
+    "description": "no issue ",
+    "status": "Open",
+    "createdDate": "2026-06-04"
+  },
+  {
+    "ticketId": "TKT-4913",
+    "vendorId": "VND-001",
+    "category": "Technical Support",
+    "subject": "few",
+    "description": "efwe",
+    "status": "Open",
+    "createdDate": "2026-06-04"
+  },
+  {
+    "ticketId": "TKT-4859",
+    "vendorId": "VND-001",
+    "category": "Finance & Tax",
+    "subject": "wefwe",
+    "description": "fewe",
+    "status": "Open",
+    "createdDate": "2026-06-04"
+  }
+]

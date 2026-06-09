@@ -91,12 +91,28 @@
 
 .kpiGrid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
 }
 
 .kpiCard {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.kpiCardActive {
+  border-color: var(--color-primary) !important;
+  background-color: #f0f5ff !important;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.15), var(--shadow-md) !important;
+  transform: translateY(-2px);
 }
 
 .kpiHeader {
@@ -241,22 +257,20 @@
 }
 
 .actionBtn {
-  background-color: #f8fafc;
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  padding: 20px;
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
 }
 
 .actionBtn:hover {
-  border-color: var(--color-primary);
-  background-color: #f0f5ff;
+  background-color: #f1f5f9;
+  color: var(--color-primary);
 }
 
 .iconBox {
@@ -332,4 +346,168 @@
 
 .aiLink:hover {
   text-decoration: underline;
+}
+
+/* Embedded Invoice List repository styles */
+.tableCard {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 24px;
+}
+
+.tab {
+  padding: 16px 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.activeTab {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.tableToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.searchWrap {
+  position: relative;
+}
+
+.searchInput {
+  padding-left: 36px;
+  min-width: 280px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-tertiary);
+}
+
+.filterSelect {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  background-color: white;
+  outline: none;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.statusSuccess {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.statusWarning {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.statusDraft {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.statusDanger {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.statusPurple {
+  background-color: #f3e8ff;
+  color: #7c3aed;
+}
+
+.actionsCell {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-border);
+}
+
+.pageInfo {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.pageControls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pageBtn, .pageBtnActive, .pageBtnNext {
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.pageBtn {
+  background: none;
+  color: var(--color-text-secondary);
+}
+
+.pageBtn:hover {
+  background-color: #f1f5f9;
+}
+
+.pageBtnActive {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.pageBtnNext {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.pageBtnNext:hover {
+  background-color: #f1f5f9;
 }

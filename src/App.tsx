@@ -15,7 +15,7 @@ import { DocumentList } from './pages/Documents/DocumentList';
 import { UploadDocument } from './pages/Documents/UploadDocument';
 import { DocumentApprovals } from './pages/Documents/DocumentApprovals';
 import { ExpiryTracker } from './pages/Documents/ExpiryTracker';
-import { KycDashboard } from './pages/KYC/KycDashboard';
+
 import { KycDetail } from './pages/KYC/KycDetail';
 import { KycApprovals } from './pages/KYC/KycApprovals';
 import { KycRiskAssessment } from './pages/KYC/KycRiskAssessment';
@@ -25,8 +25,10 @@ import { KycPepScreening } from './pages/KYC/KycPepScreening';
 import { KycAdverseMedia } from './pages/KYC/KycAdverseMedia';
 import { KycShellCheck } from './pages/KYC/KycShellCheck';
 import { KycReKycScheduling } from './pages/KYC/KycReKycScheduling';
+import { KycDashboardNew } from './pages/KYC/KycDashboardNew';
+import { ScreeningRisk } from './pages/KYC/ScreeningRisk';
+import { ReviewsApprovals } from './pages/KYC/ReviewsApprovals';
 import { ContractsDashboard } from './pages/Contracts/ContractsDashboard';
-import { ContractList } from './pages/Contracts/ContractList';
 import { CreateContract } from './pages/Contracts/CreateContract';
 import { ContractApprovals } from './pages/Contracts/ContractApprovals';
 import { ClauseLibrary } from './pages/Contracts/ClauseLibrary';
@@ -45,12 +47,9 @@ import { PaymentDashboard } from './pages/Payments/PaymentDashboard';
 import { PaymentProcessing } from './pages/Payments/PaymentProcessing';
 import { PaymentList } from './pages/Payments/PaymentList';
 import { PaymentApprovals } from './pages/Payments/PaymentApprovals';
-import { ReportsDashboard } from './pages/Reports/ReportsDashboard';
-import { ProcurementAnalytics } from './pages/Reports/ProcurementAnalytics';
-import { VendorPerformance } from './pages/Reports/VendorPerformance';
-import { InvoicePaymentReports } from './pages/Reports/InvoicePaymentReports';
-import { CustomReportBuilder } from './pages/Reports/CustomReportBuilder';
-import { AIInsightsDashboard } from './pages/Reports/AIInsightsDashboard';
+import { MISDashboard } from './pages/Reports/MISDashboard';
+import { PerformanceAnalytics } from './pages/Reports/PerformanceAnalytics';
+import { AIInsights } from './pages/Reports/AIInsights';
 
 
 
@@ -61,6 +60,9 @@ import { ApprovalWorkflowSettings } from './pages/Settings/ApprovalWorkflowSetti
 import { SecurityGovernanceSettings } from './pages/Settings/SecurityGovernanceSettings';
 import { IntegrationHubSettings } from './pages/Settings/IntegrationHubSettings';
 import { PublishDeploySettings } from './pages/Settings/PublishDeploySettings';
+import { GeneralSettings } from './pages/Settings/GeneralSettings';
+import { UsersRoles } from './pages/Settings/UsersRoles';
+import { SystemPreferences } from './pages/Settings/SystemPreferences';
 import { VendorPortalDashboard } from './pages/VendorPortal/VendorPortalDashboard';
 
 import { CatalogueDashboard } from './pages/Catalogue/CatalogueDashboard';
@@ -72,10 +74,7 @@ import { HsnSacMapping } from './pages/Catalogue/HsnSacMapping';
 import { UomManagement } from './pages/Catalogue/UomManagement';
 import { RatePriceReference } from './pages/Catalogue/RatePriceReference';
 import { QualityStandards } from './pages/Catalogue/QualityStandards';
-import { VendorComparison } from './pages/Catalogue/VendorComparison';
 import { CatalogueApprovals } from './pages/Catalogue/CatalogueApprovals';
-import { AiRecommendations } from './pages/Catalogue/AiRecommendations';
-import { CatalogueAnalytics } from './pages/Catalogue/CatalogueAnalytics';
 import { PublishCatalogue } from './pages/Catalogue/PublishCatalogue';
 
 function App() {
@@ -93,9 +92,13 @@ function App() {
             <Route element={<Layout />}>
               <Route path="/access-denied" element={<AccessDenied />} />
 
-              {/* Internal Procurement Modules: restricted to ADMIN */}
-              <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+              {/* Internal Procurement Modules: restricted to ADMIN, PROCUREMENT, COMPLIANCE, FINANCE */}
+              <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'PROCUREMENT', 'COMPLIANCE', 'FINANCE']} />}>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/administrator/dashboard" element={<Dashboard />} />
+                <Route path="/procurement/dashboard" element={<Dashboard />} />
+                <Route path="/compliance/dashboard" element={<Dashboard />} />
+                <Route path="/finance/dashboard" element={<Dashboard />} />
                 <Route path="/vendors" element={<VendorList />} />
                 <Route path="/vendors/add" element={<AddVendor />} />
                 <Route path="/vendors/approvals" element={<VendorApprovals />} />
@@ -103,7 +106,10 @@ function App() {
                 <Route path="/documents/upload" element={<UploadDocument />} />
                 <Route path="/documents/approvals" element={<DocumentApprovals />} />
                 <Route path="/documents/expiry" element={<ExpiryTracker />} />
-                <Route path="/kyc" element={<KycDashboard />} />
+                <Route path="/kyc" element={<Navigate to="/kyc/dashboard" replace />} />
+                <Route path="/kyc/dashboard" element={<KycDashboardNew />} />
+                <Route path="/kyc/screening" element={<ScreeningRisk />} />
+                <Route path="/kyc/reviews" element={<ReviewsApprovals />} />
                 <Route path="/kyc/:id" element={<KycDetail />} />
                 <Route path="/kyc/approvals" element={<KycApprovals />} />
                 <Route path="/kyc/risk" element={<KycRiskAssessment />} />
@@ -133,18 +139,14 @@ function App() {
                 <Route path="/catalogue/pricing" element={<RatePriceReference />} />
                 <Route path="/catalogue/quality" element={<QualityStandards />} />
                 <Route path="/catalogue/quality-standards" element={<QualityStandards />} />
-                <Route path="/catalogue/comparison" element={<VendorComparison />} />
                 <Route path="/catalogue/approvals" element={<CatalogueApprovals />} />
                 <Route path="/catalogue/approval-workflow" element={<CatalogueApprovals />} />
-                <Route path="/catalogue/ai-recommendations" element={<AiRecommendations />} />
-
                 <Route path="/catalogue/published" element={<PublishCatalogue />} />
-                <Route path="/catalogue/analytics" element={<CatalogueAnalytics />} />
                 <Route path="/catalogue/publish" element={<PublishCatalogue />} />
 
                 <Route path="/contracts" element={<Navigate to="/contracts/dashboard" replace />} />
                 <Route path="/contracts/dashboard" element={<ContractsDashboard />} />
-                <Route path="/contracts/repository" element={<ContractList />} />
+                <Route path="/contracts/repository" element={<Navigate to="/contracts/dashboard" replace />} />
                 <Route path="/contracts/create" element={<CreateContract />} />
                 <Route path="/contracts/approvals" element={<ContractApprovals />} />
                 <Route path="/contracts/clauses" element={<ClauseLibrary />} />
@@ -155,15 +157,14 @@ function App() {
                 <Route path="/purchase-orders/create" element={<CreatePO />} />
                 <Route path="/purchase-orders/list" element={<POList />} />
                 <Route path="/purchase-orders/approvals" element={<POApprovals />} />
-                <Route path="/purchase-orders/grn" element={<POReceipt />} />
-                <Route path="/purchase-orders/match" element={<POThreeWayMatch />} />
 
                 <Route path="/invoices" element={<Navigate to="/invoices/dashboard" replace />} />
                 <Route path="/invoices/dashboard" element={<InvoiceDashboard />} />
                 <Route path="/invoices/upload" element={<UploadInvoice />} />
                 <Route path="/invoices/list" element={<InvoiceList />} />
+                <Route path="/invoices/grn" element={<POReceipt />} />
+                <Route path="/invoices/match" element={<POThreeWayMatch />} />
                 <Route path="/invoices/approvals" element={<InvoiceApprovals />} />
-                <Route path="/invoices/match" element={<InvoiceDashboard />} />
                 <Route path="/invoices/gst" element={<InvoiceDashboard />} />
                 <Route path="/invoices/exceptions" element={<InvoiceDashboard />} />
                 <Route path="/invoices/analytics" element={<InvoiceDashboard />} />
@@ -180,25 +181,24 @@ function App() {
                 <Route path="/payments/analytics" element={<PaymentDashboard />} />
 
                 <Route path="/reports" element={<Navigate to="/reports/dashboard" replace />} />
-                <Route path="/reports/dashboard" element={<ReportsDashboard />} />
-                <Route path="/reports/procurement" element={<ProcurementAnalytics />} />
-                <Route path="/reports/performance" element={<VendorPerformance />} />
-                <Route path="/reports/spend" element={<ProcurementAnalytics />} />
-                <Route path="/reports/finance" element={<InvoicePaymentReports />} />
-                <Route path="/reports/compliance" element={<ReportsDashboard />} />
-                <Route path="/reports/sla" element={<VendorPerformance />} />
-                <Route path="/reports/builder" element={<CustomReportBuilder />} />
-                <Route path="/reports/audit" element={<ReportsDashboard />} />
-                <Route path="/reports/insights" element={<AIInsightsDashboard />} />
+                <Route path="/reports/dashboard"   element={<MISDashboard />} />
+                <Route path="/reports/performance" element={<PerformanceAnalytics />} />
+                <Route path="/reports/insights"    element={<AIInsights />} />
 
-                <Route path="/settings" element={<Navigate to="/settings/dashboard" replace />} />
-                <Route path="/settings/dashboard" element={<SettingsDashboard />} />
-                <Route path="/settings/org" element={<OrgBrandingSettings />} />
-                <Route path="/settings/roles" element={<UserRoleManagement />} />
-                <Route path="/settings/workflow" element={<ApprovalWorkflowSettings />} />
-                <Route path="/settings/security" element={<SecurityGovernanceSettings />} />
-                <Route path="/settings/integrations" element={<IntegrationHubSettings />} />
-                <Route path="/settings/publish" element={<PublishDeploySettings />} />
+                {/* New simplified Settings routes */}
+                <Route path="/settings" element={<Navigate to="/settings/general" replace />} />
+                <Route path="/settings/general" element={<GeneralSettings />} />
+                <Route path="/settings/users" element={<UsersRoles />} />
+                <Route path="/settings/preferences" element={<SystemPreferences />} />
+
+                {/* Legacy Settings routes — redirect to new simplified pages */}
+                <Route path="/settings/dashboard" element={<Navigate to="/settings/general" replace />} />
+                <Route path="/settings/org" element={<Navigate to="/settings/general" replace />} />
+                <Route path="/settings/roles" element={<Navigate to="/settings/users" replace />} />
+                <Route path="/settings/workflow" element={<Navigate to="/settings/preferences" replace />} />
+                <Route path="/settings/security" element={<Navigate to="/settings/preferences" replace />} />
+                <Route path="/settings/integrations" element={<Navigate to="/settings/preferences" replace />} />
+                <Route path="/settings/publish" element={<Navigate to="/settings/general" replace />} />
               </Route>
 
               {/* Vendor Portal: restricted to VENDOR */}

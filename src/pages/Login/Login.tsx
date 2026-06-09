@@ -8,7 +8,7 @@ import styles from './Login.module.css';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { login, user } = useAuth();
+  const { login, demoLogin, user } = useAuth();
   
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -21,16 +21,124 @@ export const Login: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Demo Accounts State
+  const [demoUsers, setDemoUsers] = useState<any[]>([]);
+
+  // Fetch demo users on mount
+  useEffect(() => {
+    async function loadDemoUsers() {
+      try {
+        const res = await fetch('/api/auth/demo-users');
+        const data = await res.json();
+        setDemoUsers(data);
+      } catch (err) {
+        console.error("Failed to load demo users from backend:", err);
+        // Fallback demo users list
+        setDemoUsers([
+          {
+            "id": "USR-001",
+            "name": "Saurabh Anand",
+            "role": "System Administrator",
+            "portal": "Admin Portal",
+            "username": "admin",
+            "password": "admin123",
+            "redirectUrl": "/administrator/dashboard",
+            "color": "blue",
+            "initials": "SA"
+          },
+          {
+            "id": "USR-002",
+            "name": "Priya Sharma",
+            "role": "Procurement Manager",
+            "portal": "Procurement Portal",
+            "username": "procurement",
+            "password": "procurement123",
+            "redirectUrl": "/procurement/dashboard",
+            "color": "green",
+            "initials": "PS"
+          },
+          {
+            "id": "USR-003",
+            "name": "Rahul Verma",
+            "role": "Compliance Officer",
+            "portal": "Compliance Portal",
+            "username": "compliance",
+            "password": "compliance123",
+            "redirectUrl": "/compliance/dashboard",
+            "color": "purple",
+            "initials": "RV"
+          },
+          {
+            "id": "USR-004",
+            "name": "Amit Gupta",
+            "role": "Finance Manager",
+            "portal": "Finance Portal",
+            "username": "finance",
+            "password": "finance123",
+            "redirectUrl": "/finance/dashboard",
+            "color": "orange",
+            "initials": "AG"
+          },
+          {
+            "id": "USR-005",
+            "name": "Acme Vendor",
+            "role": "Vendor Representative",
+            "portal": "Vendor Portal",
+            "username": "vendor",
+            "password": "vendor123",
+            "redirectUrl": "/vendor/dashboard",
+            "color": "teal",
+            "initials": "AV"
+          }
+        ]);
+      }
+    }
+    loadDemoUsers();
+  }, []);
+
   // Auto-redirect if already logged in
   useEffect(() => {
     if (user) {
-      if (user.role === 'VENDOR') {
+      if (user.role === 'ADMIN') {
+        navigate('/administrator/dashboard');
+      } else if (user.role === 'PROCUREMENT') {
+        navigate('/procurement/dashboard');
+      } else if (user.role === 'COMPLIANCE') {
+        navigate('/compliance/dashboard');
+      } else if (user.role === 'FINANCE') {
+        navigate('/finance/dashboard');
+      } else if (user.role === 'VENDOR') {
         navigate('/vendor/dashboard');
       } else {
         navigate('/dashboard');
       }
     }
   }, [user, navigate]);
+
+  const handleDemoCardClick = (demoUser: any) => {
+    setDomain('qualtech');
+    setUsername(demoUser.username);
+    setPassword(demoUser.password);
+    setStep(2);
+    setError(null);
+  };
+
+  const handleQuickLogin = async (demoUser: any) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await demoLogin(demoUser.username);
+      if (result.success) {
+        navigate(result.redirect || demoUser.redirectUrl);
+      } else {
+        setError(result.message || 'Demo login failed');
+      }
+    } catch (err) {
+      setError('An unexpected error occurred during demo login');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDomainSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,6 +176,57 @@ export const Login: React.FC = () => {
     }
   };
 
+  const renderDemoSection = () => {
+    if (demoUsers.length === 0) return null;
+    return (
+      <div className={styles.demoSection}>
+        <div className={styles.demoDivider}>
+          <span>or continue as demo</span>
+        </div>
+        
+        <div className={styles.demoHeader}>
+          <div className={styles.demoBadge}>
+            <span className={styles.badgePulse}></span>
+            Demo Ready Environment
+          </div>
+          <span className={styles.demoCount}>{demoUsers.length} Roles Available</span>
+        </div>
+        
+        <p className={styles.demoNote}>
+          Select a role below to explore the platform. Click card to fill credentials, or click <strong>Go →</strong> for instant entry.
+        </p>
+
+        <div className={styles.demoUsersGrid}>
+          {demoUsers.map(u => (
+            <div 
+              key={u.id} 
+              className={`${styles.demoCard} ${styles[u.color || 'blue']}`} 
+              onClick={() => handleDemoCardClick(u)}
+              title="Click to populate credentials"
+            >
+              <div className={styles.demoAvatar}>
+                {u.initials}
+              </div>
+              <div className={styles.demoInfo}>
+                <div className={styles.demoName}>{u.name}</div>
+                <div className={styles.demoRole}>{u.role}</div>
+                <div className={styles.demoPortal}>{u.portal}</div>
+              </div>
+              <button 
+                type="button"
+                className={styles.quickLoginBtn} 
+                onClick={(e) => { e.stopPropagation(); handleQuickLogin(u); }}
+                title={`Quick login as ${u.role}`}
+              >
+                Go →
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className={styles.loginContainer}>
       {/* Left Sidebar - Branding */}
@@ -91,11 +250,11 @@ export const Login: React.FC = () => {
           <p>AI-powered vendor lifecycle management platform for Banks & NBFCs.</p>
           
           <ul className={styles.featureList}>
-            <li><CheckCircle2 size={18} /> RBI Compliant & Audit Ready</li>
+            <li><CheckCircle2 size={18} /> RBI Compliant</li>
             <li><CheckCircle2 size={18} /> Multi-Tenant SaaS Platform</li>
-            <li><CheckCircle2 size={18} /> AI Powered Risk Monitoring</li>
-            <li><CheckCircle2 size={18} /> Maker-Checker Workflows</li>
-            <li><CheckCircle2 size={18} /> Secure. Scalable. Reliable.</li>
+            <li><CheckCircle2 size={18} /> AI-Powered Risk Monitoring</li>
+            <li><CheckCircle2 size={18} /> Maker Checker Workflow</li>
+            <li><CheckCircle2 size={18} /> Vendor Lifecycle Management</li>
           </ul>
         </div>
 
@@ -154,6 +313,8 @@ export const Login: React.FC = () => {
               <Button fullWidth type="submit" disabled={loading}>
                 {loading ? 'Verifying...' : 'Continue'} <ChevronRight size={18} />
               </Button>
+
+              {renderDemoSection()}
             </form>
           )}
 
@@ -219,6 +380,8 @@ export const Login: React.FC = () => {
               <div className={styles.ssoButtons}>
                 <Button variant="outline" fullWidth type="button">SSO / SAML Login</Button>
               </div>
+
+              {renderDemoSection()}
             </form>
           )}
         </div>

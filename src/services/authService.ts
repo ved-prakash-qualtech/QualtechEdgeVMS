@@ -53,6 +53,12 @@ export async function loginUser(username: string, password: string): Promise<Log
   return res.data;
 }
 
+// 1.5. Demo Quick Login API
+export async function demoLoginUser(username: string): Promise<VerifyOtpResponse> {
+  const res = await axios.post('/api/auth/demo-login', { username });
+  return res.data;
+}
+
 // 2. Send OTP API
 export async function sendOtp(username: string): Promise<{ success: boolean; message: string }> {
   const res = await axios.post('/api/auth/send-otp', { username });

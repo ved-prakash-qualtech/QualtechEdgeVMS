@@ -119,5 +119,16 @@
     "ipAddress": "127.0.0.1",
     "status": "Success",
     "severity": "Low"
+  },
+  {
+    "id": "AUD-41183",
+    "timestamp": "8/6/2026, 9:43:08 am",
+    "actor": "Saurabh Anand",
+    "role": "Procurement Checker",
+    "tenant": "Qualtech Corporate",
+    "action": "Approved Vendor onboarding for VND-2026-88001 (HDFC Bank Limited)",
+    "ipAddress": "127.0.0.1",
+    "status": "Success",
+    "severity": "High"
   }
 ]

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ChevronLeft, CheckCircle2, Bot, UploadCloud, FileText } from 'lucide-react';
+import { ChevronLeft, CheckCircle2, Bot, UploadCloud, FileText, X } from 'lucide-react';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
 import { Input } from '../../components/Input/Input';
@@ -35,6 +35,8 @@ export const CreateContract: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [createdContractId, setCreatedContractId] = useState('CTR-2026-00045');
+  const [createdContract, setCreatedContract] = useState<ContractRecord | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   // Master lists
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -231,6 +233,7 @@ export const CreateContract: React.FC = () => {
       const res = await createContract(payload);
       if (res.success && res.contract) {
         setCreatedContractId(res.contract.contractId || 'CTR-2026-00045');
+        setCreatedContract(res.contract);
         setIsSubmitted(true);
       }
     } catch (err) {
@@ -253,12 +256,116 @@ export const CreateContract: React.FC = () => {
             <CheckCircle2 size={64} color="#16a34a" />
           </div>
           <h2 className={styles.successTitle}>Contract Created Successfully!</h2>
-          <p className={styles.successDesc}>The contract {createdContractId} has been successfully saved to the database and routed to Procurement Review stage.</p>
+          <p className={styles.successDesc}>
+            The contract <strong>{createdContractId}</strong> has been successfully saved to the database and routed to the Procurement approval stage.
+          </p>
           <div className={styles.successActions}>
-            <Button onClick={() => navigate('/contracts/repository')}>Go to Repository</Button>
-            <Button variant="outline" onClick={() => { setIsSubmitted(false); setCurrentStep(1); setUploadedFiles([]); }}>Create Another</Button>
+            <Button onClick={() => navigate('/contracts/dashboard')}>Go to Repository</Button>
+            <Button variant="outline" onClick={() => setShowDetailsModal(true)}>View Contract</Button>
+            <Button onClick={() => navigate('/contracts/approvals')}>Go to Approvals</Button>
+            <Button variant="outline" onClick={() => { setIsSubmitted(false); setCurrentStep(1); setUploadedFiles([]); setCreatedContract(null); }}>Create Another</Button>
           </div>
         </div>
+
+        {showDetailsModal && createdContract && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>
+                  <FileText size={20} color="#3b82f6" /> Contract Details - {createdContract.contractId}
+                </h3>
+                <button className={styles.modalCloseBtn} onClick={() => setShowDetailsModal(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+              <div className={styles.modalBody}>
+                <div className={styles.modalSection}>
+                  <h4 className={styles.sectionTitle}>Basic Information</h4>
+                  <div className={styles.grid2}>
+                    <div className={styles.detailItem}>
+                      <span className={styles.detailLabel}>Contract Name</span>
+                      <span className={styles.detailValue}>{createdContract.contractName}</span>
+                    </div>
+                    <div className={styles.detailItem}>
+                      <span className={styles.detailLabel}>Vendor Name</span>
+                      <span className={styles.detailValue}>{createdContract.vendorName || createdContract.vendor?.vendorName}</span>
+                    </div>
+                    <div className={styles.detailItem}>
+                      <span className={styles.detailLabel}>Contract Type</span>
+                      <span className={styles.detailValue}>{createdContract.contractType}</span>
+                    </div>
+                    <div className={styles.detailItem}>
+                      <span className={styles.detailLabel}>Department</span>
+                      <span className={styles.detailValue}>{createdContract.department}</span>
+                    </div>
+                    <div className={styles.detailItem}>
+                      <span className={styles.detailLabel}>Effective Date</span>
+                      <span className={styles.detailValue}>{createdContract.effectiveDate}</span>
+                    </div>
+                    <div className={styles.detailItem}>
+                      <span className={styles.detailLabel}>Expiry Date</span>
+                      <span className={styles.detailValue}>{createdContract.expiryDate}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.modalSection}>
+                  <h4 className={styles.sectionTitle}>Commercial Terms</h4>
+                  <div className={styles.grid3}>
+                    <div className={styles.detailItem}>
+                      <span className={styles.detailLabel}>Contract Value</span>
+                      <span className={styles.detailValue}>
+                        {createdContract.currency || createdContract.commercialTerms?.currency || 'INR'}{' '}
+                        {parseFloat(String(createdContract.contractValue || createdContract.commercialTerms?.contractValue || 0)).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                    <div className={styles.detailItem}>
+                      <span className={styles.detailLabel}>Payment Terms</span>
+                      <span className={styles.detailValue}>{createdContract.paymentTerms || createdContract.commercialTerms?.paymentTerms}</span>
+                    </div>
+                    <div className={styles.detailItem}>
+                      <span className={styles.detailLabel}>Billing Frequency</span>
+                      <span className={styles.detailValue}>{createdContract.billingFrequency || createdContract.commercialTerms?.billingFrequency}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {createdContract.slaAndLegal?.selectedClauses && createdContract.slaAndLegal.selectedClauses.length > 0 && (
+                  <div className={styles.modalSection}>
+                    <h4 className={styles.sectionTitle}>Selected Clauses</h4>
+                    <div className={styles.clauseList}>
+                      {createdContract.slaAndLegal.selectedClauses.map((clause: string, i: number) => (
+                        <div key={i} className={styles.clauseItem}>
+                          {clause}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {createdContract.uploadedDocuments && createdContract.uploadedDocuments.length > 0 && (
+                  <div className={styles.modalSection}>
+                    <h4 className={styles.sectionTitle}>Uploaded Documents</h4>
+                    <div className={styles.documentList}>
+                      {createdContract.uploadedDocuments.map((doc: any, i: number) => (
+                        <div key={i} className={styles.documentItem}>
+                          <FileText size={16} className={styles.documentIcon} />
+                          <div className={styles.documentInfo}>
+                            <span className={styles.documentName}>{doc.fileName || doc.originalName}</span>
+                            <span className={styles.documentSize}>{doc.fileSize || doc.size}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className={styles.modalFooter}>
+                <Button onClick={() => setShowDetailsModal(false)}>Close Details</Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -479,7 +586,20 @@ export const CreateContract: React.FC = () => {
               </div>
             </div>
 
-            <div className={styles.formGrid} style={{ marginTop: '20px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '24px', marginBottom: '8px' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--color-text-primary)', margin: 0 }}>SLA Details</h3>
+              <Button 
+                type="button"
+                variant="outline" 
+                size="sm" 
+                onClick={() => alert("Demo Feature – API Integration Pending")}
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', padding: '4px 8px' }}
+              >
+                <Bot size={13} /> AI Service SLA Architect
+              </Button>
+            </div>
+
+            <div className={styles.formGrid} style={{ marginTop: '10px', marginBottom: '20px' }}>
               <Input 
                 label="Target Uptime SLA" 
                 value={uptime}
@@ -514,7 +634,18 @@ export const CreateContract: React.FC = () => {
             </div>
 
             <div className={styles.uploadSection}>
-              <h3>Supporting Documents (Optional)</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>Supporting Documents (Optional)</h3>
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => alert("Demo Feature – API Integration Pending")}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', padding: '4px 8px' }}
+                >
+                  <Bot size={13} /> OCR Auto-Extract
+                </Button>
+              </div>
               <input 
                 type="file" 
                 ref={fileInputRef} 

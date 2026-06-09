@@ -1,0 +1,9 @@
+[
+  {
+    "paymentId": "PAY-001",
+    "invoiceId": "INV-77981",
+    "amount": 2210000,
+    "paymentDate": "2026-03-15",
+    "status": "Paid"
+  }
+]

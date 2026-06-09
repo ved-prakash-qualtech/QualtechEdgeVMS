@@ -715,5 +715,111 @@
         "timestamp": "2026-06-02T05:57:16.227Z"
       }
     ]
+  },
+  {
+    "documentId": "DOC-2026-0010",
+    "documentType": "KYC Documents",
+    "documentName": "PAN Card",
+    "documentCategory": "Identity Proof",
+    "vendor": {
+      "vendorId": "VND-2025-00029",
+      "vendorName": "ABC Infotech Private Limited"
+    },
+    "documentNumber": "",
+    "issueDate": null,
+    "expiryDate": null,
+    "issuedBy": "",
+    "remarks": "",
+    "verificationStatus": "Pending Verification",
+    "approvalStatus": "Pending",
+    "uploadedBy": {
+      "userId": "USR-001",
+      "userName": "Saurabh Anand"
+    },
+    "uploadedAt": "2026-06-08T04:14:29.585Z",
+    "fileDetails": {
+      "originalFileName": "Screenshot 2025-12-02 142918.png",
+      "storedFileName": "DOC_2026_3482_DOC.png",
+      "filePath": "/uploads/documents/DOC_2026_3482_DOC.png",
+      "fileType": "image/png",
+      "fileSizeKB": 21,
+      "fileExtension": ".png"
+    },
+    "previewImage": null,
+    "documentUsage": {
+      "usedInKYC": true,
+      "usedInVendorOnboarding": true,
+      "usedInCompliance": false,
+      "usedInContracts": false,
+      "usedInInvoiceVerification": false
+    },
+    "versionHistory": [
+      {
+        "version": 1,
+        "uploadedAt": "2026-06-08T04:14:29.585Z",
+        "uploadedBy": "Saurabh Anand",
+        "status": "Initial Upload"
+      }
+    ],
+    "auditTrail": [
+      {
+        "action": "Document Uploaded",
+        "performedBy": "Saurabh Anand",
+        "timestamp": "2026-06-08T04:14:29.585Z"
+      }
+    ]
+  },
+  {
+    "documentId": "DOC-2026-0011",
+    "documentType": "KYC Documents",
+    "documentName": "PAN Card",
+    "documentCategory": "Identity Proof",
+    "vendor": {
+      "vendorId": "VND-2025-00029",
+      "vendorName": "ABC Infotech Private Limited"
+    },
+    "documentNumber": "",
+    "issueDate": null,
+    "expiryDate": null,
+    "issuedBy": "",
+    "remarks": "",
+    "verificationStatus": "Pending Verification",
+    "approvalStatus": "Pending",
+    "uploadedBy": {
+      "userId": "USR-001",
+      "userName": "Saurabh Anand"
+    },
+    "uploadedAt": "2026-06-09T08:39:43.915Z",
+    "fileDetails": {
+      "originalFileName": "ChatGPT Image May 14, 2026, 05_06_16 PM.png",
+      "storedFileName": "DOC_2026_3149_DOC.png",
+      "filePath": "/uploads/documents/DOC_2026_3149_DOC.png",
+      "fileType": "image/png",
+      "fileSizeKB": 1411,
+      "fileExtension": ".png"
+    },
+    "previewImage": null,
+    "documentUsage": {
+      "usedInKYC": true,
+      "usedInVendorOnboarding": true,
+      "usedInCompliance": false,
+      "usedInContracts": false,
+      "usedInInvoiceVerification": false
+    },
+    "versionHistory": [
+      {
+        "version": 1,
+        "uploadedAt": "2026-06-09T08:39:43.915Z",
+        "uploadedBy": "Saurabh Anand",
+        "status": "Initial Upload"
+      }
+    ],
+    "auditTrail": [
+      {
+        "action": "Document Uploaded",
+        "performedBy": "Saurabh Anand",
+        "timestamp": "2026-06-09T08:39:43.915Z"
+      }
+    ]
   }
 ]

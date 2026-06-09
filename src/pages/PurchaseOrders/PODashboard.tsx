@@ -6,66 +6,137 @@ import {
   CheckCircle2, 
   Truck, 
   FileText, 
-  IndianRupee, 
-  TrendingUp,
-  AlertTriangle,
   ArrowRight,
   Plus,
-  Upload,
-  RefreshCcw
+  Download,
+  Eye,
+  Search,
+  Filter,
+  MoreVertical
 } from 'lucide-react';
-import { 
-  PieChart, 
-  Pie, 
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line
-} from 'recharts';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
-import { getPODashboard } from '../../services/purchaseOrderService';
-import type { DashboardStats } from '../../services/purchaseOrderService';
+import { Input } from '../../components/Input/Input';
+import { DataTable } from '../../components/DataTable/DataTable';
+import { getAllPOs } from '../../services/purchaseOrderService';
+import type { PurchaseOrderRecord } from '../../services/purchaseOrderService';
 import styles from './PODashboard.module.css';
 
 export const PODashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  // PO List States
+  const [poList, setPoList] = useState<PurchaseOrderRecord[]>([]);
+  const [repoLoading, setRepoLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [deliveryFilter, setDeliveryFilter] = useState('All');
 
   useEffect(() => {
     let active = true;
-    getPODashboard()
+    
+    // Fetch POs
+    getAllPOs()
       .then(res => {
         if (active) {
-          setStats(res);
-          setLoading(false);
+          setPoList(res);
+          setRepoLoading(false);
         }
       })
       .catch(err => {
-        console.error('Failed to load dashboard metrics:', err);
-        if (active) setLoading(false);
+        console.error('Failed to load POs:', err);
+        if (active) setRepoLoading(false);
       });
+
     return () => {
       active = false;
     };
   }, []);
 
-  if (loading || !stats) {
+  const tabCounts = {
+    All: poList.length,
+    'Pending Approval': poList.filter(po => po.status === 'Pending Approval').length,
+    'Sent to Vendor': poList.filter(po => po.status === 'Sent').length,
+    'Partially Received': poList.filter(po => po.deliveryStatus === 'Partial').length,
+    Closed: poList.filter(po => po.status === 'Closed').length
+  };
+
+  const filteredPOs = poList.filter(po => {
+    // Tab Filter
+    if (activeTab === 'Pending Approval' && po.status !== 'Pending Approval') return false;
+    if (activeTab === 'Sent to Vendor' && po.status !== 'Sent') return false;
+    if (activeTab === 'Partially Received' && po.deliveryStatus !== 'Partial') return false;
+    if (activeTab === 'Closed' && po.status !== 'Closed') return false;
+
+    // Status Dropdown Filter
+    if (statusFilter !== 'All' && po.status !== statusFilter) return false;
+
+    // Delivery Dropdown Filter
+    if (deliveryFilter !== 'All' && po.deliveryStatus !== deliveryFilter) return false;
+
+    // Search Query
+    if (searchQuery.trim() !== '') {
+      const q = searchQuery.toLowerCase();
+      const matchId = po.poId.toLowerCase().includes(q);
+      const matchVendor = po.vendorName.toLowerCase().includes(q);
+      const matchCategory = po.category.toLowerCase().includes(q);
+      return matchId || matchVendor || matchCategory;
+    }
+
+    return true;
+  });
+
+  const columns = [
+    { header: 'PO Number', accessor: 'poId' as keyof PurchaseOrderRecord },
+    { header: 'Vendor Name', accessor: 'vendorName' as keyof PurchaseOrderRecord },
+    { header: 'Category', accessor: 'category' as keyof PurchaseOrderRecord },
+    { 
+      header: 'PO Value', 
+      accessor: (row: PurchaseOrderRecord) => `₹${row.poValue.toLocaleString('en-IN')}` 
+    },
+    { header: 'Created Date', accessor: 'createdDate' as keyof PurchaseOrderRecord },
+    { 
+      header: 'Status', 
+      accessor: (row: PurchaseOrderRecord) => {
+        let className = styles.statusBadge;
+        if (row.status === 'Approved' || row.status === 'Sent' || row.status === 'Closed') className = styles.statusSuccess;
+        if (row.status === 'Pending Approval') className = styles.statusWarning;
+        if (row.status === 'Draft') className = styles.statusDraft;
+        if (row.status === 'Canceled' || row.status === 'Rejected') className = styles.statusDanger;
+        if (row.status === 'Sent Back') className = styles.statusWarning;
+        return <span className={className}>{row.status}</span>;
+      } 
+    },
+    { 
+      header: 'Delivery', 
+      accessor: (row: PurchaseOrderRecord) => {
+        let className = styles.statusBadge;
+        if (row.deliveryStatus === 'Received') className = styles.statusSuccess;
+        if (row.deliveryStatus === 'Partial') className = styles.statusPurple;
+        if (row.deliveryStatus === 'Pending') className = styles.statusWarning;
+        if (row.deliveryStatus === '-') return '-';
+        return <span className={className}>{row.deliveryStatus}</span>;
+      } 
+    },
+    { 
+      header: 'Actions', 
+      align: 'center' as const,
+      accessor: () => (
+        <div className={styles.actionsCell}>
+          <button className={styles.actionBtn} onClick={() => navigate('/purchase-orders/list')} title="View details"><Eye size={16} /></button>
+          <button className={styles.actionBtn} title="More Options"><MoreVertical size={16} /></button>
+        </div>
+      ) 
+    },
+  ];
+
+  if (repoLoading) {
     return (
       <div className={styles.container} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '80vh' }}>
-        <p style={{ color: 'var(--color-text-secondary)', fontSize: '1.1rem' }}>Loading Dashboard Metrics...</p>
+        <p style={{ color: 'var(--color-text-secondary)', fontSize: '1.1rem' }}>Loading Dashboard...</p>
       </div>
     );
   }
-
-  const { kpis, statusData, categoryData, trendData, topVendors, approvalQueue, aiInsights } = stats;
 
   return (
     <div className={styles.container}>
@@ -84,238 +155,145 @@ export const PODashboard: React.FC = () => {
 
       {/* KPI Row */}
       <div className={styles.kpiGrid}>
-        <Card className={styles.kpiCard}>
+        <Card 
+          className={`${styles.kpiCard} ${activeTab === 'All' ? styles.kpiCardActive : ''}`}
+          onClick={() => setActiveTab('All')}
+        >
           <div className={styles.kpiHeader}>
             <span className={styles.kpiLabel}>Total POs</span>
             <div className={styles.kpiIcon} style={{ backgroundColor: '#eff6ff', color: '#3b82f6' }}><ShoppingCart size={20} /></div>
           </div>
-          <div className={styles.kpiValue}>{kpis.totalPOs.toLocaleString()}</div>
+          <div className={styles.kpiValue}>{tabCounts.All.toLocaleString()}</div>
           <div className={styles.kpiFooterGreen}>↑ 12.5% vs last month</div>
         </Card>
         
-        <Card className={styles.kpiCard}>
+        <Card 
+          className={`${styles.kpiCard} ${activeTab === 'Pending Approval' ? styles.kpiCardActive : ''}`}
+          onClick={() => setActiveTab('Pending Approval')}
+        >
           <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>POs in Progress</span>
+            <span className={styles.kpiLabel}>Pending Approval</span>
             <div className={styles.kpiIcon} style={{ backgroundColor: '#fffbeb', color: '#f59e0b' }}><Hourglass size={20} /></div>
           </div>
-          <div className={styles.kpiValue}>{kpis.posInProgress.toLocaleString()}</div>
-          <div className={styles.kpiFooterGreen}>↑ 8.4% vs last month</div>
+          <div className={styles.kpiValue}>{tabCounts['Pending Approval'].toLocaleString()}</div>
+          <div className={styles.kpiFooter}>Requires action</div>
         </Card>
 
-        <Card className={styles.kpiCard}>
+        <Card 
+          className={`${styles.kpiCard} ${activeTab === 'Sent to Vendor' ? styles.kpiCardActive : ''}`}
+          onClick={() => setActiveTab('Sent to Vendor')}
+        >
           <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Awaiting Approval</span>
+            <span className={styles.kpiLabel}>Sent to Vendor</span>
             <div className={styles.kpiIcon} style={{ backgroundColor: '#f3e8ff', color: '#8b5cf6' }}><CheckCircle2 size={20} /></div>
           </div>
-          <div className={styles.kpiValue}>{kpis.awaitingApproval.toLocaleString()}</div>
-          <div className={styles.kpiFooter} style={{ color: 'var(--color-primary)', fontWeight: 500, cursor: 'pointer' }} onClick={() => navigate('/purchase-orders/approvals')}>Requires action</div>
+          <div className={styles.kpiValue}>{tabCounts['Sent to Vendor'].toLocaleString()}</div>
+          <div className={styles.kpiFooter}>POs sent to suppliers</div>
         </Card>
 
-        <Card className={styles.kpiCard}>
+        <Card 
+          className={`${styles.kpiCard} ${activeTab === 'Partially Received' ? styles.kpiCardActive : ''}`}
+          onClick={() => setActiveTab('Partially Received')}
+        >
           <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Goods Received</span>
+            <span className={styles.kpiLabel}>Partially Received</span>
             <div className={styles.kpiIcon} style={{ backgroundColor: '#dcfce7', color: '#10b981' }}><Truck size={20} /></div>
           </div>
-          <div className={styles.kpiValue}>{kpis.goodsReceived.toLocaleString()}</div>
-          <div className={styles.kpiFooterGreen}>↑ 15.6% vs last month</div>
+          <div className={styles.kpiValue}>{tabCounts['Partially Received'].toLocaleString()}</div>
+          <div className={styles.kpiFooterGreen}>Partial delivery status</div>
         </Card>
 
-        <Card className={styles.kpiCard}>
+        <Card 
+          className={`${styles.kpiCard} ${activeTab === 'Closed' ? styles.kpiCardActive : ''}`}
+          onClick={() => setActiveTab('Closed')}
+        >
           <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Pending Invoices</span>
+            <span className={styles.kpiLabel}>Closed POs</span>
             <div className={styles.kpiIcon} style={{ backgroundColor: '#ffedd5', color: '#f97316' }}><FileText size={20} /></div>
           </div>
-          <div className={styles.kpiValue}>{kpis.pendingInvoices.toLocaleString()}</div>
-          <div className={styles.kpiFooter} style={{ color: 'var(--color-warning-text)', fontWeight: 500, cursor: 'pointer' }} onClick={() => navigate('/purchase-orders/match')}>Requires action</div>
-        </Card>
-
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>PO Value (This Month)</span>
-            <div className={styles.kpiIcon} style={{ backgroundColor: '#f3e8ff', color: '#7c3aed' }}><IndianRupee size={20} /></div>
-          </div>
-          <div className={styles.kpiValue}>₹ {kpis.poValueThisMonth} Cr</div>
-          <div className={styles.kpiFooterGreen}>↑ 18.7% vs last month</div>
+          <div className={styles.kpiValue}>{tabCounts.Closed.toLocaleString()}</div>
+          <div className={styles.kpiFooter}>Fully completed & closed</div>
         </Card>
       </div>
 
-      <div className={styles.chartGrid}>
-        {/* Status Donut */}
-        <Card className={styles.chartCard}>
-          <h3 className={styles.sectionTitle}>PO Status Overview</h3>
-          <div className={styles.pieWrapper}>
-            <ResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <Pie
-                  data={statusData}
-                  innerRadius={65}
-                  outerRadius={85}
-                  paddingAngle={2}
-                  dataKey="value"
-                >
-                  {statusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <RechartsTooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className={styles.pieCenter}>
-              <span>{kpis.totalPOs}</span>
-              <p>Total POs</p>
+
+
+      {/* PO List Embedded Section */}
+      <Card className={styles.tableCard} style={{ marginTop: '24px', marginBottom: '24px' }}>
+        <div className={styles.tabs}>
+          <div className={`${styles.tab} ${activeTab === 'All' ? styles.activeTab : ''}`} onClick={() => setActiveTab('All')}>
+            All POs ({tabCounts.All})
+          </div>
+          <div className={`${styles.tab} ${activeTab === 'Pending Approval' ? styles.activeTab : ''}`} onClick={() => setActiveTab('Pending Approval')}>
+            Pending Approval ({tabCounts['Pending Approval']})
+          </div>
+          <div className={`${styles.tab} ${activeTab === 'Sent to Vendor' ? styles.activeTab : ''}`} onClick={() => setActiveTab('Sent to Vendor')}>
+            Sent to Vendor ({tabCounts['Sent to Vendor']})
+          </div>
+          <div className={`${styles.tab} ${activeTab === 'Partially Received' ? styles.activeTab : ''}`} onClick={() => setActiveTab('Partially Received')}>
+            Partially Received ({tabCounts['Partially Received']})
+          </div>
+          <div className={`${styles.tab} ${activeTab === 'Closed' ? styles.activeTab : ''}`} onClick={() => setActiveTab('Closed')}>
+            Closed ({tabCounts.Closed})
+          </div>
+        </div>
+
+        <div className={styles.tableToolbar}>
+          <div className={styles.filters}>
+            <div className={styles.searchWrap}>
+              <Input 
+                placeholder="Search PO number, vendor..." 
+                fullWidth={false} 
+                className={styles.searchInput}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Search size={16} className={styles.searchIcon} />
             </div>
-          </div>
-          <div className={styles.legendGrid}>
-            {statusData.map(item => (
-              <div key={item.name} className={styles.legendItem}>
-                <span className={styles.legendColor} style={{ backgroundColor: item.color }}></span>
-                <span className={styles.legendName}>{item.name}</span>
-                <span className={styles.legendVal}>{item.value}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
+            
+            <select className={styles.filterSelect} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+              <option value="All">Status: All</option>
+              <option value="Draft">Draft</option>
+              <option value="Pending Approval">Pending Approval</option>
+              <option value="Approved">Approved</option>
+              <option value="Sent">Sent</option>
+              <option value="Closed">Closed</option>
+              <option value="Canceled">Canceled</option>
+            </select>
 
-        {/* Spend by Category */}
-        <Card className={styles.chartCard}>
-          <h3 className={styles.sectionTitle}>PO Value by Category (₹ Cr)</h3>
-          <div style={{ height: '280px', marginTop: '20px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={categoryData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="category" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                <RechartsTooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }} />
-                <Bar dataKey="value" fill="#1d4ed8" radius={[4, 4, 0, 0]} barSize={24}>
-                  {categoryData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={index === 0 ? '#1d4ed8' : '#3b82f6'} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <select className={styles.filterSelect} value={deliveryFilter} onChange={(e) => setDeliveryFilter(e.target.value)}>
+              <option value="All">Delivery: All</option>
+              <option value="Pending">Pending</option>
+              <option value="Partial">Partial</option>
+              <option value="Received">Received</option>
+            </select>
+            
+            <Button variant="ghost" icon={<Filter size={16} />}>More Filters</Button>
           </div>
-        </Card>
+          
+          <Button variant="outline" icon={<Download size={16} />}>Export</Button>
+        </div>
 
-        {/* POs Over Time */}
-        <Card className={styles.chartCard}>
-          <h3 className={styles.sectionTitle}>POs Over Time</h3>
-          <div className={styles.chartLegendTop}>
-            <span className={styles.legendDotCurrent}>This Year</span>
-            <span className={styles.legendDotLast}>Last Year</span>
+        {repoLoading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '40px', color: 'var(--color-text-secondary)' }}>
+            Loading Purchase Orders Repository...
           </div>
-          <div style={{ height: '260px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={trendData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                <RechartsTooltip />
-                <Line type="monotone" dataKey="thisYear" stroke="#1d4ed8" strokeWidth={3} dot={{ r: 4, fill: '#1d4ed8' }} activeDot={{ r: 6 }} />
-                <Line type="monotone" dataKey="lastYear" stroke="#93c5fd" strokeWidth={3} dot={{ r: 4, fill: '#93c5fd' }} />
-              </LineChart>
-            </ResponsiveContainer>
+        ) : (
+          <DataTable 
+            columns={columns} 
+            data={filteredPOs} 
+            keyExtractor={(row) => row.poId} 
+          />
+        )}
+        
+        <div className={styles.pagination}>
+          <span className={styles.pageInfo}>Showing 1 to {filteredPOs.length} of {filteredPOs.length} entries</span>
+          <div className={styles.pageControls}>
+            <button className={styles.pageBtnActive}>1</button>
+            <button className={styles.pageBtnNext}>&gt;</button>
           </div>
-        </Card>
-
-        {/* Top Vendors */}
-        <Card className={styles.chartCard}>
-          <h3 className={styles.sectionTitle}>Top Vendors by PO Value (₹ Cr)</h3>
-          <div className={styles.vendorList}>
-            {topVendors.map(vendor => (
-              <div key={vendor.name} className={styles.vendorItem}>
-                <div className={styles.vendorInfo}>
-                  <span className={styles.vendorName}>{vendor.name}</span>
-                  <span className={styles.vendorVal}>{vendor.value}</span>
-                </div>
-                <div className={styles.vendorBarBg}>
-                  <div className={styles.vendorBarFill} style={{ width: vendor.width }}></div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button className={styles.viewAllBtn} onClick={() => navigate('/purchase-orders/list')}>View All Vendors</button>
-        </Card>
-      </div>
-
-      <div className={styles.bottomGrid}>
-        {/* Quick Actions */}
-        <Card className={styles.quickCard}>
-          <h3 className={styles.sectionTitle}>Quick Actions</h3>
-          <div className={styles.actionRow}>
-            <button className={styles.actionBtn} onClick={() => navigate('/purchase-orders/create')}>
-              <div className={styles.iconBox}><Plus size={20} /></div>
-              <span>Create Requisition</span>
-            </button>
-            <button className={styles.actionBtn} onClick={() => navigate('/purchase-orders/create')}>
-              <div className={styles.iconBox}><ShoppingCart size={20} /></div>
-              <span>Create PO</span>
-            </button>
-            <button className={styles.actionBtn} onClick={() => navigate('/purchase-orders/grn')}>
-              <div className={styles.iconBox}><Upload size={20} /></div>
-              <span>Goods Receipt (GRN)</span>
-            </button>
-            <button className={styles.actionBtn} onClick={() => navigate('/contracts/repository')}>
-              <div className={styles.iconBox}><FileText size={20} /></div>
-              <span>PO from Contract</span>
-            </button>
-            <button className={styles.actionBtn} onClick={() => navigate('/purchase-orders/list')}>
-              <div className={styles.iconBox}><Truck size={20} /></div>
-              <span>Track PO</span>
-            </button>
-            <button className={styles.actionBtn} onClick={() => navigate('/purchase-orders/match')}>
-              <div className={styles.iconBox}><RefreshCcw size={20} /></div>
-              <span>3-Way Match</span>
-            </button>
-          </div>
-        </Card>
-
-        {/* Approval Queue */}
-        <Card className={styles.queueCard}>
-          <h3 className={styles.sectionTitle}>Approval Queue</h3>
-          <div className={styles.queueList}>
-            {approvalQueue.map(item => (
-              <div key={item.type} className={styles.queueItem} style={{ cursor: 'pointer' }} onClick={() => {
-                if (item.type === "PO Approval") navigate('/purchase-orders/approvals');
-                else if (item.type === "GRN Approval") navigate('/purchase-orders/grn');
-                else if (item.type === "Payment Approval") navigate('/purchase-orders/match');
-              }}>
-                <div className={styles.queueLabel}>
-                  {item.type === "PO Approval" && <CheckCircle2 size={16} color={item.color} />}
-                  {item.type === "PO Amendment" && <FileText size={16} color={item.color} />}
-                  {item.type === "GRN Approval" && <Truck size={16} color={item.color} />}
-                  {item.type === "Payment Approval" && <IndianRupee size={16} color={item.color} />}
-                  <span>{item.type}</span>
-                </div>
-                <div className={styles.queueVal}>
-                  <span className={styles.queueNum}>{String(item.count).padStart(2, '0')}</span>
-                  <ArrowRight size={14} color="#94a3b8" />
-                </div>
-              </div>
-            ))}
-          </div>
-          <button className={styles.viewAllBtnQueue} onClick={() => navigate('/purchase-orders/approvals')}>View All</button>
-        </Card>
-
-        {/* AI Insights */}
-        <Card className={styles.aiCard}>
-          <h3 className={styles.sectionTitle}>AI Insights</h3>
-          <div className={styles.aiList}>
-            {aiInsights.map((insight, idx) => (
-              <div key={idx} className={styles.aiItem}>
-                {insight.type === 'warning' && <AlertTriangle size={16} color="#f59e0b" className={styles.aiItemIcon} />}
-                {insight.type === 'danger' && <AlertTriangle size={16} color="#ef4444" className={styles.aiItemIcon} />}
-                {insight.type === 'info' && <TrendingUp size={16} color="#3b82f6" className={styles.aiItemIcon} />}
-                {insight.type === 'success' && <CheckCircle2 size={16} color="#10b981" className={styles.aiItemIcon} />}
-                <p>{insight.text}</p>
-                <button onClick={() => {
-                  if (insight.text.includes('delay') || insight.text.includes('limit')) navigate('/purchase-orders/list');
-                  else if (insight.text.includes('duplicate')) navigate('/purchase-orders/approvals');
-                }}>View Details</button>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
+        </div>
+      </Card>
 
       {/* End to End Flow Visualizer */}
       <div className={styles.flowContainer}>
@@ -329,9 +307,9 @@ export const PODashboard: React.FC = () => {
           <ArrowRight size={16} color="#cbd5e1" />
           <div className={styles.flowStep} onClick={() => navigate('/purchase-orders/list')} style={{ cursor: 'pointer' }}>4. PO Sent to Vendor</div>
           <ArrowRight size={16} color="#cbd5e1" />
-          <div className={styles.flowStep} onClick={() => navigate('/purchase-orders/grn')} style={{ cursor: 'pointer' }}>5. Goods Receipt (GRN)</div>
+          <div className={styles.flowStep} onClick={() => navigate('/invoices/grn')} style={{ cursor: 'pointer' }}>5. Goods Receipt (GRN)</div>
           <ArrowRight size={16} color="#cbd5e1" />
-          <div className={styles.flowStep} onClick={() => navigate('/purchase-orders/match')} style={{ cursor: 'pointer' }}>6. Invoice & 3-Way Match</div>
+          <div className={styles.flowStep} onClick={() => navigate('/invoices/match')} style={{ cursor: 'pointer' }}>6. Invoice & 3-Way Match</div>
           <ArrowRight size={16} color="#cbd5e1" />
           <div className={styles.flowStep}>7. Payment Processing</div>
         </div>

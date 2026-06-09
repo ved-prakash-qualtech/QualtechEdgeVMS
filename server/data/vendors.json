@@ -64,6 +64,20 @@
         "fileName": "MSME_ABC.pdf",
         "status": "Verified",
         "expiryDate": "2026-03-15"
+      },
+      {
+        "documentType": "PAN Card",
+        "fileName": "Screenshot 2025-12-02 142918.png",
+        "status": "Pending",
+        "expiryDate": null,
+        "documentId": "DOC-2026-0010"
+      },
+      {
+        "documentType": "PAN Card",
+        "fileName": "ChatGPT Image May 14, 2026, 05_06_16 PM.png",
+        "status": "Pending",
+        "expiryDate": null,
+        "documentId": "DOC-2026-0011"
       }
     ],
     "approvalWorkflow": {
@@ -91,7 +105,7 @@
   },
   {
     "vendorId": "VND-2026-88001",
-    "status": "Pending Approval",
+    "status": "Active",
     "createdAt": "2026-05-22T08:40:00Z",
     "basicDetails": {
       "legalName": "HDFC Bank Limited",
@@ -162,14 +176,23 @@
     "approvalWorkflow": {
       "submittedBy": "Saurabh Anand",
       "submittedDate": "2026-05-22T08:40:00Z",
-      "currentStage": "Procurement Approval",
-      "approvalStatus": "Pending"
+      "currentStage": "Approved",
+      "approvalStatus": "Approved",
+      "approverRemarks": "",
+      "approvedBy": "Saurabh Anand",
+      "approvedDate": "2026-06-08T04:13:08.340Z"
     },
     "auditTrail": [
       {
         "action": "Vendor Onboarding Created",
         "performedBy": "Saurabh Anand",
         "timestamp": "2026-05-22T08:40:00Z"
+      },
+      {
+        "action": "Vendor Approved",
+        "performedBy": "Saurabh Anand",
+        "timestamp": "2026-06-08T04:13:08.340Z",
+        "remarks": ""
       }
     ]
   },

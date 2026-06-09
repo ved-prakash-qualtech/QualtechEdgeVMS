@@ -8,5 +8,20 @@
     "roleId": "ROLE-002",
     "roleName": "VENDOR",
     "description": "Vendor Portal User"
+  },
+  {
+    "roleId": "ROLE-003",
+    "roleName": "PROCUREMENT",
+    "description": "Procurement Manager"
+  },
+  {
+    "roleId": "ROLE-004",
+    "roleName": "COMPLIANCE",
+    "description": "Compliance Officer"
+  },
+  {
+    "roleId": "ROLE-005",
+    "roleName": "FINANCE",
+    "description": "Finance Manager"
   }
 ]

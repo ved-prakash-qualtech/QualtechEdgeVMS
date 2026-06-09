@@ -244,5 +244,49 @@
         "dateTime": "2026-06-02 05:45:26"
       }
     ]
+  },
+  {
+    "itemCode": "IT-mob-01",
+    "itemName": "new mobile phone ",
+    "category": "IT Hardware",
+    "subCategory": "mobile",
+    "description": "mobile",
+    "brand": "mobile ",
+    "countryOfOrigin": "india",
+    "minimumOrderQuantity": 5,
+    "maximumOrderLimit": 100,
+    "expectedLeadTime": "7",
+    "warrantySupport": "12 months ",
+    "preferredVendor": {
+      "vendorId": "VND-2025-00029",
+      "vendorName": "ABC Infotech Private Limited"
+    },
+    "alternateVendors": [],
+    "hsnCode": "84713010",
+    "unitOfMeasurement": "Nos",
+    "taxCode": "GST 18%",
+    "qualityComplianceStandards": "ISO 9001",
+    "qualityTestingCriteria": "new",
+    "riskClassification": "Low Risk",
+    "submittedBy": "Saurabh Anand",
+    "uploadedFiles": [
+      {
+        "fileId": "FILE-3314",
+        "fileName": "ChatGPT Image May 14, 2026, 05_06_16 PM.png",
+        "fileType": "image/png",
+        "filePath": "/uploads/catalogue/items/ChatGPT Image May 14, 2026, 05_06_16 PM.png",
+        "uploadedOn": "2026-06-08",
+        "fileSize": "1.0 MB",
+        "attachmentId": "ATT-001"
+      }
+    ],
+    "itemId": "ITM-2026-05860",
+    "status": "Pending Approval",
+    "approvalWorkflow": {
+      "submittedBy": "Saurabh Anand",
+      "submittedDate": "2026-06-08",
+      "approvalStatus": "Pending",
+      "currentApprover": "Procurement Checker"
+    }
   }
 ]

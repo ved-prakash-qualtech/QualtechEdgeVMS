@@ -43,5 +43,16 @@
     "status": "Pending",
     "currentApprover": "Procurement Checker",
     "isService": true
+  },
+  {
+    "approvalId": "APP-ITM-483",
+    "itemId": "ITM-2026-05860",
+    "itemName": "new mobile phone ",
+    "category": "IT Hardware",
+    "preferredVendor": "ABC Infotech Private Limited",
+    "submittedBy": "Saurabh Anand",
+    "submittedDate": "2026-06-08",
+    "status": "Pending",
+    "currentApprover": "Procurement Checker"
   }
 ]

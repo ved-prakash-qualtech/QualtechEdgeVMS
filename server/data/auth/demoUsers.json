@@ -1,0 +1,57 @@
+[
+  {
+    "id": "USR-001",
+    "name": "Saurabh Anand",
+    "role": "System Administrator",
+    "portal": "Admin Portal",
+    "username": "admin",
+    "password": "admin123",
+    "redirectUrl": "/administrator/dashboard",
+    "color": "blue",
+    "initials": "SA"
+  },
+  {
+    "id": "USR-002",
+    "name": "Priya Sharma",
+    "role": "Procurement Manager",
+    "portal": "Procurement Portal",
+    "username": "procurement",
+    "password": "procurement123",
+    "redirectUrl": "/procurement/dashboard",
+    "color": "green",
+    "initials": "PS"
+  },
+  {
+    "id": "USR-003",
+    "name": "Rahul Verma",
+    "role": "Compliance Officer",
+    "portal": "Compliance Portal",
+    "username": "compliance",
+    "password": "compliance123",
+    "redirectUrl": "/compliance/dashboard",
+    "color": "purple",
+    "initials": "RV"
+  },
+  {
+    "id": "USR-004",
+    "name": "Amit Gupta",
+    "role": "Finance Manager",
+    "portal": "Finance Portal",
+    "username": "finance",
+    "password": "finance123",
+    "redirectUrl": "/finance/dashboard",
+    "color": "orange",
+    "initials": "AG"
+  },
+  {
+    "id": "USR-005",
+    "name": "Acme Vendor",
+    "role": "Vendor Representative",
+    "portal": "Vendor Portal",
+    "username": "vendor",
+    "password": "vendor123",
+    "redirectUrl": "/vendor/dashboard",
+    "color": "teal",
+    "initials": "AV"
+  }
+]

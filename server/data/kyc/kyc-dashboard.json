@@ -1,0 +1,94 @@
+{
+  "vendors": [
+    {
+      "vendorId": "VND-2026-00029",
+      "vendorName": "ABC Infotech Pvt Ltd",
+      "category": "IT Services",
+      "kycStatus": "Verified",
+      "riskLevel": "Low",
+      "lastVerified": "2026-05-01",
+      "nextReviewDate": "2027-05-01"
+    },
+    {
+      "vendorId": "VND-2026-00031",
+      "vendorName": "Secure Facilities Ltd",
+      "category": "Facility Management",
+      "kycStatus": "Verified",
+      "riskLevel": "Low",
+      "lastVerified": "2026-04-15",
+      "nextReviewDate": "2027-04-15"
+    },
+    {
+      "vendorId": "VND-2026-00034",
+      "vendorName": "Fincons Consulting LLP",
+      "category": "Financial Advisory",
+      "kycStatus": "Pending",
+      "riskLevel": "Medium",
+      "lastVerified": "2025-12-10",
+      "nextReviewDate": "2026-06-10"
+    },
+    {
+      "vendorId": "VND-2026-00038",
+      "vendorName": "Global Security Solutions",
+      "category": "Security Services",
+      "kycStatus": "In Progress",
+      "riskLevel": "Medium",
+      "lastVerified": "2025-11-20",
+      "nextReviewDate": "2026-07-20"
+    },
+    {
+      "vendorId": "VND-2026-00041",
+      "vendorName": "DataSoft Technologies",
+      "category": "Software Development",
+      "kycStatus": "Verified",
+      "riskLevel": "Low",
+      "lastVerified": "2026-03-22",
+      "nextReviewDate": "2027-03-22"
+    },
+    {
+      "vendorId": "VND-2026-00045",
+      "vendorName": "Meridian Trade Co.",
+      "category": "Import & Export",
+      "kycStatus": "High Risk",
+      "riskLevel": "High",
+      "lastVerified": "2025-09-05",
+      "nextReviewDate": "2026-03-05"
+    },
+    {
+      "vendorId": "VND-2026-00047",
+      "vendorName": "TechBridge Pvt Ltd",
+      "category": "Telecom",
+      "kycStatus": "Re-KYC Due",
+      "riskLevel": "Medium",
+      "lastVerified": "2024-06-01",
+      "nextReviewDate": "2026-06-01"
+    },
+    {
+      "vendorId": "VND-2026-00052",
+      "vendorName": "NovaChem Industries",
+      "category": "Chemicals",
+      "kycStatus": "High Risk",
+      "riskLevel": "Critical",
+      "lastVerified": "2025-10-12",
+      "nextReviewDate": "2026-04-12"
+    },
+    {
+      "vendorId": "VND-2026-00058",
+      "vendorName": "SwiftLogix Pvt Ltd",
+      "category": "Logistics",
+      "kycStatus": "Pending",
+      "riskLevel": "Low",
+      "lastVerified": "2026-01-30",
+      "nextReviewDate": "2027-01-30"
+    },
+    {
+      "vendorId": "VND-2026-00061",
+      "vendorName": "Apex Construction Ltd",
+      "category": "Infrastructure",
+      "kycStatus": "Re-KYC Due",
+      "riskLevel": "High",
+      "lastVerified": "2024-05-15",
+      "nextReviewDate": "2026-05-15"
+    }
+  ]
+}

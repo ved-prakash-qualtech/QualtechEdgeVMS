@@ -133,5 +133,90 @@
         "message": "Penalty cap set below enterprise standard"
       }
     ]
+  },
+  {
+    "contractId": "CTR-2026-45803",
+    "portfolioRisk": "High",
+    "legalExposure": 63,
+    "complianceRisk": 27,
+    "financialRisk": 72,
+    "alerts": [
+      {
+        "severity": "High",
+        "message": "Missing explicit data residency clause"
+      },
+      {
+        "severity": "Medium",
+        "message": "Penalty cap set below enterprise standard"
+      }
+    ]
+  },
+  {
+    "contractId": "CTR-2026-36961",
+    "portfolioRisk": "Medium",
+    "legalExposure": 69,
+    "complianceRisk": 16,
+    "financialRisk": 65,
+    "alerts": [
+      {
+        "severity": "High",
+        "message": "Missing explicit data residency clause"
+      },
+      {
+        "severity": "Medium",
+        "message": "Penalty cap set below enterprise standard"
+      }
+    ]
+  },
+  {
+    "contractId": "CTR-2026-59112",
+    "portfolioRisk": "Medium",
+    "legalExposure": 53,
+    "complianceRisk": 23,
+    "financialRisk": 64,
+    "alerts": [
+      {
+        "severity": "High",
+        "message": "Missing explicit data residency clause"
+      },
+      {
+        "severity": "Medium",
+        "message": "Penalty cap set below enterprise standard"
+      }
+    ]
+  },
+  {
+    "contractId": "CTR-2026-87841",
+    "portfolioRisk": "Medium",
+    "legalExposure": 54,
+    "complianceRisk": 33,
+    "financialRisk": 61,
+    "alerts": [
+      {
+        "severity": "High",
+        "message": "Missing explicit data residency clause"
+      },
+      {
+        "severity": "Medium",
+        "message": "Penalty cap set below enterprise standard"
+      }
+    ]
+  },
+  {
+    "contractId": "CTR-2026-59762",
+    "portfolioRisk": "Medium",
+    "legalExposure": 62,
+    "complianceRisk": 18,
+    "financialRisk": 63,
+    "alerts": [
+      {
+        "severity": "High",
+        "message": "Missing explicit data residency clause"
+      },
+      {
+        "severity": "Medium",
+        "message": "Penalty cap set below enterprise standard"
+      }
+    ]
   }
 ]

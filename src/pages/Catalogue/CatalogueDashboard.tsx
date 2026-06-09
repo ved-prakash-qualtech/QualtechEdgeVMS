@@ -6,38 +6,15 @@ import {
   Users, 
   Layers, 
   CheckSquare, 
-  AlertTriangle, 
-  ShieldAlert, 
-  Percent, 
   FileSignature, 
   RefreshCw, 
   Plus, 
-  FileUp, 
-  Link, 
-  Hash, 
-  BadgeIndianRupee, 
   BrainCircuit, 
-  ArrowRight,
-  TrendingDown,
-  Search,
-  LayoutGrid,
-  List
+  TrendingDown, 
+  Search, 
+  LayoutGrid, 
+  List 
 } from 'lucide-react';
-import { 
-  ResponsiveContainer, 
-  PieChart, 
-  Pie, 
-  Cell, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  LineChart, 
-  Line 
-} from 'recharts';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
 import { CatalogueHeader } from './CatalogueHeader';
@@ -47,58 +24,28 @@ import {
   getItemDashboardStats
 } from '../../services/itemMasterService';
 import type { 
-  CatalogueItem, 
-  DashboardStats 
+  CatalogueItem
 } from '../../services/itemMasterService';
-
-const COLORS = ['#1D4ED8', '#16A34A', '#F59E0B', '#7C3AED', '#DC2626'];
-
-const categorySpend = [
-  { name: 'IT Hardware', value: 3400000, percentage: 35 },
-  { name: 'Office Supplies', value: 1200000, percentage: 12 },
-  { name: 'Facility Management', value: 2100000, percentage: 22 },
-  { name: 'Professional Services', value: 1800000, percentage: 18 },
-  { name: 'Logistics', value: 1300000, percentage: 13 },
-];
-
-const vendorUsage = [
-  { name: 'ABC Infotech', items: 120, rate: 94 },
-  { name: 'Secure Facilities', items: 85, rate: 88 },
-  { name: 'Tech Solutions', items: 154, rate: 97 },
-  { name: 'Global Logistics', items: 64, rate: 82 },
-  { name: 'Office Supplies Co', items: 210, rate: 90 },
-];
-
-const demandForecast = [
-  { month: 'Jan', actual: 420, forecasted: 410 },
-  { month: 'Feb', actual: 480, forecasted: 460 },
-  { month: 'Mar', actual: 510, forecasted: 500 },
-  { month: 'Apr', actual: 580, forecasted: 560 },
-  { month: 'May', actual: 640, forecasted: 620 },
-  { month: 'Jun', actual: null, forecasted: 700 },
-  { month: 'Jul', actual: null, forecasted: 740 },
-];
 
 export const CatalogueDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState<CatalogueItem[]>([]);
-  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [kpiFilter, setKpiFilter] = useState<string | null>(null);
   const [isGrid, setIsGrid] = useState(false);
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const [itemsList, dashboardStats] = await Promise.all([
+      const [itemsList] = await Promise.all([
         getAllItems(),
         getItemDashboardStats()
       ]);
       setItems(itemsList);
-      setStats(dashboardStats);
     } catch (err) {
       console.error('Error fetching catalogue dashboard details:', err);
     } finally {
@@ -110,28 +57,26 @@ export const CatalogueDashboard: React.FC = () => {
     fetchDashboardData();
   }, []);
 
+  // Calculate dynamic counts from items array
+  const totalItemsCount = items.filter(item => !((item as any).isService || item.category === 'Professional Services' || item.category === 'Logistics')).length;
+  const totalServicesCount = items.filter(item => (item as any).isService || item.category === 'Professional Services' || item.category === 'Logistics').length;
+  const activeVendorsCount = new Set(items.map(item => item.preferredVendor?.vendorName).filter(name => name && name !== 'N/A')).size;
+  const pendingApprovalsCount = items.filter(item => item.status === 'Pending Approval').length;
+  const publishedCount = items.filter(item => item.status === 'Published').length;
+  const draftCount = items.filter(item => item.status === 'Draft' || !item.status).length;
+
   const kpis = [
-    { name: 'Total Items', val: stats ? stats.totalItems.toLocaleString('en-IN') : '8,420', icon: Package, color: '#1D4ED8', bg: '#EAF2FF', trend: '+12.5%', isUp: true, ai: 'AI: 24 new recommended items' },
-    { name: 'Total Services', val: stats ? stats.totalServices.toLocaleString('en-IN') : '1,248', icon: Layers, color: '#7C3AED', bg: '#F3E8FF', trend: '+5.2%', isUp: true, ai: 'AI: 12 obsolete codes' },
-    { name: 'Active Sourced Vendors', val: stats ? stats.activeVendors.toString() : '103', icon: Users, color: '#16A34A', bg: '#DCFCE7', trend: '+8.4%', isUp: true, ai: 'AI: 3 vendors near capacity' },
-    { name: 'Pending Approvals', val: stats ? stats.pendingApprovals.toString() : '14', icon: CheckSquare, color: '#F59E0B', bg: '#FEF3C7', trend: '-2.1%', isUp: false, ai: 'AI: SLA warning on 3 items' },
-    { name: 'Critical Categories', val: stats ? stats.criticalCategories.toString() : '4', icon: ShieldAlert, color: '#DC2626', bg: '#FEE2E2', trend: 'Stable', isUp: true, ai: 'AI: Sourcing gap in Facility' },
-    { name: 'Rate Revisions Due', val: stats ? stats.rateRevisionsDue.toString() : '8', icon: BadgeIndianRupee, color: '#0B1F5F', bg: '#E0E7FF', trend: '+3', isUp: true, ai: 'AI: Savings potential: ₹24L' },
-    { name: 'Catalogue Utilization', val: stats ? stats.catalogueUtilization.toString() + '%' : '87.5%', icon: Percent, color: '#16A34A', bg: '#DCFCE7', trend: '+1.2%', isUp: true, ai: 'AI: Contract coverage high' },
-    { name: 'Contract Linked Items', val: '6,840', icon: FileSignature, color: '#1D4ED8', bg: '#EAF2FF', trend: '+15.4%', isUp: true, ai: 'AI: Leakage warning on unlinked' },
-    { name: 'AI Risk Alerts', val: '3', icon: AlertTriangle, color: '#DC2626', bg: '#FEE2E2', trend: '-50%', isUp: false, ai: 'AI: Duplicate items in Supplies' },
-    { name: 'Duplicate Catalogue Alerts', val: '2', icon: BrainCircuit, color: '#7C3AED', bg: '#F3E8FF', trend: '-10%', isUp: false, ai: 'AI: Resolve duplicate tags' }
+    { name: 'Total Items', val: totalItemsCount.toLocaleString('en-IN'), icon: Package, color: '#1D4ED8', bg: '#EAF2FF', trend: '+12.5%', isUp: true },
+    { name: 'Total Services', val: totalServicesCount.toLocaleString('en-IN'), icon: Layers, color: '#7C3AED', bg: '#F3E8FF', trend: '+5.2%', isUp: true },
+    { name: 'Active Sourced Vendors', val: activeVendorsCount.toString(), icon: Users, color: '#16A34A', bg: '#DCFCE7', trend: '+8.4%', isUp: true },
+    { name: 'Pending Approvals', val: pendingApprovalsCount.toString(), icon: CheckSquare, color: '#F59E0B', bg: '#FEF3C7', trend: '-2.1%', isUp: false },
+    { name: 'Published Catalogue', val: publishedCount.toLocaleString('en-IN'), icon: FileSignature, color: '#10B981', bg: '#ECFDF5', trend: 'Stable', isUp: true },
+    { name: 'Draft Catalogue', val: draftCount.toLocaleString('en-IN'), icon: BrainCircuit, color: '#6B7280', bg: '#F3F4F6', trend: '-10%', isUp: false }
   ];
 
-  const handleDuplicateDetection = () => {
-    alert("Running AI Duplicate Catalogue Scan...\nFound 2 potential duplicates in 'Office Supplies' & 'IT Hardware'.");
-  };
-
-  const handleExport = () => {
-    alert("Exporting entire item & service catalog to Excel (CSV)...");
-  };
-
   const filteredItems = items.filter(item => {
+    const isService = (item as any).isService || item.category === 'Professional Services' || item.category === 'Logistics';
+
     const matchesSearch = 
       item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) || 
       item.itemId?.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -141,7 +86,23 @@ export const CatalogueDashboard: React.FC = () => {
       
     const matchesCategory = categoryFilter === 'All' || item.category === categoryFilter;
     const matchesStatus = statusFilter === 'All' || item.status === statusFilter;
-    return matchesSearch && matchesCategory && matchesStatus;
+    
+    let matchesKpi = true;
+    if (kpiFilter === 'Total Items') {
+      matchesKpi = !isService;
+    } else if (kpiFilter === 'Total Services') {
+      matchesKpi = isService;
+    } else if (kpiFilter === 'Active Sourced Vendors') {
+      matchesKpi = !!(item.preferredVendor?.vendorName && item.preferredVendor.vendorName !== 'N/A');
+    } else if (kpiFilter === 'Pending Approvals') {
+      matchesKpi = item.status === 'Pending Approval';
+    } else if (kpiFilter === 'Published Catalogue') {
+      matchesKpi = item.status === 'Published';
+    } else if (kpiFilter === 'Draft Catalogue') {
+      matchesKpi = item.status === 'Draft' || !item.status;
+    }
+
+    return matchesSearch && matchesCategory && matchesStatus && matchesKpi;
   });
 
   return (
@@ -157,12 +118,18 @@ export const CatalogueDashboard: React.FC = () => {
         }
       />
 
-      {/* KPI 10 Cards Grid */}
+      {/* KPI Cards Grid */}
       <div className={styles.kpiGrid}>
         {kpis.map((kpi, idx) => {
           const IconComponent = kpi.icon;
+          const isActive = kpiFilter === kpi.name;
           return (
-            <div key={idx} className={styles.kpiCard}>
+            <Card 
+              key={idx} 
+              className={`${styles.kpiCard} ${isActive ? styles.kpiCardActive : ''}`}
+              onClick={() => setKpiFilter(kpiFilter === kpi.name ? null : kpi.name)}
+              style={{ cursor: 'pointer' }}
+            >
               <div className={styles.kpiHeader}>
                 <span className={styles.kpiLabel}>{kpi.name}</span>
                 <div className={styles.kpiIconWrapper} style={{ backgroundColor: kpi.bg, color: kpi.color }}>
@@ -177,141 +144,13 @@ export const CatalogueDashboard: React.FC = () => {
                   </span>
                   <span style={{ marginLeft: '4px' }}>vs last month</span>
                 </div>
-                <span className={styles.aiNote}>{kpi.ai}</span>
               </div>
-            </div>
+            </Card>
           );
         })}
       </div>
 
-      {/* Main Charts & Quick Actions Sidebar */}
-      <div className={styles.dashboardLayout}>
-        <div className={styles.chartsContainer}>
-          {/* Charts Row 1 */}
-          <div className={styles.chartsGrid}>
-            <Card className={styles.chartCard}>
-              <h3 className={styles.chartTitle}>Category-wise Spend Distribution (INR)</h3>
-              <div className={styles.chartWrapper}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={categorySpend}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={90}
-                      paddingAngle={3}
-                      dataKey="value"
-                    >
-                      {categorySpend.map((_entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value: any) => `₹${(Number(value)/100000).toFixed(1)} L`} />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
 
-            <Card className={styles.chartCard}>
-              <h3 className={styles.chartTitle}>Vendor Catalogue Compliance Rate (%)</h3>
-              <div className={styles.chartWrapper}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={vendorUsage}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="rate" name="Compliance %" fill="#1D4ED8" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </Card>
-          </div>
-
-          {/* Charts Row 2 */}
-          <Card className={styles.chartCard}>
-            <h3 className={styles.chartTitle}>
-              AI Sourcing Demand Forecast (Item Units Ordered)
-              <span style={{ fontSize: '12px', fontWeight: 'normal', color: 'var(--color-text-secondary)' }}>Predictive ML Sourcing Analysis</span>
-            </h3>
-            <div className={styles.chartWrapper} style={{ height: '220px' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={demandForecast}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="actual" name="Actual Orders" stroke="#16A34A" strokeWidth={3} activeDot={{ r: 8 }} />
-                  <Line type="monotone" dataKey="forecasted" name="AI Forecasted Orders" stroke="#1D4ED8" strokeDasharray="5 5" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-        </div>
-
-        {/* Sidebar Actions & Real-time Alerts */}
-        <div className={styles.sidebarPanel}>
-          <Card className={styles.panelCard}>
-            <h3 className={styles.panelTitle}>Quick Actions</h3>
-            <div className={styles.actionsGrid}>
-              <button className={styles.actionButton} onClick={() => navigate('/catalogue/items')}>
-                <Plus size={16} className={styles.actionIcon} />
-                <span>Add New Item</span>
-              </button>
-              <button className={styles.actionButton} onClick={() => navigate('/catalogue/services')}>
-                <Plus size={16} className={styles.actionIcon} />
-                <span>Add New Service</span>
-              </button>
-              <button className={styles.actionButton} onClick={() => alert("Open File Upload Wizard...")}>
-                <FileUp size={16} className={styles.actionIcon} />
-                <span>Bulk Upload Catalogue</span>
-              </button>
-              <button className={styles.actionButton} onClick={() => navigate('/catalogue/vendor-mapping')}>
-                <Link size={16} className={styles.actionIcon} />
-                <span>Map Vendor to Item</span>
-              </button>
-              <button className={styles.actionButton} onClick={() => navigate('/catalogue/hsn-sac')}>
-                <Hash size={16} className={styles.actionIcon} />
-                <span>Import HSN/SAC Codes</span>
-              </button>
-              <button className={styles.actionButton} onClick={() => navigate('/catalogue/rates')}>
-                <BadgeIndianRupee size={16} className={styles.actionIcon} />
-                <span>Configure Rates</span>
-              </button>
-              <button className={styles.actionButton} onClick={handleDuplicateDetection}>
-                <BrainCircuit size={16} className={styles.actionIcon} />
-                <span>Run AI Duplicate Finder</span>
-              </button>
-              <button className={styles.actionButton} onClick={handleExport}>
-                <ArrowRight size={16} className={styles.actionIcon} />
-                <span>Export CSV/Excel</span>
-              </button>
-            </div>
-          </Card>
-
-          <Card className={styles.panelCard}>
-            <h3 className={styles.panelTitle}>AI Sourcing Insights</h3>
-            <div className={styles.alertList}>
-              <div className={`${styles.alertCard} ${styles.alertCardWarning}`}>
-                <div className={styles.alertText}>Potential Duplicate in Office Supplies</div>
-                <div className={styles.alertMeta}>"Ergonomic Chair" looks 92% identical to "Standard Mesh Chair".</div>
-              </div>
-              <div className={`${styles.alertCard} ${styles.alertCardDanger}`}>
-                <div className={styles.alertText}>Unmapped HSN Codes Detected</div>
-                <div className={styles.alertMeta}>4 items in 'IT Hardware' category are missing GST tax rates.</div>
-              </div>
-              <div className={styles.alertCard}>
-                <div className={styles.alertText}>Better Vendor Pricing Found</div>
-                <div className={styles.alertMeta}>AI recommends ABC Infotech for Laptop purchases (potential savings: ₹1.2L).</div>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </div>
 
       {/* Catalogue Items List Section */}
       <Card className={styles.recentTableCard}>

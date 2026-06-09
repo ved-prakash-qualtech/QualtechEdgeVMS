@@ -1,0 +1,179 @@
+{
+  "organization": {
+    "companyName": "Qualtech - Future-ready engineering",
+    "cin": "U72200DL2002PTC118121",
+    "primaryEmail": "procurement@qualtech.in",
+    "contactNumber": "+91 120 4567 890",
+    "registeredAddress": "4th Floor, Tower B, Logix Techno Park, Sector 127, Noida, Uttar Pradesh 201301",
+    "website": "https://www.qualtech.in",
+    "gstin": "09AAACQ1234F1Z2",
+    "panNumber": "AAACQ1234F",
+    "logoUrl": null,
+    "primaryColor": "#0B1F5F",
+    "accentColor": "#2563EB",
+    "currency": "INR",
+    "timezone": "Asia/Kolkata",
+    "fiscalYear": "Apr-Mar",
+    "language": "EN",
+    "dateFormat": "DD/MM/YYYY",
+    "businessUnits": [
+      "Noida Sourcing Hub",
+      "Mumbai Finance Shared Services",
+      "Bangalore IT Operations"
+    ],
+    "lastUpdated": "2026-06-09T08:00:00.000Z",
+    "updatedBy": "Saurabh Anand"
+  },
+  "users": [
+    {
+      "userId": "USR-001",
+      "name": "Neha Sharma",
+      "email": "neha.sharma@qualtech.in",
+      "role": "Super Admin",
+      "department": "IT Administration",
+      "businessUnit": "Noida HQ",
+      "status": "Active",
+      "phone": "+91 98100 11001",
+      "lastLogin": "2026-06-09T07:30:00.000Z",
+      "createdAt": "2025-01-15T09:00:00.000Z"
+    },
+    {
+      "userId": "USR-002",
+      "name": "Suresh Kumar",
+      "email": "suresh.kumar@qualtech.in",
+      "role": "Finance Manager",
+      "department": "Finance & Accounts",
+      "businessUnit": "Mumbai Hub",
+      "status": "Active",
+      "phone": "+91 98200 22002",
+      "lastLogin": "2026-06-08T14:00:00.000Z",
+      "createdAt": "2025-02-01T09:00:00.000Z"
+    },
+    {
+      "userId": "USR-003",
+      "name": "Amit Singh",
+      "email": "amit.singh@qualtech.in",
+      "role": "Procurement Manager",
+      "department": "Procurement",
+      "businessUnit": "Noida HQ",
+      "status": "Active",
+      "phone": "+91 97300 33003",
+      "lastLogin": "2026-06-09T09:15:00.000Z",
+      "createdAt": "2025-02-15T09:00:00.000Z"
+    },
+    {
+      "userId": "USR-004",
+      "name": "Rajesh Patel",
+      "email": "rajesh.patel@qualtech.in",
+      "role": "Compliance Officer",
+      "department": "Compliance & Risk",
+      "businessUnit": "Bangalore Hub",
+      "status": "Active",
+      "phone": "+91 96400 44004",
+      "lastLogin": "2026-06-07T11:00:00.000Z",
+      "createdAt": "2025-03-01T09:00:00.000Z"
+    },
+    {
+      "userId": "USR-005",
+      "name": "Priya Nair",
+      "email": "priya.nair@qualtech.in",
+      "role": "Procurement Manager",
+      "department": "Procurement",
+      "businessUnit": "Mumbai Hub",
+      "status": "Inactive",
+      "phone": "+91 95500 55005",
+      "lastLogin": "2026-05-20T10:00:00.000Z",
+      "createdAt": "2025-03-15T09:00:00.000Z"
+    }
+  ],
+  "roles": [
+    {
+      "roleId": "ROLE-001",
+      "name": "Super Admin",
+      "description": "Full root tenant administrative rights — all modules, all actions",
+      "status": "Active",
+      "userCount": 1
+    },
+    {
+      "roleId": "ROLE-002",
+      "name": "Procurement Manager",
+      "description": "Approves PO requisitions, manages supplier contracts and SLAs",
+      "status": "Active",
+      "userCount": 2
+    },
+    {
+      "roleId": "ROLE-003",
+      "name": "Finance Manager",
+      "description": "Releases payouts, manages tax logs and invoice reconciliation",
+      "status": "Active",
+      "userCount": 1
+    },
+    {
+      "roleId": "ROLE-004",
+      "name": "Compliance Officer",
+      "description": "Performs sanctions, PEP and KYC due-diligence audits",
+      "status": "Active",
+      "userCount": 1
+    },
+    {
+      "roleId": "ROLE-005",
+      "name": "Vendor Portal User",
+      "description": "Uploads invoices, views PO notifications, manages own profile",
+      "status": "Active",
+      "userCount": 0
+    }
+  ],
+  "permissionsMatrix": [
+    { "module": "Vendors Master", "superAdmin": true, "procurement": true, "finance": false, "compliance": true, "vendor": false },
+    { "module": "Documents & KYC", "superAdmin": true, "procurement": true, "finance": false, "compliance": true, "vendor": true },
+    { "module": "Contracts & SLAs", "superAdmin": true, "procurement": true, "finance": false, "compliance": false, "vendor": false },
+    { "module": "Purchase Orders", "superAdmin": true, "procurement": true, "finance": false, "compliance": false, "vendor": false },
+    { "module": "Invoice Management", "superAdmin": true, "procurement": false, "finance": true, "compliance": false, "vendor": true },
+    { "module": "Payments & Treasury", "superAdmin": true, "procurement": false, "finance": true, "compliance": false, "vendor": false },
+    { "module": "Reports & MIS", "superAdmin": true, "procurement": true, "finance": true, "compliance": true, "vendor": false },
+    { "module": "Catalogue", "superAdmin": true, "procurement": true, "finance": false, "compliance": false, "vendor": false },
+    { "module": "Settings & Config", "superAdmin": true, "procurement": false, "finance": false, "compliance": false, "vendor": false }
+  ],
+  "notifications": {
+    "emailAlerts": true,
+    "smsAlerts": false,
+    "inAppNotifications": true,
+    "vendorOnboarding": true,
+    "documentExpiry": true,
+    "invoiceApproval": true,
+    "paymentRelease": true,
+    "kycAlerts": true,
+    "contractRenewal": true,
+    "poApproval": false,
+    "systemHealth": true,
+    "digestFrequency": "Daily",
+    "escalationEmails": ["neha.sharma@qualtech.in", "amit.singh@qualtech.in"]
+  },
+  "integrations": [
+    { "id": "INT-001", "name": "SAP ERP S/4HANA", "category": "ERP", "status": "Connected", "lastSync": "2026-06-09T08:00:00.000Z", "uptime": "99.98%" },
+    { "id": "INT-002", "name": "GSTN Portal", "category": "Tax & Compliance", "status": "Connected", "lastSync": "2026-06-09T09:00:00.000Z", "uptime": "99.95%" },
+    { "id": "INT-003", "name": "HDFC Bank API", "category": "Payment Gateway", "status": "Connected", "lastSync": "2026-06-09T07:30:00.000Z", "uptime": "99.99%" },
+    { "id": "INT-004", "name": "Oracle Financials", "category": "ERP", "status": "Disconnected", "lastSync": "2026-05-01T00:00:00.000Z", "uptime": "0%" },
+    { "id": "INT-005", "name": "TDS Portal (TRACES)", "category": "Tax & Compliance", "status": "Connected", "lastSync": "2026-06-08T18:00:00.000Z", "uptime": "99.90%" },
+    { "id": "INT-006", "name": "DocuSign eSign", "category": "Document Signing", "status": "Connected", "lastSync": "2026-06-09T06:00:00.000Z", "uptime": "99.85%" }
+  ],
+  "security": {
+    "mfaEnabled": true,
+    "sessionTimeout": 30,
+    "passwordExpiryDays": 90,
+    "ipWhitelistEnabled": false,
+    "ipWhitelist": [],
+    "auditLogsEnabled": true,
+    "dataEncryption": "AES-256",
+    "ssoEnabled": false,
+    "loginAttempts": 5,
+    "dataRetentionDays": 365
+  },
+  "auditLogs": [
+    { "id": "AUD-SET-001", "action": "Organization profile updated", "performedBy": "Neha Sharma", "role": "Super Admin", "timestamp": "2026-06-09T08:10:00.000Z", "severity": "Medium", "status": "Success" },
+    { "id": "AUD-SET-002", "action": "New user USR-005 created", "performedBy": "Neha Sharma", "role": "Super Admin", "timestamp": "2026-06-08T14:30:00.000Z", "severity": "High", "status": "Success" },
+    { "id": "AUD-SET-003", "action": "GSTN integration re-authorized", "performedBy": "Rajesh Patel", "role": "Compliance Officer", "timestamp": "2026-06-07T11:45:00.000Z", "severity": "Medium", "status": "Success" },
+    { "id": "AUD-SET-004", "action": "MFA policy enforced for all roles", "performedBy": "Neha Sharma", "role": "Super Admin", "timestamp": "2026-06-05T09:00:00.000Z", "severity": "High", "status": "Success" },
+    { "id": "AUD-SET-005", "action": "Password policy updated — expiry 90 days", "performedBy": "Neha Sharma", "role": "Super Admin", "timestamp": "2026-06-01T10:00:00.000Z", "severity": "Medium", "status": "Success" }
+  ]
+}

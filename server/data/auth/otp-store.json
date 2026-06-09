@@ -8,7 +8,7 @@
   {
     "username": "vendor",
     "otp": "123456",
-    "status": "ACTIVE",
+    "status": "USED",
     "expiresInSeconds": 300
   },
   {

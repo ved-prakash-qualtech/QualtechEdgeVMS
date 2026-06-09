@@ -76,6 +76,9 @@ const AUTH_AUDIT_PATH = path.join(AUTH_DIR, 'login-audit.json');
 const AUTH_SESSIONS_PATH = path.join(AUTH_DIR, 'sessions.json');
 const AUTH_OTP_STORE_PATH = path.join(AUTH_DIR, 'otp-store.json');
 
+const SETTINGS_PATH = path.join(__dirname, 'data', 'settings.json');
+const SETTINGS_UPLOADS_DIR = path.join(UPLOADS_DIR, 'settings');
+
 const CAT_UPLOADS_DIR = path.join(UPLOADS_DIR, 'catalogue');
 const CAT_SPECS_DIR = path.join(CAT_UPLOADS_DIR, 'specifications');
 const CAT_IMAGES_DIR = path.join(CAT_UPLOADS_DIR, 'images');
@@ -99,6 +102,7 @@ async function ensureDirectories() {
   await fs.mkdir(CAT_TEMP_DIR, { recursive: true });
   await fs.mkdir(CAT_ITEMS_UPLOADS_DIR, { recursive: true });
   await fs.mkdir(CAT_SERVICES_UPLOADS_DIR, { recursive: true });
+  await fs.mkdir(SETTINGS_UPLOADS_DIR, { recursive: true });
   await fs.mkdir(SHELL_COMPANY_UPLOADS_DIR, { recursive: true });
   await fs.mkdir(RE_KYC_UPLOADS_DIR, { recursive: true });
 
@@ -1817,18 +1821,35 @@ app.get('/api/catalogue/files/:itemId', async (req, res) => {
 
 const CONTRACTS_DIR = path.join(__dirname, 'data', 'contracts');
 const CONTRACTS_PATH = path.join(CONTRACTS_DIR, 'contracts.json');
-const CONTRACT_DASHBOARD_PATH = path.join(CONTRACTS_DIR, 'contract-dashboard.json');
-const CONTRACT_APPROVALS_PATH = path.join(CONTRACTS_DIR, 'contract-approvals.json');
-const CONTRACT_RENEWALS_PATH = path.join(CONTRACTS_DIR, 'contract-renewals.json');
-const CLAUSE_LIBRARY_PATH = path.join(CONTRACTS_DIR, 'clause-library.json');
+const CONTRACT_DRAFTS_PATH = path.join(CONTRACTS_DIR, 'contractDrafts.json');
+const CONTRACT_DASHBOARD_PATH = path.join(CONTRACTS_DIR, 'dashboardCache.json');
+const CONTRACT_APPROVALS_PATH = path.join(CONTRACTS_DIR, 'approvals.json');
+const CONTRACT_RENEWALS_PATH = path.join(CONTRACTS_DIR, 'renewals.json');
+const CLAUSE_LIBRARY_PATH = path.join(CONTRACTS_DIR, 'clauseLibrary.json');
 const CONTRACT_ACTIVITY_PATH = path.join(CONTRACTS_DIR, 'contract-activity.json');
 const CONTRACT_RISK_INSIGHTS_PATH = path.join(CONTRACTS_DIR, 'contract-risk-insights.json');
-const SLA_TRACKER_PATH = path.join(CONTRACTS_DIR, 'sla-tracker.json');
-const CONTRACT_UPLOADED_FILES_PATH = path.join(CONTRACTS_DIR, 'uploaded-files.json');
+const SLA_TRACKER_PATH = path.join(CONTRACTS_DIR, 'slaBreaches.json');
+const CONTRACT_UPLOADED_FILES_PATH = path.join(CONTRACTS_DIR, 'files.json');
 const CONTRACT_TEMPLATES_PATH = path.join(CONTRACTS_DIR, 'contract-templates.json');
-const CONTRACT_AUDIT_LOG_PATH = path.join(CONTRACTS_DIR, 'contract-audit-log.json');
+const CONTRACT_AUDIT_LOG_PATH = path.join(CONTRACTS_DIR, 'auditTrail.json');
 const CONTRACTS_VENDORS_PATH = path.join(CONTRACTS_DIR, 'vendors.json');
 const CONTRACT_TYPES_PATH = path.join(CONTRACTS_DIR, 'contract-types.json');
+
+// VENDOR SELF-SERVICE PORTAL CONSTANTS
+const VENDOR_PORTAL_DIR = path.join(__dirname, 'data', 'vendor');
+const VENDOR_PORTAL_VENDORS_PATH = path.join(VENDOR_PORTAL_DIR, 'vendors.json');
+const VENDOR_PORTAL_DOCUMENTS_PATH = path.join(VENDOR_PORTAL_DIR, 'documents.json');
+const VENDOR_PORTAL_KYC_PATH = path.join(VENDOR_PORTAL_DIR, 'kyc.json');
+const VENDOR_PORTAL_POS_PATH = path.join(VENDOR_PORTAL_DIR, 'purchaseOrders.json');
+const VENDOR_PORTAL_INVOICES_PATH = path.join(VENDOR_PORTAL_DIR, 'invoices.json');
+const VENDOR_PORTAL_PAYMENTS_PATH = path.join(VENDOR_PORTAL_DIR, 'payments.json');
+const VENDOR_PORTAL_TICKETS_PATH = path.join(VENDOR_PORTAL_DIR, 'supportTickets.json');
+const VENDOR_PORTAL_NOTIFICATIONS_PATH = path.join(VENDOR_PORTAL_DIR, 'notifications.json');
+const VENDOR_PORTAL_AUDIT_LOG_PATH = path.join(VENDOR_PORTAL_DIR, 'auditTrail.json');
+const VENDOR_PORTAL_DASHBOARD_PATH = path.join(VENDOR_PORTAL_DIR, 'dashboardCache.json');
+const VENDOR_PORTAL_FILES_PATH = path.join(VENDOR_PORTAL_DIR, 'files.json');
+
+const VENDOR_UPLOADS_DIR = path.join(UPLOADS_DIR, 'vendor');
 
 const CONTRACTS_UPLOADS_DIR = path.join(UPLOADS_DIR, 'contracts');
 const CTR_LEGAL_DIR = path.join(CONTRACTS_UPLOADS_DIR, 'legal');
@@ -1839,7 +1860,7 @@ const CTR_TEMPLATES_DIR = path.join(CONTRACTS_UPLOADS_DIR, 'templates');
 const CTR_SIGNED_DIR = path.join(CONTRACTS_UPLOADS_DIR, 'signed');
 const CTR_TEMP_DIR = path.join(CONTRACTS_UPLOADS_DIR, 'temp');
 
-// Ensure contract folders exist
+// Ensure contract folders and files exist
 async function ensureContractDirs() {
   await fs.mkdir(CONTRACTS_DIR, { recursive: true });
   await fs.mkdir(CONTRACTS_UPLOADS_DIR, { recursive: true });
@@ -1850,8 +1871,408 @@ async function ensureContractDirs() {
   await fs.mkdir(CTR_TEMPLATES_DIR, { recursive: true });
   await fs.mkdir(CTR_SIGNED_DIR, { recursive: true });
   await fs.mkdir(CTR_TEMP_DIR, { recursive: true });
+
+  // Migration logic from old hyphenated/capitalized files to final unified files
+  const migrationMap = [
+    { oldName: 'contract-approvals.json', newName: 'approvals.json' },
+    { oldName: 'contractApprovals.json', newName: 'approvals.json' },
+    { oldName: 'contract-renewals.json', newName: 'renewals.json' },
+    { oldName: 'contractRenewals.json', newName: 'renewals.json' },
+    { oldName: 'uploaded-files.json', newName: 'files.json' },
+    { oldName: 'uploadedFiles.json', newName: 'files.json' },
+    { oldName: 'clause-library.json', newName: 'clauseLibrary.json' },
+    { oldName: 'clause-library.json', newName: 'clauseLibrary.json' },
+    { oldName: 'contract-audit-log.json', newName: 'auditTrail.json' },
+    { oldName: 'contractAuditTrail.json', newName: 'auditTrail.json' },
+    { oldName: 'contract-dashboard.json', newName: 'dashboardCache.json' },
+    { oldName: 'sla-tracker.json', newName: 'slaBreaches.json' }
+  ];
+
+  for (const item of migrationMap) {
+    const oldPath = path.join(CONTRACTS_DIR, item.oldName);
+    const newPath = path.join(CONTRACTS_DIR, item.newName);
+    try {
+      await fs.access(oldPath);
+      try {
+        await fs.access(newPath);
+      } catch {
+        // If old exists and new does not, rename/migrate it
+        await fs.rename(oldPath, newPath);
+      }
+    } catch {}
+  }
+
+  // Initialize empty database files if they don't exist
+  const initList = [
+    { path: CONTRACTS_PATH, defaultVal: '[]' },
+    { path: CONTRACT_DRAFTS_PATH, defaultVal: '[]' },
+    { path: CONTRACT_APPROVALS_PATH, defaultVal: '[]' },
+    { path: CONTRACT_RENEWALS_PATH, defaultVal: '[]' },
+    { path: CONTRACT_UPLOADED_FILES_PATH, defaultVal: '[]' },
+    { path: CONTRACT_AUDIT_LOG_PATH, defaultVal: '[]' }
+  ];
+
+  for (const item of initList) {
+    try {
+      await fs.access(item.path);
+    } catch {
+      await fs.writeFile(item.path, item.defaultVal, 'utf8');
+    }
+  }
+
+  // Seed clauseLibrary.json if it is missing or empty
+  try {
+    const clauses = await readJsonFile(CLAUSE_LIBRARY_PATH);
+    if (!clauses || clauses.length === 0) {
+      throw new Error();
+    }
+  } catch {
+    const defaultClauses = [
+      {
+        id: "CLS-RBI",
+        name: "RBI Outsourcing Guidelines Clause",
+        category: "Regulatory Compliance",
+        text: "The service provider agrees to comply with the RBI Guidelines on Outsourcing of Financial Services, permitting inspections and audits by the regulator.",
+        mandatory: true
+      },
+      {
+        id: "CLS-NDA",
+        name: "Standard NDA Clause",
+        category: "Confidentiality",
+        text: "Both parties agree to hold all proprietary and confidential information in strict confidence and use it solely for the purpose of executing this Agreement.",
+        mandatory: true
+      },
+      {
+        id: "CLS-PRIVACY",
+        name: "Data Privacy & Security Clause",
+        category: "Data Security",
+        text: "The vendor shall process personal data in compliance with standard data protection laws and implement robust technical and organizational security controls.",
+        mandatory: true
+      },
+      {
+        id: "CLS-ARBITRATION",
+        name: "Dispute Resolution (Arbitration)",
+        category: "Legal",
+        text: "Any dispute arising out of or in connection with this contract shall be referred to and finally resolved by arbitration in Mumbai in accordance with Arbitration rules.",
+        mandatory: false
+      },
+      {
+        id: "CLS-GDPR",
+        name: "GDPR Compliance Clause",
+        category: "Regulatory Compliance",
+        text: "Where EU personal data is processed, the parties shall execute Standard Contractual Clauses (SCCs) to ensure adequacy of cross-border transfers.",
+        mandatory: false
+      },
+      {
+        id: "CLS-PENALTY",
+        name: "SLA Penalty Clause",
+        category: "Service Level",
+        text: "Failure to meet the designated service levels will trigger penalties, starting from 5% of monthly billing value, capped at 10% of total contract value.",
+        mandatory: false
+      }
+    ];
+    await fs.writeFile(CLAUSE_LIBRARY_PATH, JSON.stringify(defaultClauses, null, 2), 'utf8');
+  }
+
+  // Seed slaBreaches.json if missing
+  try {
+    await fs.access(SLA_TRACKER_PATH);
+  } catch {
+    const defaultSla = [
+      {
+        contractId: "CTR-2026-00045",
+        vendorName: "Global Secure Tech",
+        uptime: "99.95%",
+        responseTime: "2 Hours",
+        resolutionTime: "8 Hours",
+        breachCount: 0,
+        penaltyTriggered: false,
+        complianceScore: 92
+      },
+      {
+        contractId: "CTR-2025-104",
+        vendorName: "Global Secure Tech",
+        uptime: "99.9%",
+        responseTime: "4 Hours",
+        resolutionTime: "12 Hours",
+        breachCount: 2,
+        penaltyTriggered: true,
+        complianceScore: 88
+      },
+      {
+        contractId: "CTR-2025-045",
+        vendorName: "CloudNet Systems",
+        uptime: "99.99%",
+        responseTime: "1 Hour",
+        resolutionTime: "4 Hours",
+        breachCount: 1,
+        penaltyTriggered: false,
+        complianceScore: 95
+      }
+    ];
+    await fs.writeFile(SLA_TRACKER_PATH, JSON.stringify(defaultSla, null, 2), 'utf8');
+  }
 }
 ensureContractDirs().catch(console.error);
+
+async function ensureVendorDirs() {
+  await fs.mkdir(VENDOR_PORTAL_DIR, { recursive: true });
+  await fs.mkdir(VENDOR_UPLOADS_DIR, { recursive: true });
+
+  const initList = [
+    {
+      path: VENDOR_PORTAL_VENDORS_PATH,
+      defaultVal: JSON.stringify([
+        {
+          "vendorId": "VND-001",
+          "vendorName": "Acme Cloud Solutions Pvt Ltd",
+          "vendorType": "IT Services",
+          "email": "vendor@acmecloud.com",
+          "phone": "+91-9876543210",
+          "address": "402, Signature Towers, Sector 30, Gurugram, HR, India",
+          "contactPerson": "Rohan Sharma",
+          "status": "Verified Partner",
+          "bankSecurityNode": true,
+          "onboardingDate": "2026-01-10",
+          "lastLogin": "2026-06-03"
+        }
+      ], null, 2)
+    },
+    {
+      path: VENDOR_PORTAL_DOCUMENTS_PATH,
+      defaultVal: JSON.stringify([
+        {
+          "documentId": "DOC-101",
+          "vendorId": "VND-001",
+          "documentName": "GST Certificate.pdf",
+          "documentType": "Tax Registration",
+          "uploadDate": "2026-01-12",
+          "expiryDate": "2028-12-31",
+          "status": "Verified",
+          "fileId": "FILE-001"
+        },
+        {
+          "documentId": "DOC-102",
+          "vendorId": "VND-001",
+          "documentName": "PAN Card Copy.pdf",
+          "documentType": "Identity Proof",
+          "uploadDate": "2026-01-12",
+          "expiryDate": null,
+          "status": "Verified",
+          "fileId": "FILE-002"
+        },
+        {
+          "documentId": "DOC-103",
+          "vendorId": "VND-001",
+          "documentName": "MSME Registration Certificate.pdf",
+          "documentType": "MSME Proof",
+          "uploadDate": "2026-01-15",
+          "expiryDate": "2028-08-15",
+          "status": "Verified",
+          "fileId": "FILE-003"
+        },
+        {
+          "documentId": "DOC-104",
+          "vendorId": "VND-001",
+          "documentName": "ISO 27001 InfoSec Certificate.pdf",
+          "documentType": "Compliance",
+          "uploadDate": "2025-05-10",
+          "expiryDate": "2026-05-10",
+          "status": "Expired",
+          "fileId": "FILE-004"
+        }
+      ], null, 2)
+    },
+    {
+      path: VENDOR_PORTAL_KYC_PATH,
+      defaultVal: JSON.stringify([
+        {
+          "vendorId": "VND-001",
+          "gstNumber": "29ABCDE1234F1Z5",
+          "panNumber": "ABCDE1234F",
+          "msmeNumber": "MSME123456",
+          "status": "Verified"
+        }
+      ], null, 2)
+    },
+    {
+      path: VENDOR_PORTAL_POS_PATH,
+      defaultVal: JSON.stringify([
+        {
+          "poId": "PO-2026-981",
+          "vendorId": "VND-001",
+          "issueDate": "2026-05-18",
+          "items": 4,
+          "value": 1245000,
+          "status": "Pending Acknowledgement"
+        },
+        {
+          "poId": "PO-2026-880",
+          "vendorId": "VND-001",
+          "issueDate": "2026-05-04",
+          "items": 1,
+          "value": 450000,
+          "status": "Acknowledged"
+        },
+        {
+          "poId": "PO-2026-712",
+          "vendorId": "VND-001",
+          "issueDate": "2026-04-15",
+          "items": 12,
+          "value": 890000,
+          "status": "Delivered"
+        },
+        {
+          "poId": "PO-2026-550",
+          "vendorId": "VND-001",
+          "issueDate": "2026-03-01",
+          "items": 20,
+          "value": 2210000,
+          "status": "Invoiced"
+        }
+      ], null, 2)
+    },
+    {
+      path: VENDOR_PORTAL_INVOICES_PATH,
+      defaultVal: JSON.stringify([
+        {
+          "invoiceId": "INV-77981",
+          "vendorId": "VND-001",
+          "poId": "PO-2026-550",
+          "amount": 2210000,
+          "submitDate": "2026-03-10",
+          "verificationStage": "Paid",
+          "paymentStatus": "Paid"
+        },
+        {
+          "invoiceId": "INV-88192",
+          "vendorId": "VND-001",
+          "poId": "PO-2026-712",
+          "amount": 890000,
+          "submitDate": "2026-04-28",
+          "verificationStage": "Approved For Payment",
+          "paymentStatus": "Approved For Payment"
+        },
+        {
+          "invoiceId": "INV-89104",
+          "vendorId": "VND-001",
+          "poId": "PO-2026-880",
+          "amount": 450000,
+          "submitDate": "2026-05-12",
+          "verificationStage": "3-Way Match",
+          "paymentStatus": "Pending"
+        }
+      ], null, 2)
+    },
+    {
+      path: VENDOR_PORTAL_PAYMENTS_PATH,
+      defaultVal: JSON.stringify([
+        {
+          "paymentId": "PAY-001",
+          "invoiceId": "INV-77981",
+          "amount": 2210000,
+          "paymentDate": "2026-03-15",
+          "status": "Paid"
+        }
+      ], null, 2)
+    },
+    {
+      path: VENDOR_PORTAL_TICKETS_PATH,
+      defaultVal: JSON.stringify([
+        {
+          "ticketId": "TKT-901",
+          "vendorId": "VND-001",
+          "category": "Finance & Tax",
+          "subject": "TDS Deduction rate query on INV-77981",
+          "description": "Please clarify the TDS rate deduction applied to the paid invoice INV-77981.",
+          "status": "Resolved",
+          "createdDate": "2026-04-12"
+        },
+        {
+          "ticketId": "TKT-942",
+          "vendorId": "VND-001",
+          "category": "Technical Support",
+          "subject": "API endpoint integration credentials",
+          "description": "We need the API credentials to start the automated invoice data sync test.",
+          "status": "Open",
+          "createdDate": "2026-05-21"
+        }
+      ], null, 2)
+    },
+    {
+      path: VENDOR_PORTAL_NOTIFICATIONS_PATH,
+      defaultVal: JSON.stringify([
+        {
+          "notificationId": "NOT-001",
+          "vendorId": "VND-001",
+          "message": "Purchase Order PO-2026-981 requires acknowledgement.",
+          "read": false,
+          "createdDate": "2026-06-03"
+        }
+      ], null, 2)
+    },
+    {
+      path: VENDOR_PORTAL_AUDIT_LOG_PATH,
+      defaultVal: JSON.stringify([], null, 2)
+    },
+    {
+      path: VENDOR_PORTAL_DASHBOARD_PATH,
+      defaultVal: JSON.stringify({
+        "vendorId": "VND-001",
+        "pendingPOs": 1,
+        "paidInvoices": 1,
+        "expiredDocuments": 1,
+        "activeTickets": 1
+      }, null, 2)
+    },
+    {
+      path: VENDOR_PORTAL_FILES_PATH,
+      defaultVal: JSON.stringify([
+        {
+          "fileId": "FILE-001",
+          "vendorId": "VND-001",
+          "fileName": "GST_Certificate.pdf",
+          "fileType": "application/pdf",
+          "filePath": "/uploads/vendor/GST_Certificate.pdf",
+          "uploadDate": "2026-01-12"
+        },
+        {
+          "fileId": "FILE-002",
+          "vendorId": "VND-001",
+          "fileName": "PAN_Card.pdf",
+          "fileType": "application/pdf",
+          "filePath": "/uploads/vendor/PAN_Card.pdf",
+          "uploadDate": "2026-01-12"
+        },
+        {
+          "fileId": "FILE-003",
+          "vendorId": "VND-001",
+          "fileName": "MSME_Registration.pdf",
+          "fileType": "application/pdf",
+          "filePath": "/uploads/vendor/MSME_Registration.pdf",
+          "uploadDate": "2026-01-15"
+        },
+        {
+          "fileId": "FILE-004",
+          "vendorId": "VND-001",
+          "fileName": "ISO_27001_InfoSec.pdf",
+          "fileType": "application/pdf",
+          "filePath": "/uploads/vendor/ISO_27001_InfoSec.pdf",
+          "uploadDate": "2025-05-10"
+        }
+      ], null, 2)
+    }
+  ];
+
+  for (const item of initList) {
+    try {
+      await fs.access(item.path);
+    } catch {
+      await fs.writeFile(item.path, item.defaultVal, 'utf8');
+    }
+  }
+}
+ensureVendorDirs().catch(console.error);
 
 // ==========================================
 // PURCHASE ORDERS PATHS & DIRECTORIES SETUP
@@ -1921,6 +2342,46 @@ const contractStorage = multer.diskStorage({
 const contractUpload = multer({ storage: contractStorage });
 
 // Helper to update contract dashboard stats
+async function updateContractRenewals() {
+  try {
+    const contracts = await readJsonFile(CONTRACTS_PATH);
+    const renewals = [];
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    for (const c of contracts) {
+      if (!c.expiryDate) continue;
+      const exp = new Date(c.expiryDate);
+      exp.setHours(0,0,0,0);
+      const diffTime = exp - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      let renewalStatus = "Active";
+      if (diffDays < 0) {
+        renewalStatus = "Expired";
+      } else if (diffDays <= 30) {
+        renewalStatus = "Expiring Soon";
+      } else if (diffDays <= 90) {
+        renewalStatus = "Renewal Due";
+      }
+
+      renewals.push({
+        contractId: c.contractId,
+        vendorName: c.vendorName || c.vendor?.vendorName || "Unknown Vendor",
+        contractType: c.contractType,
+        expiryDate: c.expiryDate,
+        daysRemaining: diffDays,
+        renewalStatus: renewalStatus,
+        status: diffDays < 0 ? "Expired" : diffDays <= 30 ? "Pending" : diffDays <= 90 ? "In Review" : "Auto-Renew",
+        owner: c.approvalWorkflow?.submittedBy || c.submittedBy || "Procurement Team"
+      });
+    }
+    await writeJsonFile(CONTRACT_RENEWALS_PATH, renewals);
+  } catch (error) {
+    console.error('Failed to update contract renewals:', error);
+  }
+}
+
 async function updateContractDashboardMetrics() {
   try {
     const contracts = await readJsonFile(CONTRACTS_PATH);
@@ -1932,17 +2393,17 @@ async function updateContractDashboardMetrics() {
       if (c.status !== 'Active') return false;
       const exp = new Date(c.expiryDate);
       const diffTime = exp - new Date();
-      const diffDays = Math.ceil(diffTime / (1024 * 60 * 60 * 24));
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return diffDays > 0 && diffDays <= 30;
     }).length + 40;
 
-    const pendingLegalReviewsCount = approvals.filter(a => a.currentStage === 'Legal Review').length + 62;
+    const pendingLegalReviewsCount = approvals.filter(a => a.currentStage === 'Legal Review' || a.currentStage === 'Legal').length + 62;
     const breaches = sla.reduce((sum, item) => sum + (item.breachCount || 0), 0) + 11;
 
     // Calculate lifecycle counts
     const active = contracts.filter(c => c.status === 'Active').length + 843;
-    const draft = contracts.filter(c => c.status === 'Draft').length + 119;
-    const review = contracts.filter(c => c.status === 'In Review').length + 62;
+    const draft = contracts.filter(c => c.status === 'Draft' || c.status === 'Revision Required').length + 119;
+    const review = contracts.filter(c => c.status === 'In Review' || c.status === 'Pending Approval').length + 62;
     const sig = contracts.filter(c => c.status === 'Pending Signature').length + 41;
     const expired = contracts.filter(c => c.status === 'Expired').length + 27;
 
@@ -1954,6 +2415,81 @@ async function updateContractDashboardMetrics() {
       { name: 'Expired', value: expired, color: '#EF4444' }
     ];
 
+    // Baseline offsets
+    const categorySpends = {
+      'IT Services': 45,
+      'Facilities': 28,
+      'Legal': 18,
+      'Cloud': 32,
+      'Consulting': 22
+    };
+
+    // Baseline risk averages
+    let totalRiskCount = 0;
+    let sumLegal = 0;
+    let sumCompliance = 0;
+    let sumFinancial = 0;
+    let highRiskCount = 4;
+    let medRiskCount = 18;
+    let lowRiskCount = 78;
+
+    contracts.forEach(c => {
+      const val = c.contractValue || c.commercialTerms?.contractValue || 0;
+      const valInCr = val / 10000000;
+      const dept = (c.department || '').toLowerCase();
+      
+      if (c.status === 'Active') {
+        if (dept.includes('it') || dept.includes('service') || dept.includes('tech')) {
+          categorySpends['IT Services'] += valInCr;
+        } else if (dept.includes('facility') || dept.includes('ops') || dept.includes('operation') || dept.includes('office')) {
+          categorySpends['Facilities'] += valInCr;
+        } else if (dept.includes('legal') || dept.includes('compliance')) {
+          categorySpends['Legal'] += valInCr;
+        } else if (dept.includes('cloud') || dept.includes('saas') || dept.includes('hosting')) {
+          categorySpends['Cloud'] += valInCr;
+        } else if (dept.includes('consult') || dept.includes('strategy') || dept.includes('advisory')) {
+          categorySpends['Consulting'] += valInCr;
+        } else {
+          categorySpends['IT Services'] += valInCr;
+        }
+
+        const ri = c.riskInsights || {};
+        const legal = ri.legalExposure || 50;
+        const comp = ri.complianceRisk || 20;
+        const fin = ri.financialRisk || 50;
+        
+        sumLegal += legal;
+        sumCompliance += comp;
+        sumFinancial += fin;
+        totalRiskCount++;
+
+        const rLevel = (c.riskLevel || ri.portfolioRisk || 'Medium').toLowerCase();
+        if (rLevel === 'high') highRiskCount++;
+        else if (rLevel === 'low') lowRiskCount++;
+        else medRiskCount++;
+      }
+    });
+
+    const contractValueByCategory = Object.keys(categorySpends).map(cat => ({
+      category: cat,
+      spend: parseFloat(categorySpends[cat].toFixed(2))
+    }));
+
+    const baselineCount = 843;
+    const avgLegal = Math.round((sumLegal + baselineCount * 58) / (totalRiskCount + baselineCount));
+    const avgCompliance = Math.round((sumCompliance + baselineCount * 22) / (totalRiskCount + baselineCount));
+    const avgFinancial = Math.round((sumFinancial + baselineCount * 74) / (totalRiskCount + baselineCount));
+    
+    let avgPortfolioRisk = "Medium";
+    if (avgFinancial > 70) avgPortfolioRisk = "High";
+    else if (avgFinancial < 40) avgPortfolioRisk = "Low";
+
+    const vendorRiskAnalysis = [
+      { name: "High Risk", value: highRiskCount },
+      { name: "Medium Risk", value: medRiskCount },
+      { name: "Low Risk", value: lowRiskCount }
+    ];
+
     const currentDashboard = await readJsonFile(CONTRACT_DASHBOARD_PATH);
     const updated = {
       ...currentDashboard,
@@ -1961,7 +2497,13 @@ async function updateContractDashboardMetrics() {
       expiringSoon: expiringSoonCount,
       pendingLegalReviews: pendingLegalReviewsCount,
       slaBreaches: breaches,
-      lifecycleDistribution
+      lifecycleDistribution,
+      contractValueByCategory,
+      portfolioRisk: avgPortfolioRisk,
+      legalExposure: avgLegal,
+      complianceRisk: avgCompliance,
+      financialRisk: avgFinancial,
+      vendorRiskAnalysis
     };
     await writeJsonFile(CONTRACT_DASHBOARD_PATH, updated);
   } catch (err) {
@@ -2069,7 +2611,6 @@ app.get('/api/contracts/:id', async (req, res) => {
   }
 });
 
-// 7. POST /api/contracts and /api/contracts/create
 const handleCreateContract = async (req, res) => {
   try {
     const contractData = req.body;
@@ -2081,24 +2622,34 @@ const handleCreateContract = async (req, res) => {
       contractData.contractId = `CTR-${year}-${String(rand).padStart(5, '0')}`;
     }
 
-    contractData.status = "In Review";
+    // Calculate Mock AI Risk Insights
+    const legalRisk = Math.floor(40 + Math.random() * 30);
+    const complianceRisk = Math.floor(15 + Math.random() * 20);
+    const financialRisk = Math.floor(50 + Math.random() * 30);
+    const riskLevel = financialRisk > 70 ? "High" : financialRisk > 40 ? "Medium" : "Low";
+
+    // Flatten keys to root level as per requirements
+    contractData.vendorName = contractData.vendor?.vendorName || "Unknown Vendor";
+    contractData.contractValue = contractData.commercialTerms?.contractValue || 0;
+    contractData.currency = contractData.commercialTerms?.currency || "INR";
+    contractData.paymentTerms = contractData.commercialTerms?.paymentTerms || "Net 30";
+    contractData.billingFrequency = contractData.commercialTerms?.billingFrequency || "Monthly";
+    contractData.riskLevel = riskLevel;
+    contractData.uploadedFiles = (contractData.uploadedDocuments || []).map(d => d.fileId || d.id);
+    contractData.status = "Pending Approval";
+    contractData.approvalStage = "Procurement";
+
     contractData.createdDate = new Date().toISOString().split('T')[0];
     contractData.lastModified = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
 
     contractData.approvalWorkflow = {
-      currentStage: "Procurement Review",
+      currentStage: "Procurement",
       workflowStep: 1,
       approvalStatus: "Pending",
       currentApprover: "Procurement Team",
       submittedBy: contractData.submittedBy || "Saurabh Anand",
       submittedOn: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
     };
-
-    // Calculate Mock AI Risk Insights
-    const legalRisk = Math.floor(40 + Math.random() * 30);
-    const complianceRisk = Math.floor(15 + Math.random() * 20);
-    const financialRisk = Math.floor(50 + Math.random() * 30);
-    const riskLevel = financialRisk > 70 ? "High" : financialRisk > 40 ? "Medium" : "Low";
 
     contractData.riskInsights = {
       portfolioRisk: riskLevel,
@@ -2121,15 +2672,19 @@ const handleCreateContract = async (req, res) => {
 
     await appendJsonData(CONTRACTS_PATH, contractData);
 
-    // Save history in contract-approvals.json
+    // Save approvals in contractApprovals.json
     const approvalItem = {
       approvalId: `APP-CTR-${Math.floor(1000 + Math.random() * 9000)}`,
       contractId: contractData.contractId,
-      vendorName: contractData.vendor?.vendorName || "Unknown Vendor",
-      currentStage: "Procurement Review",
+      vendorName: contractData.vendorName,
+      contractType: contractData.contractType,
+      contractValue: contractData.contractValue,
+      risk: contractData.riskLevel,
+      currentStage: "Procurement",
       assignedTo: "Procurement Team",
       status: "Pending",
       remarks: "",
+      uploadedFiles: contractData.uploadedFiles,
       history: [
         {
           action: "Submitted",
@@ -2150,14 +2705,14 @@ const handleCreateContract = async (req, res) => {
     };
     await appendJsonData(CONTRACT_ACTIVITY_PATH, activity);
 
-    // Audit Log
+    // Audit Log to contractAuditTrail.json
     const auditLog = {
       id: `AUD-CTR-${Math.floor(10000 + Math.random() * 90000)}`,
       timestamp: new Date().toISOString(),
       contractId: contractData.contractId,
       action: "Contract Created & Submitted for Approval",
       performedBy: contractData.submittedBy || "Saurabh Anand",
-      details: `Contract with ${contractData.vendor?.vendorName || 'Unknown Vendor'} created and routed to Procurement Review.`
+      details: `Contract with ${contractData.vendorName} created and routed to Procurement.`
     };
     await appendJsonData(CONTRACT_AUDIT_LOG_PATH, auditLog);
 
@@ -2175,6 +2730,8 @@ const handleCreateContract = async (req, res) => {
     };
     await appendJsonData(CONTRACT_RISK_INSIGHTS_PATH, riskInsightsItem);
 
+    // Dynamic Updates
+    await updateContractRenewals();
     await updateContractDashboardMetrics();
 
     res.status(201).json({ success: true, contract: contractData });
@@ -2295,41 +2852,23 @@ app.post('/api/contracts/approve', async (req, res) => {
     }
 
     const contract = contracts[cIndex];
-    let workflow = contract.approvalWorkflow || {};
-    let nextStage = "";
-    let nextStep = workflow.workflowStep || 1;
-    let nextStatus = "In Review";
+    const previousStage = contract.approvalWorkflow?.currentStage || "Procurement Review";
 
-    if (workflow.workflowStep === 1) {
-      nextStage = "Legal Review";
-      nextStep = 2;
-    } else if (workflow.workflowStep === 2) {
-      nextStage = "Finance Review";
-      nextStep = 3;
-    } else if (workflow.workflowStep === 3) {
-      nextStage = "Final Approval";
-      nextStep = 4;
-    } else if (workflow.workflowStep === 4) {
-      nextStage = "Approved";
-      nextStep = 4;
-      nextStatus = "Active";
-    }
-
-    contract.status = nextStatus;
+    // Set contract status to Active immediately on approval as per specs
+    contract.status = "Active";
+    contract.approvalStage = "Completed";
     contract.approvalWorkflow = {
-      ...workflow,
-      currentStage: nextStage === "Approved" ? "" : nextStage,
-      workflowStep: nextStep,
-      approvalStatus: nextStatus === "Active" ? "Approved" : "Pending",
-      currentApprover: nextStage === "Legal Review" ? "Legal Team" : 
-                       nextStage === "Finance Review" ? "Finance Team" :
-                       nextStage === "Final Approval" ? "Executive Board" : "",
+      ...(contract.approvalWorkflow || {}),
+      currentStage: "Completed",
+      workflowStep: 5,
+      approvalStatus: "Approved",
+      currentApprover: "",
       lastRemarks: remarks
     };
 
     if (!contract.auditTrail) contract.auditTrail = [];
     contract.auditTrail.push({
-      action: `Approved at Stage ${workflow.currentStage}`,
+      action: `Approved at Stage ${previousStage}`,
       user: userName,
       dateTime: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
       remarks
@@ -2338,24 +2877,11 @@ app.post('/api/contracts/approve', async (req, res) => {
     contracts[cIndex] = contract;
     await writeJsonFile(CONTRACTS_PATH, contracts);
 
-    // Update approvals queue
+    // Update approvals queue - remove from active pending reviews
     const approvals = await readJsonFile(CONTRACT_APPROVALS_PATH);
     const appIndex = approvals.findIndex(a => a.contractId === contractId);
     if (appIndex !== -1) {
-      if (nextStatus === "Active") {
-        approvals.splice(appIndex, 1);
-      } else {
-        approvals[appIndex].currentStage = nextStage;
-        approvals[appIndex].assignedTo = contract.approvalWorkflow.currentApprover;
-        approvals[appIndex].remarks = remarks;
-        if (!approvals[appIndex].history) approvals[appIndex].history = [];
-        approvals[appIndex].history.push({
-          action: `Approved by ${workflow.currentStage}`,
-          by: userName,
-          dateTime: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
-          remarks
-        });
-      }
+      approvals.splice(appIndex, 1);
       await writeJsonFile(CONTRACT_APPROVALS_PATH, approvals);
     }
 
@@ -2363,7 +2889,7 @@ app.post('/api/contracts/approve', async (req, res) => {
     const activity = {
       id: `ACT-${Math.floor(1000 + Math.random() * 9000)}`,
       contractId,
-      action: `Approved (${workflow.currentStage})`,
+      action: `Approved (${previousStage})`,
       user: userName,
       dateTime: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
     };
@@ -2374,13 +2900,15 @@ app.post('/api/contracts/approve', async (req, res) => {
       id: `AUD-CTR-${Math.floor(10000 + Math.random() * 90000)}`,
       timestamp: new Date().toISOString(),
       contractId,
-      action: `Stage Approval: ${workflow.currentStage}`,
+      action: `Contract Approved`,
       performedBy: userName,
-      details: `Approved by ${userName} at ${workflow.currentStage}. Remarks: ${remarks || 'None'}`
+      details: `Approved by ${userName} at ${previousStage}. Status set to Active. Remarks: ${remarks || 'None'}`
     };
     await appendJsonData(CONTRACT_AUDIT_LOG_PATH, auditLog);
 
+    await updateContractRenewals();
     await updateContractDashboardMetrics();
+
     res.json({ success: true, contract });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -2403,15 +2931,30 @@ app.post('/api/contracts/reject', async (req, res) => {
     const contract = contracts[cIndex];
     const previousStage = contract.approvalWorkflow?.currentStage || "Review";
 
-    contract.status = mode === 'Send Back' ? 'Draft' : 'Terminated';
-    contract.approvalWorkflow = {
-      ...contract.approvalWorkflow,
-      approvalStatus: mode === 'Send Back' ? 'Sent Back' : 'Rejected',
-      currentStage: mode === 'Send Back' ? 'Procurement Review' : 'Rejected',
-      workflowStep: mode === 'Send Back' ? 1 : 0,
-      currentApprover: mode === 'Send Back' ? 'Procurement Team' : '',
-      lastRemarks: remarks
-    };
+    // Set contract status based on action type
+    if (mode === 'Send Back') {
+      contract.status = "Revision Required";
+      contract.approvalStage = "Revision Required";
+      contract.approvalWorkflow = {
+        ...(contract.approvalWorkflow || {}),
+        approvalStatus: "Revision Required",
+        currentStage: "Revision Required",
+        workflowStep: 0,
+        currentApprover: "",
+        lastRemarks: remarks
+      };
+    } else {
+      contract.status = "Rejected";
+      contract.approvalStage = "Rejected";
+      contract.approvalWorkflow = {
+        ...(contract.approvalWorkflow || {}),
+        approvalStatus: "Rejected",
+        currentStage: "Rejected",
+        workflowStep: 0,
+        currentApprover: "",
+        lastRemarks: remarks
+      };
+    }
 
     if (!contract.auditTrail) contract.auditTrail = [];
     contract.auditTrail.push({
@@ -2427,21 +2970,7 @@ app.post('/api/contracts/reject', async (req, res) => {
     const approvals = await readJsonFile(CONTRACT_APPROVALS_PATH);
     const appIndex = approvals.findIndex(a => a.contractId === contractId);
     if (appIndex !== -1) {
-      if (mode === 'Send Back') {
-        approvals[appIndex].currentStage = "Procurement Review";
-        approvals[appIndex].assignedTo = "Procurement Team";
-        approvals[appIndex].status = "Sent Back";
-        approvals[appIndex].remarks = remarks;
-        if (!approvals[appIndex].history) approvals[appIndex].history = [];
-        approvals[appIndex].history.push({
-          action: `Sent Back by ${previousStage}`,
-          by: userName,
-          dateTime: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
-          remarks
-        });
-      } else {
-        approvals.splice(appIndex, 1);
-      }
+      approvals.splice(appIndex, 1);
       await writeJsonFile(CONTRACT_APPROVALS_PATH, approvals);
     }
 
@@ -2460,17 +2989,432 @@ app.post('/api/contracts/reject', async (req, res) => {
       contractId,
       action: `Contract ${mode}ed`,
       performedBy: userName,
-      details: `${mode}ed at ${previousStage} by ${userName}. Remarks: ${remarks || 'None'}`
+      details: `${mode}ed at ${previousStage} by ${userName}. Status set to ${contract.status}. Remarks: ${remarks || 'None'}`
     };
     await appendJsonData(CONTRACT_AUDIT_LOG_PATH, auditLog);
 
+    await updateContractRenewals();
     await updateContractDashboardMetrics();
+
     res.json({ success: true, contract });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
+
+// ==========================================
+// VENDOR PORTAL APIs
+// ==========================================
+
+const vendorStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, VENDOR_UPLOADS_DIR);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, 'VND_' + uniqueSuffix + ext);
+  }
+});
+const vendorUpload = multer({ storage: vendorStorage });
+
+async function updateVendorDashboardMetrics() {
+  try {
+    const documents = await readJsonFile(VENDOR_PORTAL_DOCUMENTS_PATH);
+    const pos = await readJsonFile(VENDOR_PORTAL_POS_PATH);
+    const invoices = await readJsonFile(VENDOR_PORTAL_INVOICES_PATH);
+    const tickets = await readJsonFile(VENDOR_PORTAL_TICKETS_PATH);
+
+    const pendingPOs = pos.filter(po => po.status === 'Pending Acknowledgement' || po.status === 'Pending Acknowledgment').length;
+    
+    const todayStr = new Date().toISOString().split('T')[0];
+    let expiredDocs = 0;
+    for (const doc of documents) {
+      if (doc.expiryDate && doc.expiryDate !== 'N/A' && doc.expiryDate !== 'null') {
+        const exp = new Date(doc.expiryDate);
+        const today = new Date(todayStr);
+        if (exp <= today) {
+          doc.status = 'Expired';
+          expiredDocs++;
+        } else {
+          if (doc.status === 'Expired') {
+            doc.status = 'Verified';
+          }
+        }
+      }
+    }
+    await writeJsonFile(VENDOR_PORTAL_DOCUMENTS_PATH, documents);
+
+    const paidInvoices = invoices.filter(inv => inv.paymentStatus === 'Paid' || inv.verificationStage === 'Paid').length;
+    const activeTickets = tickets.filter(t => t.status !== 'Resolved').length;
+
+    const cache = {
+      vendorId: "VND-001",
+      pendingPOs,
+      paidInvoices,
+      expiredDocuments: expiredDocs,
+      activeTickets
+    };
+
+    await writeJsonFile(VENDOR_PORTAL_DASHBOARD_PATH, cache);
+  } catch (err) {
+    console.error('Failed to update vendor dashboard metrics:', err);
+  }
+}
+
+async function addVendorAuditTrail(action, referenceId, performedBy = "Vendor User") {
+  try {
+    const log = {
+      auditId: `AUD-${Math.floor(1000 + Math.random() * 9000)}`,
+      vendorId: "VND-001",
+      action,
+      referenceId: referenceId || "",
+      performedBy,
+      timestamp: new Date().toISOString()
+    };
+    await appendJsonData(VENDOR_PORTAL_AUDIT_LOG_PATH, log);
+  } catch (err) {
+    console.error('Failed to add vendor audit trail:', err);
+  }
+}
+
+async function addVendorNotification(message) {
+  try {
+    const notif = {
+      notificationId: `NOT-${Math.floor(1000 + Math.random() * 9000)}`,
+      vendorId: "VND-001",
+      message,
+      read: false,
+      createdDate: new Date().toISOString().split('T')[0]
+    };
+    await appendJsonData(VENDOR_PORTAL_NOTIFICATIONS_PATH, notif);
+  } catch (err) {
+    console.error('Failed to create vendor notification:', err);
+  }
+}
+
+// 1. GET /api/vendor-portal/dashboard
+app.get('/api/vendor-portal/dashboard', async (req, res) => {
+  try {
+    await updateVendorDashboardMetrics();
+    const cache = await readJsonFile(VENDOR_PORTAL_DASHBOARD_PATH);
+    res.json(cache);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 2. GET /api/vendor-portal/notifications
+app.get('/api/vendor-portal/notifications', async (req, res) => {
+  try {
+    const list = await readJsonFile(VENDOR_PORTAL_NOTIFICATIONS_PATH);
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/vendor-portal/notifications/read-all', async (req, res) => {
+  try {
+    const list = await readJsonFile(VENDOR_PORTAL_NOTIFICATIONS_PATH);
+    list.forEach(n => n.read = true);
+    await writeJsonFile(VENDOR_PORTAL_NOTIFICATIONS_PATH, list);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 3. GET /api/vendor-portal/profile
+app.get('/api/vendor-portal/profile', async (req, res) => {
+  try {
+    const list = await readJsonFile(VENDOR_PORTAL_VENDORS_PATH);
+    const profile = list.find(v => v.vendorId === 'VND-001') || list[0];
+    res.json(profile);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/vendor-portal/profile', async (req, res) => {
+  try {
+    const list = await readJsonFile(VENDOR_PORTAL_VENDORS_PATH);
+    const idx = list.findIndex(v => v.vendorId === 'VND-001');
+    if (idx === -1) {
+      return res.status(404).json({ message: 'Vendor profile not found' });
+    }
+    list[idx] = {
+      ...list[idx],
+      vendorName: req.body.vendorName || list[idx].vendorName,
+      email: req.body.email || list[idx].email,
+      phone: req.body.phone || list[idx].phone,
+      address: req.body.address || list[idx].address,
+      contactPerson: req.body.contactPerson || list[idx].contactPerson,
+      lastModified: new Date().toLocaleString()
+    };
+    await writeJsonFile(VENDOR_PORTAL_VENDORS_PATH, list);
+    await addVendorAuditTrail("Profile Update", "VND-001", "Vendor User");
+    await addVendorNotification("Profile contact information updated successfully.");
+    res.json(list[idx]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 4. GET /api/vendor-portal/kyc
+app.get('/api/vendor-portal/kyc', async (req, res) => {
+  try {
+    const list = await readJsonFile(VENDOR_PORTAL_KYC_PATH);
+    const kyc = list.find(v => v.vendorId === 'VND-001') || list[0];
+    res.json(kyc);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/vendor-portal/kyc', async (req, res) => {
+  try {
+    const list = await readJsonFile(VENDOR_PORTAL_KYC_PATH);
+    const idx = list.findIndex(v => v.vendorId === 'VND-001');
+    if (idx === -1) {
+      return res.status(404).json({ message: 'Vendor KYC not found' });
+    }
+    list[idx] = {
+      ...list[idx],
+      gstNumber: req.body.gstNumber || list[idx].gstNumber,
+      panNumber: req.body.panNumber || list[idx].panNumber,
+      msmeNumber: req.body.msmeNumber || list[idx].msmeNumber,
+      status: "Verified"
+    };
+    await writeJsonFile(VENDOR_PORTAL_KYC_PATH, list);
+    await addVendorAuditTrail("KYC Update", "VND-001", "Vendor User");
+    await addVendorNotification("KYC registration numbers updated and verified.");
+    res.json(list[idx]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 5. GET /api/vendor-portal/documents
+app.get('/api/vendor-portal/documents', async (req, res) => {
+  try {
+    await updateVendorDashboardMetrics();
+    const list = await readJsonFile(VENDOR_PORTAL_DOCUMENTS_PATH);
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/vendor-portal/documents/upload', vendorUpload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+    const { documentType, documentName, expiryDate, documentId } = req.body;
+    const cleanPath = '/uploads/vendor/' + req.file.filename;
+
+    const fileId = `FILE-${Math.floor(1000 + Math.random() * 9000)}`;
+    const fileMeta = {
+      fileId,
+      vendorId: "VND-001",
+      fileName: req.file.originalname,
+      fileType: req.file.mimetype,
+      filePath: cleanPath,
+      uploadDate: new Date().toISOString().split('T')[0]
+    };
+    await appendJsonData(VENDOR_PORTAL_FILES_PATH, fileMeta);
+
+    const documents = await readJsonFile(VENDOR_PORTAL_DOCUMENTS_PATH);
+    
+    let docEntry;
+    if (documentId) {
+      const idx = documents.findIndex(d => d.documentId === documentId);
+      if (idx !== -1) {
+        documents[idx] = {
+          ...documents[idx],
+          documentName: documentName || req.file.originalname,
+          uploadDate: new Date().toISOString().split('T')[0],
+          expiryDate: expiryDate && expiryDate !== 'null' && expiryDate !== 'undefined' ? expiryDate : null,
+          status: "Verified",
+          fileId
+        };
+        docEntry = documents[idx];
+      }
+    }
+
+    if (!docEntry) {
+      const newDocId = `DOC-${Math.floor(100 + Math.random() * 900)}`;
+      docEntry = {
+        documentId: newDocId,
+        vendorId: "VND-001",
+        documentName: documentName || req.file.originalname,
+        documentType: documentType || "Compliance",
+        uploadDate: new Date().toISOString().split('T')[0],
+        expiryDate: expiryDate && expiryDate !== 'null' && expiryDate !== 'undefined' ? expiryDate : null,
+        status: "Verified",
+        fileId
+      };
+      documents.push(docEntry);
+    }
+
+    await writeJsonFile(VENDOR_PORTAL_DOCUMENTS_PATH, documents);
+    await addVendorAuditTrail("Document Upload", docEntry.documentId, "Vendor User");
+    await addVendorNotification(`Document ${docEntry.documentName} uploaded successfully.`);
+    await updateVendorDashboardMetrics();
+
+    res.json({ success: true, document: docEntry });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 6. GET /api/vendor-portal/pos
+app.get('/api/vendor-portal/pos', async (req, res) => {
+  try {
+    const list = await readJsonFile(VENDOR_PORTAL_POS_PATH);
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/vendor-portal/pos/:poId/acknowledge', async (req, res) => {
+  try {
+    const { poId } = req.params;
+    const list = await readJsonFile(VENDOR_PORTAL_POS_PATH);
+    const idx = list.findIndex(po => po.poId === poId);
+    if (idx === -1) {
+      return res.status(404).json({ message: 'PO not found' });
+    }
+    list[idx].status = 'Acknowledged';
+    await writeJsonFile(VENDOR_PORTAL_POS_PATH, list);
+
+    await addVendorAuditTrail("PO Acknowledgement", poId, "Vendor User");
+    await addVendorNotification(`Purchase Order ${poId} acknowledged successfully.`);
+    await updateVendorDashboardMetrics();
+
+    res.json({ success: true, po: list[idx] });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 7. GET /api/vendor-portal/invoices
+app.get('/api/vendor-portal/invoices', async (req, res) => {
+  try {
+    const list = await readJsonFile(VENDOR_PORTAL_INVOICES_PATH);
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/vendor-portal/invoices', async (req, res) => {
+  try {
+    const { invoiceNo, poId, amount } = req.body;
+    
+    const pos = await readJsonFile(VENDOR_PORTAL_POS_PATH);
+    const poIdx = pos.findIndex(p => p.poId === poId);
+    if (poIdx !== -1) {
+      pos[poIdx].status = 'Invoiced';
+      await writeJsonFile(VENDOR_PORTAL_POS_PATH, pos);
+    }
+
+    const newInvoice = {
+      invoiceId: `INV-${invoiceNo}`,
+      vendorId: "VND-001",
+      poId: poId,
+      amount: parseFloat(amount),
+      submitDate: new Date().toISOString().split('T')[0],
+      verificationStage: "Paid",
+      paymentStatus: "Paid"
+    };
+
+    await appendJsonData(VENDOR_PORTAL_INVOICES_PATH, newInvoice);
+
+    const payment = {
+      paymentId: `PAY-${Math.floor(100 + Math.random() * 900)}`,
+      invoiceId: newInvoice.invoiceId,
+      amount: newInvoice.amount,
+      paymentDate: new Date().toISOString().split('T')[0],
+      status: "Paid"
+    };
+    await appendJsonData(VENDOR_PORTAL_PAYMENTS_PATH, payment);
+
+    await addVendorAuditTrail("Invoice Submission", newInvoice.invoiceId, "Vendor User");
+    await addVendorNotification(`Invoice ${newInvoice.invoiceId} successfully matched and Paid.`);
+    await updateVendorDashboardMetrics();
+
+    res.json({ success: true, invoice: newInvoice });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/vendor-portal/payments', async (req, res) => {
+  try {
+    const list = await readJsonFile(VENDOR_PORTAL_PAYMENTS_PATH);
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 8. GET /api/vendor-portal/contracts
+app.get('/api/vendor-portal/contracts', async (req, res) => {
+  try {
+    const contracts = await readJsonFile(CONTRACTS_PATH);
+    const filtered = contracts.filter(c => 
+      c.vendor?.vendorId === 'VND-001' || 
+      c.vendor?.vendorId === 'VND-2025-00029' ||
+      (c.vendorName || '').toLowerCase().includes('acme') ||
+      (c.vendor?.vendorName || '').toLowerCase().includes('acme') ||
+      (c.vendorName || '').toLowerCase().includes('global') ||
+      (c.vendor?.vendorName || '').toLowerCase().includes('global')
+    );
+    res.json(filtered);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 9. GET /api/vendor-portal/tickets
+app.get('/api/vendor-portal/tickets', async (req, res) => {
+  try {
+    const list = await readJsonFile(VENDOR_PORTAL_TICKETS_PATH);
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/vendor-portal/tickets', async (req, res) => {
+  try {
+    const { category, subject, description } = req.body;
+    const ticketId = `TKT-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const newTicket = {
+      ticketId,
+      vendorId: "VND-001",
+      category,
+      subject,
+      description,
+      status: "Open",
+      createdDate: new Date().toISOString().split('T')[0]
+    };
+
+    await appendJsonData(VENDOR_PORTAL_TICKETS_PATH, newTicket);
+    await addVendorAuditTrail("Ticket Creation", ticketId, "Vendor User");
+    await addVendorNotification(`Support ticket ${ticketId} raised successfully.`);
+    await updateVendorDashboardMetrics();
+
+    res.json({ success: true, ticket: newTicket });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // ==========================================
 // PURCHASE ORDERS MODULE APIs
@@ -3383,6 +4327,88 @@ app.post('/api/auth/verify-otp', async (req, res) => {
     await writeJsonFile(AUTH_OTP_STORE_PATH, otps);
 
     // Create session in sessions.json
+    const token = `JWT-DEMO-${Math.floor(100000 + Math.random() * 900000)}`;
+    const sessionId = `SESSION-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const newSession = {
+      sessionId,
+      userId: user.userId,
+      username: user.username,
+      role: user.role,
+      loginTime: timeStr,
+      twoFactorVerified: true,
+      status: "ACTIVE",
+      token,
+      lastActivity: Date.now()
+    };
+    await appendJsonData(AUTH_SESSIONS_PATH, newSession);
+
+    // Create Success Audit Log
+    const successAudit = {
+      auditId: `AUDIT-${Math.floor(1000 + Math.random() * 9000)}`,
+      username: user.username,
+      loginTime: timeStr,
+      twoFactorCompleted: true,
+      loginStatus: "SUCCESS",
+      ipAddress,
+      browser
+    };
+    await appendJsonData(AUTH_AUDIT_PATH, successAudit);
+
+    // Update user lastLogin
+    user.lastLogin = timeStr;
+    await writeJsonFile(AUTH_USERS_PATH, users);
+
+    res.json({
+      success: true,
+      authenticated: true,
+      redirect: user.dashboardRoute || "/dashboard",
+      token,
+      role: user.role,
+      user: {
+        userId: user.userId,
+        username: user.username,
+        fullName: user.fullName,
+        role: user.role,
+        profileImage: user.profileImage,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /api/auth/demo-users
+app.get('/api/auth/demo-users', async (req, res) => {
+  try {
+    const demoUsersPath = path.join(AUTH_DIR, 'demoUsers.json');
+    const demoUsers = await readJsonFile(demoUsersPath);
+    res.json(demoUsers);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/auth/demo-login
+app.post('/api/auth/demo-login', async (req, res) => {
+  try {
+    const { username } = req.body;
+    const users = await readJsonFile(AUTH_USERS_PATH);
+    const user = users.find(u => u.username === username);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (user.status !== "Active") {
+      return res.status(403).json({ success: false, message: 'Your account is disabled' });
+    }
+
+    const ipAddress = getClientIp(req);
+    const browser = getBrowserInfo(req);
+    const timeStr = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
     const token = `JWT-DEMO-${Math.floor(100000 + Math.random() * 900000)}`;
     const sessionId = `SESSION-${Math.floor(1000 + Math.random() * 9000)}`;
 
@@ -6313,6 +7339,148 @@ app.post('/api/kyc/approvals/attach-file', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// ==========================================
+// SETTINGS MODULE APIS
+// ==========================================
+
+// Configure Multer for settings uploads (logo, files)
+const settingsStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, SETTINGS_UPLOADS_DIR);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, 'settings-' + uniqueSuffix + ext);
+  }
+});
+const settingsUpload = multer({ storage: settingsStorage, limits: { fileSize: 5 * 1024 * 1024 } });
+
+// GET /api/settings — fetch all settings
+app.get('/api/settings', async (req, res) => {
+  try {
+    const settings = await readJsonFile(SETTINGS_PATH);
+    res.json(settings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PUT /api/settings — update any settings section
+app.put('/api/settings', async (req, res) => {
+  try {
+    const existing = await readJsonFile(SETTINGS_PATH);
+    const updates = req.body;
+    // Deep merge: only update provided top-level keys
+    const merged = { ...existing };
+    for (const key of Object.keys(updates)) {
+      if (typeof updates[key] === 'object' && !Array.isArray(updates[key]) && updates[key] !== null) {
+        merged[key] = { ...(existing[key] || {}), ...updates[key] };
+      } else {
+        merged[key] = updates[key];
+      }
+    }
+    merged.organization = {
+      ...(merged.organization || {}),
+      lastUpdated: new Date().toISOString(),
+      updatedBy: req.body.updatedBy || 'Admin'
+    };
+    await writeJsonFile(SETTINGS_PATH, merged);
+    // Add audit log entry
+    const newLog = {
+      id: `AUD-SET-${Date.now()}`,
+      action: `Settings updated — section: ${Object.keys(updates).join(', ')}`,
+      performedBy: req.body.updatedBy || 'Admin',
+      role: 'Super Admin',
+      timestamp: new Date().toISOString(),
+      severity: 'Medium',
+      status: 'Success'
+    };
+    merged.auditLogs = [newLog, ...(merged.auditLogs || [])];
+    await writeJsonFile(SETTINGS_PATH, merged);
+    res.json({ success: true, settings: merged });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/settings/users — add a new user
+app.post('/api/settings/users', async (req, res) => {
+  try {
+    const settings = await readJsonFile(SETTINGS_PATH);
+    const users = settings.users || [];
+    const newUser = {
+      userId: `USR-${String(users.length + 1).padStart(3, '0')}`,
+      ...req.body,
+      status: 'Active',
+      createdAt: new Date().toISOString()
+    };
+    users.push(newUser);
+    settings.users = users;
+    await writeJsonFile(SETTINGS_PATH, settings);
+    res.status(201).json({ success: true, user: newUser });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// PUT /api/settings/users/:userId — update a user
+app.put('/api/settings/users/:userId', async (req, res) => {
+  try {
+    const settings = await readJsonFile(SETTINGS_PATH);
+    const users = settings.users || [];
+    const idx = users.findIndex(u => u.userId === req.params.userId);
+    if (idx === -1) return res.status(404).json({ message: 'User not found' });
+    users[idx] = { ...users[idx], ...req.body };
+    settings.users = users;
+    await writeJsonFile(SETTINGS_PATH, settings);
+    res.json({ success: true, user: users[idx] });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE /api/settings/users/:userId — delete a user
+app.delete('/api/settings/users/:userId', async (req, res) => {
+  try {
+    const settings = await readJsonFile(SETTINGS_PATH);
+    const users = settings.users || [];
+    const idx = users.findIndex(u => u.userId === req.params.userId);
+    if (idx === -1) return res.status(404).json({ message: 'User not found' });
+    const [removed] = users.splice(idx, 1);
+    settings.users = users;
+    await writeJsonFile(SETTINGS_PATH, settings);
+    res.json({ success: true, removed });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/settings/upload — upload logo or file for settings
+app.post('/api/settings/upload', settingsUpload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ success: false, message: 'No file uploaded' });
+    const fileUrl = `/uploads/settings/${req.file.filename}`;
+    const fieldName = req.body.field || 'logoUrl';
+
+    // Save the file URL into organization section of settings.json
+    const settings = await readJsonFile(SETTINGS_PATH);
+    settings.organization = {
+      ...(settings.organization || {}),
+      [fieldName]: fileUrl,
+      lastUpdated: new Date().toISOString()
+    };
+    await writeJsonFile(SETTINGS_PATH, settings);
+
+    res.json({ success: true, fileUrl, filename: req.file.filename });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Static serving for settings uploads
+app.use('/uploads/settings', express.static(SETTINGS_UPLOADS_DIR));
 
 // Global error handler for uncaught multer/routing errors
 app.use((err, req, res, next) => {

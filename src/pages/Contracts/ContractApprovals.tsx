@@ -124,8 +124,8 @@ export const ContractApprovals: React.FC = () => {
   const getWorkflowStepLabel = (step?: number) => {
     if (!step) return 'Step 1 of 4 (Procurement Review)';
     if (step === 1) return 'Step 1 of 4 (Procurement Review)';
-    if (step === 2) return 'Step 2 of 4 (Legal Review)';
-    if (step === 3) return 'Step 3 of 4 (Finance Review)';
+    if (step === 2) return 'Step 2 of 4 (Compliance Review)';
+    if (step === 3) return 'Step 3 of 4 (Legal Review)';
     if (step === 4) return 'Step 4 of 4 (Final Approval)';
     return 'Approved';
   };
@@ -276,7 +276,7 @@ export const ContractApprovals: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <button className={styles.viewFullLink} onClick={() => navigate(`/contracts/repository`)}>
+                <button className={styles.viewFullLink} onClick={() => navigate(`/contracts/dashboard`)}>
                   Go to Contract Repository &rarr;
                 </button>
               )}

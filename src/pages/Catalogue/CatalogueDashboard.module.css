@@ -20,12 +20,20 @@
   flex-direction: column;
   justify-content: space-between;
   min-height: 140px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, background-color 0.2s;
+  cursor: pointer;
 }
 
 .kpiCard:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+}
+
+.kpiCardActive {
+  border-color: var(--color-primary) !important;
+  background-color: #f0f5ff !important;
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.15), var(--shadow-md) !important;
+  transform: translateY(-2px);
 }
 
 .kpiHeader {

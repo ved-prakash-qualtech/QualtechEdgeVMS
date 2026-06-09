@@ -5,9 +5,9 @@
     "vendorName": "ABC Infotech Pvt Ltd",
     "department": "IT Services",
     "estimatedValue": 1250000,
-    "currentStage": "Procurement Head Approval",
-    "assignedTo": "Saurabh Anand",
-    "status": "Pending",
+    "currentStage": "Approved",
+    "assignedTo": "",
+    "status": "Approved",
     "remarks": "",
     "submittedBy": "Saurabh Anand",
     "submittedOn": "2026-05-12 10:45 AM",
@@ -27,6 +27,12 @@
         "by": "Saurabh Anand",
         "dateTime": "25/5/2026, 4:46:50 pm",
         "remarks": ""
+      },
+      {
+        "action": "Procurement Head Approval Approved",
+        "by": "Saurabh Anand",
+        "dateTime": "8/6/2026, 5:09:29 pm",
+        "remarks": ""
       }
     ]
   },
@@ -36,9 +42,9 @@
     "vendorName": "Secure Facilities Ltd",
     "department": "Facilities",
     "estimatedValue": 450000,
-    "currentStage": "Department Head",
-    "assignedTo": "Priya Sharma",
-    "status": "Pending",
+    "currentStage": "Approved",
+    "assignedTo": "",
+    "status": "Approved",
     "remarks": "",
     "submittedBy": "Priya Sharma",
     "submittedOn": "2026-05-11 02:30 PM",
@@ -47,6 +53,12 @@
         "action": "Submitted",
         "by": "Priya Sharma",
         "dateTime": "2026-05-11 02:30 PM"
+      },
+      {
+        "action": "Department Head Approved",
+        "by": "Saurabh Anand",
+        "dateTime": "8/6/2026, 5:09:33 pm",
+        "remarks": ""
       }
     ]
   },
@@ -167,6 +179,46 @@
         "by": "Saurabh Anand",
         "dateTime": "25/5/2026, 5:46:02 pm",
         "remarks": ""
+      }
+    ]
+  },
+  {
+    "approvalId": "APP-PO-8948",
+    "requisitionId": "REQ-2026-00089",
+    "vendorName": "ABC Infotech Pvt Ltd",
+    "department": "IT Services",
+    "estimatedValue": 1250000,
+    "currentStage": "Department Head Approval",
+    "assignedTo": "Priya Sharma",
+    "status": "Pending",
+    "remarks": "",
+    "submittedBy": "Saurabh Anand",
+    "submittedOn": "3/6/2026, 12:35:41 pm",
+    "history": [
+      {
+        "action": "Submitted",
+        "by": "Saurabh Anand",
+        "dateTime": "3/6/2026, 12:35:41 pm"
+      }
+    ]
+  },
+  {
+    "approvalId": "APP-PO-1466",
+    "requisitionId": "REQ-2026-00090",
+    "vendorName": "ABC Infotech Pvt Ltd",
+    "department": "Facilities",
+    "estimatedValue": 1250000,
+    "currentStage": "Department Head Approval",
+    "assignedTo": "Priya Sharma",
+    "status": "Pending",
+    "remarks": "",
+    "submittedBy": "Saurabh Anand",
+    "submittedOn": "3/6/2026, 12:35:57 pm",
+    "history": [
+      {
+        "action": "Submitted",
+        "by": "Saurabh Anand",
+        "dateTime": "3/6/2026, 12:35:57 pm"
       }
     ]
   }

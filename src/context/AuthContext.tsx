@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   loginUser, 
+  demoLoginUser,
   sendOtp,
   verifyOtp,
   logoutUser, 
@@ -18,6 +19,7 @@ interface AuthContextType {
   token: string | null;
   loading: boolean;
   login: (username: string, password: string) => Promise<{ success: boolean; requires2FA?: boolean; message?: string }>;
+  demoLogin: (username: string) => Promise<{ success: boolean; redirect?: string; message?: string }>;
   verify2fa: (username: string, otp: string) => Promise<{ success: boolean; redirect?: string; message?: string }>;
   triggerSendOtp: (username: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
@@ -86,6 +88,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const demoLogin = async (username: string) => {
+    try {
+      const data = await demoLoginUser(username);
+      if (data.success && data.authenticated) {
+        setUser(data.user);
+        setToken(data.token);
+        setLocalSession(data.user, data.token, data.role);
+        return { success: true, redirect: data.redirect };
+      }
+      return { success: false, message: 'Demo login failed' };
+    } catch (error: any) {
+      const errMsg = error.response?.data?.message || 'Demo login failed';
+      return { success: false, message: errMsg };
+    }
+  };
+
   const triggerSendOtp = async (username: string) => {
     try {
       const data = await sendOtp(username);
@@ -129,7 +147,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return false;
     const role = user.role;
 
-    if (role === 'ADMIN') {
+    if (['ADMIN', 'PROCUREMENT', 'COMPLIANCE', 'FINANCE'].includes(role)) {
       return moduleName !== 'Vendor Portal';
     }
 
@@ -151,6 +169,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       token, 
       loading, 
       login, 
+      demoLogin,
       verify2fa, 
       triggerSendOtp, 
       logout, 

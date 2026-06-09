@@ -1,5 +1,37 @@
 [
   {
+    "poId": "PO-2026-000798",
+    "linkedRequisitionId": "REQ-2026-00081",
+    "vendorId": "VND-2024-00781",
+    "vendorName": "Secure Facilities Ltd",
+    "category": "Facilities",
+    "poValue": 450000,
+    "currency": "INR",
+    "createdDate": "08 Jun 2026",
+    "deliveryDate": "2026-06-18",
+    "deliveryStatus": "Pending",
+    "status": "Approved",
+    "paymentTerms": "Net 30",
+    "goodsReceiptStatus": "Pending",
+    "invoiceMatchStatus": "Pending"
+  },
+  {
+    "poId": "PO-2026-000797",
+    "linkedRequisitionId": "REQ-2026-00082",
+    "vendorId": "VND-2025-00029",
+    "vendorName": "ABC Infotech Pvt Ltd",
+    "category": "IT Services",
+    "poValue": 1250000,
+    "currency": "INR",
+    "createdDate": "08 Jun 2026",
+    "deliveryDate": "2026-06-18",
+    "deliveryStatus": "Partial",
+    "status": "Approved",
+    "paymentTerms": "Net 30",
+    "goodsReceiptStatus": "Partial",
+    "invoiceMatchStatus": "Pending"
+  },
+  {
     "poId": "PO-2026-000796",
     "linkedRequisitionId": "REQ-2026-00086",
     "vendorId": "VND-2025-00029",
@@ -25,10 +57,10 @@
     "currency": "INR",
     "createdDate": "12 May 2026",
     "deliveryDate": "2026-05-20",
-    "deliveryStatus": "Pending",
+    "deliveryStatus": "Received",
     "status": "Approved",
     "paymentTerms": "Net 30",
-    "goodsReceiptStatus": "Pending",
+    "goodsReceiptStatus": "Received",
     "invoiceMatchStatus": "Pending"
   },
   {
@@ -41,10 +73,10 @@
     "currency": "INR",
     "createdDate": "10 May 2026",
     "deliveryDate": "2026-05-18",
-    "deliveryStatus": "Partial",
+    "deliveryStatus": "Received",
     "status": "Sent",
     "paymentTerms": "Net 45",
-    "goodsReceiptStatus": "Partial",
+    "goodsReceiptStatus": "Received",
     "invoiceMatchStatus": "Matched"
   },
   {

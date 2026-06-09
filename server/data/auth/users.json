@@ -3,25 +3,25 @@
     "userId": "USR-1001",
     "username": "admin",
     "password": "admin123",
-    "fullName": "System Administrator",
+    "fullName": "Saurabh Anand",
     "email": "admin@qualtechedge.com",
     "role": "ADMIN",
     "status": "Active",
-    "dashboardRoute": "/dashboard",
+    "dashboardRoute": "/administrator/dashboard",
     "profileImage": "/assets/profile/admin.png",
     "twoFactorEnabled": true,
     "defaultOtp": "123456",
     "permissions": [
       "FULL_ENTERPRISE_ACCESS"
     ],
-    "lastLogin": "3/6/2026, 11:27:22 am"
+    "lastLogin": "9/6/2026, 4:42:33 pm"
   },
   {
     "userId": "USR-1002",
     "username": "vendor",
-    "password": "admin123",
-    "fullName": "Vendor User",
-    "email": "vendor@company.com",
+    "password": "vendor123",
+    "fullName": "Acme Vendor",
+    "email": "vendor@qualtechedge.com",
     "role": "VENDOR",
     "status": "Active",
     "dashboardRoute": "/vendor/dashboard",
@@ -31,6 +31,56 @@
     "permissions": [
       "VENDOR_PORTAL_ACCESS"
     ],
-    "lastLogin": "2/6/2026, 12:05:55 pm"
+    "lastLogin": "9/6/2026, 4:29:26 pm"
+  },
+  {
+    "userId": "USR-1003",
+    "username": "procurement",
+    "password": "procurement123",
+    "fullName": "Priya Sharma",
+    "email": "procurement@qualtechedge.com",
+    "role": "PROCUREMENT",
+    "status": "Active",
+    "dashboardRoute": "/procurement/dashboard",
+    "profileImage": "/assets/profile/procurement.png",
+    "twoFactorEnabled": true,
+    "defaultOtp": "123456",
+    "permissions": [
+      "PROCUREMENT_ACCESS"
+    ],
+    "lastLogin": "8/6/2026, 9:03:43 am"
+  },
+  {
+    "userId": "USR-1004",
+    "username": "compliance",
+    "password": "compliance123",
+    "fullName": "Rahul Verma",
+    "email": "compliance@qualtechedge.com",
+    "role": "COMPLIANCE",
+    "status": "Active",
+    "dashboardRoute": "/compliance/dashboard",
+    "profileImage": "/assets/profile/compliance.png",
+    "twoFactorEnabled": true,
+    "defaultOtp": "123456",
+    "permissions": [
+      "COMPLIANCE_ACCESS"
+    ]
+  },
+  {
+    "userId": "USR-1005",
+    "username": "finance",
+    "password": "finance123",
+    "fullName": "Amit Gupta",
+    "email": "finance@qualtechedge.com",
+    "role": "FINANCE",
+    "status": "Active",
+    "dashboardRoute": "/finance/dashboard",
+    "profileImage": "/assets/profile/finance.png",
+    "twoFactorEnabled": true,
+    "defaultOtp": "123456",
+    "permissions": [
+      "FINANCE_ACCESS"
+    ],
+    "lastLogin": "8/6/2026, 9:04:10 am"
   }
 ]

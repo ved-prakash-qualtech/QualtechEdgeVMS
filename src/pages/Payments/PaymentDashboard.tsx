@@ -1,72 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   CreditCard, 
-  Clock, 
   CheckCircle2, 
   XCircle, 
-  AlertTriangle, 
+  AlertTriangle,
+  Users,
   ArrowRight, 
-  Calendar, 
-  ShieldAlert, 
-  Download, 
-  Percent, 
-  RefreshCcw,
-  Zap,
-  Building,
-  CheckSquare
+  Search,
+  Filter,
+  Download
 } from 'lucide-react';
-import { 
-  PieChart, 
-  Pie, 
-  Cell, 
-  ResponsiveContainer, 
-  Tooltip as RechartsTooltip, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  LineChart, 
-  Line 
-} from 'recharts';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
+import { Badge } from '../../components/Badge/Badge';
 import styles from './PaymentDashboard.module.css';
-
-// Mock Data
-const paymentStatusData = [
-  { name: 'Reconciled', value: 520, color: '#16a34a' },
-  { name: 'Approved', value: 140, color: '#3b82f6' },
-  { name: 'Processed', value: 290, color: '#1d4ed8' },
-  { name: 'Pending', value: 85, color: '#f59e0b' },
-  { name: 'Failed', value: 12, color: '#dc2626' },
-  { name: 'Reversed', value: 8, color: '#7c3aed' },
-];
-
-const monthlyPaymentTrend = [
-  { month: 'Dec', volume: 4.8 },
-  { month: 'Jan', volume: 5.6 },
-  { month: 'Feb', volume: 6.2 },
-  { month: 'Mar', volume: 8.5 },
-  { month: 'Apr', volume: 9.1 },
-  { month: 'May', volume: 11.4 },
-];
-
-const vendorPayouts = [
-  { name: 'ABC Infotech', payout: 75.2 },
-  { name: 'Secure Facilities', payout: 38.6 },
-  { name: 'Global Security', payout: 24.1 },
-  { name: 'Fincons Consulting', payout: 18.9 },
-  { name: 'Data Soft', payout: 14.2 },
-];
-
-const agingBuckets = [
-  { range: 'Due Today', amount: 1.5 },
-  { range: '1-7 Days', amount: 3.8 },
-  { range: '8-15 Days', amount: 2.1 },
-  { range: 'Overdue', amount: 0.6 },
-];
 
 const steps = [
   'Invoice Selection',
@@ -81,8 +29,41 @@ const steps = [
   'Closure & Analytics'
 ];
 
+// Mock Payment Data
+const mockPayments = [
+  { id: 'PAY-2026-0087', vendor: 'ABC Infotech Pvt Ltd',   invoice: 'INV-2026-9908', amount: 1475000, mode: 'RTGS', status: 'Completed',  utr: 'HDFCR520260512001', sched: '12 May 2026', processed: '12 May 2026', type: 'MSME' },
+  { id: 'PAY-2026-0088', vendor: 'Secure Facilities Ltd',  invoice: 'INV-2026-9907', amount:  531000, mode: 'RTGS', status: 'Completed',  utr: 'HDFCR520260512002', sched: '12 May 2026', processed: '12 May 2026', type: 'Non-MSME' },
+  { id: 'PAY-2026-0089', vendor: 'Fincons Consulting',     invoice: 'INV-2026-9906', amount:  189000, mode: 'NEFT', status: 'Processing', utr: 'Awaiting Bank...',  sched: '19 May 2026', processed: 'Pending',      type: 'Non-MSME' },
+  { id: 'PAY-2026-0090', vendor: 'Global Security Ltd',    invoice: 'INV-2026-9905', amount:  241000, mode: 'IMPS', status: 'Failed',     utr: 'REJECT-B2-09',     sched: '18 May 2026', processed: 'Failed',       type: 'Non-MSME' },
+];
+
+type TabKey = 'All' | 'Completed' | 'Processing' | 'Failed' | 'MSME';
+
 export const PaymentDashboard: React.FC = () => {
   const navigate = useNavigate();
+
+  // Payment list filter states
+  const [activeTab, setActiveTab] = useState<TabKey>('All');
+  const [search, setSearch] = useState('');
+
+  // Dynamic tab counts
+  const tabCounts: Record<TabKey, number> = {
+    All:        mockPayments.length,
+    Completed:  mockPayments.filter(p => p.status === 'Completed').length,
+    Processing: mockPayments.filter(p => p.status === 'Processing').length,
+    Failed:     mockPayments.filter(p => p.status === 'Failed').length,
+    MSME:       mockPayments.filter(p => p.type === 'MSME').length,
+  };
+
+  const filteredPayments = mockPayments.filter(p => {
+    if (activeTab === 'Completed'  && p.status !== 'Completed')  return false;
+    if (activeTab === 'Processing' && p.status !== 'Processing') return false;
+    if (activeTab === 'Failed'     && p.status !== 'Failed')     return false;
+    if (activeTab === 'MSME'       && p.type   !== 'MSME')       return false;
+    const q = search.toLowerCase();
+    if (q) return p.vendor.toLowerCase().includes(q) || p.id.toLowerCase().includes(q) || p.invoice.toLowerCase().includes(q);
+    return true;
+  });
 
   return (
     <div className={styles.container}>
@@ -99,7 +80,175 @@ export const PaymentDashboard: React.FC = () => {
         </div>
       </header>
 
-      {/* 10-Step horizontal stepper */}
+      {/* KPI Cards — aligned 1-to-1 with Payment List tabs */}
+      <div className={styles.kpiGrid}>
+        <Card
+          className={`${styles.kpiCard} ${activeTab === 'All' ? styles.kpiCardActive : ''}`}
+          onClick={() => setActiveTab('All')}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Total Payments</span>
+            <div className={styles.kpiIcon} style={{ backgroundColor: '#eff6ff', color: '#1d4ed8' }}><CreditCard size={18} /></div>
+          </div>
+          <div className={styles.kpiValue}>{tabCounts.All.toLocaleString()}</div>
+          <div className={styles.kpiFooterGreen}>↑ 12.4% vs last month</div>
+        </Card>
+
+        <Card
+          className={`${styles.kpiCard} ${activeTab === 'Completed' ? styles.kpiCardActive : ''}`}
+          onClick={() => setActiveTab('Completed')}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Completed</span>
+            <div className={styles.kpiIcon} style={{ backgroundColor: '#dcfce7', color: '#16a34a' }}><CheckCircle2 size={18} /></div>
+          </div>
+          <div className={styles.kpiValue}>{tabCounts.Completed.toLocaleString()}</div>
+          <div className={styles.kpiFooterGreen}>Successfully settled</div>
+        </Card>
+
+        <Card
+          className={`${styles.kpiCard} ${activeTab === 'Processing' ? styles.kpiCardActive : ''}`}
+          onClick={() => setActiveTab('Processing')}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Processing</span>
+            <div className={styles.kpiIcon} style={{ backgroundColor: '#fffbeb', color: '#f59e0b' }}><AlertTriangle size={18} /></div>
+          </div>
+          <div className={styles.kpiValue}>{tabCounts.Processing.toLocaleString()}</div>
+          <div className={styles.kpiFooter}>Awaiting bank confirmation</div>
+        </Card>
+
+        <Card
+          className={`${styles.kpiCard} ${activeTab === 'Failed' ? styles.kpiCardActive : ''}`}
+          onClick={() => setActiveTab('Failed')}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Failed</span>
+            <div className={styles.kpiIcon} style={{ backgroundColor: '#fee2e2', color: '#dc2626' }}><XCircle size={18} /></div>
+          </div>
+          <div className={styles.kpiValue}>{tabCounts.Failed.toLocaleString()}</div>
+          <div className={styles.kpiFooterRed}>Beneficiary account issues</div>
+        </Card>
+
+        <Card
+          className={`${styles.kpiCard} ${activeTab === 'MSME' ? styles.kpiCardActive : ''}`}
+          onClick={() => setActiveTab('MSME')}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>MSME Payments</span>
+            <div className={styles.kpiIcon} style={{ backgroundColor: '#f3e8ff', color: '#7c3aed' }}><Users size={18} /></div>
+          </div>
+          <div className={styles.kpiValue}>{tabCounts.MSME.toLocaleString()}</div>
+          <div className={styles.kpiFooter}>Statutory 45-day tracking</div>
+        </Card>
+      </div>
+
+      {/* Payment List Card */}
+      <Card className={styles.tableCard}>
+        {/* Tabs */}
+        <div className={styles.tabs}>
+          {(['All', 'Completed', 'Processing', 'Failed', 'MSME'] as TabKey[]).map(tab => (
+            <div
+              key={tab}
+              className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ''}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab === 'All' ? 'All Payments' : `${tab}`} ({tabCounts[tab]})
+            </div>
+          ))}
+        </div>
+
+        {/* Toolbar */}
+        <div className={styles.tableToolbar}>
+          <div className={styles.searchWrap}>
+            <Search size={16} className={styles.searchIcon} />
+            <input
+              type="text"
+              placeholder="Search vendor name, payment ID or invoice ref..."
+              className={styles.searchInput}
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
+          <div className={styles.toolbarActions}>
+            <Button variant="ghost" icon={<Filter size={16} />}>Advanced Filters</Button>
+            <Button variant="outline" icon={<Download size={16} />}>Export</Button>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Payment ID</th>
+                <th>Vendor Name</th>
+                <th>Invoice Ref</th>
+                <th>Amount</th>
+                <th>Mode</th>
+                <th>UTR Reference</th>
+                <th>Scheduled Date</th>
+                <th>Processed Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredPayments.map(p => (
+                <tr key={p.id}>
+                  <td className={styles.paymentId}>{p.id}</td>
+                  <td>
+                    <div className={styles.vendorNameCell}>
+                      <span className={styles.vendorName}>{p.vendor}</span>
+                      {p.type === 'MSME' && <span className={styles.msmeTag}>MSME</span>}
+                    </div>
+                  </td>
+                  <td>{p.invoice}</td>
+                  <td className={styles.amountCell}>₹{p.amount.toLocaleString('en-IN')}</td>
+                  <td>{p.mode}</td>
+                  <td className={styles.utrCell}>{p.utr}</td>
+                  <td>{p.sched}</td>
+                  <td>{p.processed}</td>
+                  <td>
+                    <Badge
+                      variant={
+                        p.status === 'Completed' ? 'success' :
+                        p.status === 'Processing' ? 'warning' : 'danger'
+                      }
+                    >
+                      {p.status}
+                    </Badge>
+                  </td>
+                  <td>
+                    <div className={styles.actionsCell}>
+                      {p.status === 'Completed'  && <button className={styles.actionBtn}><Download size={14} /> Advice</button>}
+                      {p.status === 'Failed'     && <button className={styles.actionBtn} style={{ color: '#dc2626' }}>Retry Payout</button>}
+                      {p.status === 'Processing' && <button className={styles.actionBtn}>Track Node</button>}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {filteredPayments.length === 0 && (
+                <tr>
+                  <td colSpan={10} style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '32px' }}>
+                    No payments match the selected filter.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination Footer */}
+        <div className={styles.pagination}>
+          <span className={styles.pageInfo}>Showing 1 to {filteredPayments.length} of {filteredPayments.length} entries</span>
+          <div className={styles.pageControls}>
+            <button className={styles.pageBtnActive}>1</button>
+            <button className={styles.pageBtnNext}>&gt;</button>
+          </div>
+        </div>
+      </Card>
+      {/* Payments Lifecycle Stepper */}
       <Card className={styles.stepperCard}>
         <h3 className={styles.sectionTitle}>Payments Lifecycle</h3>
         <div className={styles.stepperScroll}>
@@ -120,210 +269,6 @@ export const PaymentDashboard: React.FC = () => {
           </div>
         </div>
       </Card>
-
-      {/* KPI Cards */}
-      <div className={styles.kpiGrid}>
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Total Payments</span>
-            <div className={styles.kpiIcon} style={{ backgroundColor: '#eff6ff', color: '#1d4ed8' }}><CreditCard size={18} /></div>
-          </div>
-          <div className={styles.kpiValue}>1,055</div>
-          <div className={styles.kpiFooterGreen}>↑ 12.4% vs last month</div>
-        </Card>
-
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Pending Payouts</span>
-            <div className={styles.kpiIcon} style={{ backgroundColor: '#fffbeb', color: '#f59e0b' }}><Clock size={18} /></div>
-          </div>
-          <div className={styles.kpiValue}>85</div>
-          <div className={styles.kpiFooter}>Requires Authorization</div>
-        </Card>
-
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Completed Payments</span>
-            <div className={styles.kpiIcon} style={{ backgroundColor: '#dcfce7', color: '#16a34a' }}><CheckCircle2 size={18} /></div>
-          </div>
-          <div className={styles.kpiValue}>810</div>
-          <div className={styles.kpiFooterGreen}>Successfully Settled</div>
-        </Card>
-
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Failed Payments</span>
-            <div className={styles.kpiIcon} style={{ backgroundColor: '#fee2e2', color: '#dc2626' }}><XCircle size={18} /></div>
-          </div>
-          <div className={styles.kpiValue}>12</div>
-          <div className={styles.kpiFooterRed}>Beneficiary account issues</div>
-        </Card>
-
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>MSME Due</span>
-            <div className={styles.kpiIcon} style={{ backgroundColor: '#fee2e2', color: '#dc2626' }}><ShieldAlert size={18} /></div>
-          </div>
-          <div className={styles.kpiValue}>6</div>
-          <div className={styles.kpiFooterRed}>Nearing 45-day threshold</div>
-        </Card>
-
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>TDS Deducted</span>
-            <div className={styles.kpiIcon} style={{ backgroundColor: '#f5f3ff', color: '#7c3aed' }}><Percent size={18} /></div>
-          </div>
-          <div className={styles.kpiValue}>₹14.2 L</div>
-          <div className={styles.kpiFooter}>Pending return filing</div>
-        </Card>
-      </div>
-
-      <div className={styles.chartGrid}>
-        {/* Payment Status Donut */}
-        <Card className={styles.chartCard}>
-          <h3 className={styles.sectionTitle}>Payment Status Distribution</h3>
-          <div className={styles.pieWrapper}>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={paymentStatusData}
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={2}
-                  dataKey="value"
-                >
-                  {paymentStatusData.map((entry, idx) => (
-                    <Cell key={`cell-${idx}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <RechartsTooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className={styles.pieCenter}>
-              <span>1,055</span>
-              <p>Total Payouts</p>
-            </div>
-          </div>
-          <div className={styles.legendGrid}>
-            {paymentStatusData.map(item => (
-              <div key={item.name} className={styles.legendItem}>
-                <span className={styles.legendColor} style={{ backgroundColor: item.color }}></span>
-                <span className={styles.legendName}>{item.name}</span>
-                <span className={styles.legendVal}>{item.value}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Monthly Payment Trend */}
-        <Card className={styles.chartCard}>
-          <h3 className={styles.sectionTitle}>Monthly Payment Trend (₹ Cr)</h3>
-          <div style={{ height: '240px', marginTop: '20px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={monthlyPaymentTrend} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                <RechartsTooltip />
-                <Line type="monotone" dataKey="volume" stroke="#1d4ed8" strokeWidth={3} dot={{ r: 4, fill: '#1d4ed8' }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Top Vendors Payout */}
-        <Card className={styles.chartCard}>
-          <h3 className={styles.sectionTitle}>Top Vendors by Payout (₹ L)</h3>
-          <div style={{ height: '240px', marginTop: '20px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={vendorPayouts} layout="vertical" margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
-                <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                <RechartsTooltip />
-                <Bar dataKey="payout" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={16} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        {/* Payment Aging */}
-        <Card className={styles.chartCard}>
-          <h3 className={styles.sectionTitle}>Payment Payout Aging (₹ Cr)</h3>
-          <div style={{ height: '240px', marginTop: '20px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={agingBuckets} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="range" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
-                <RechartsTooltip />
-                <Bar dataKey="amount" fill="#7c3aed" radius={[4, 4, 0, 0]} barSize={24} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      <div className={styles.bottomGrid}>
-        {/* Quick Actions */}
-        <Card className={styles.quickCard}>
-          <h3 className={styles.sectionTitle}>Quick Actions</h3>
-          <div className={styles.actionRow}>
-            <button className={styles.actionBtn} onClick={() => navigate('/payments/processing')}>
-              <div className={styles.iconBox}><CreditCard size={18} /></div>
-              <span>Release Payments</span>
-            </button>
-            <button className={styles.actionBtn}>
-              <div className={styles.iconBox}><Calendar size={18} /></div>
-              <span>Schedule Payments</span>
-            </button>
-            <button className={styles.actionBtn} onClick={() => navigate('/payments/approvals')}>
-              <div className={styles.iconBox}><CheckSquare size={18} /></div>
-              <span>Approve Payouts</span>
-            </button>
-            <button className={styles.actionBtn} onClick={() => navigate('/payments/list')}>
-              <div className={styles.iconBox}><Building size={18} /></div>
-              <span>Bank Reconciliation</span>
-            </button>
-            <button className={styles.actionBtn}>
-              <div className={styles.iconBox}><RefreshCcw size={18} /></div>
-              <span>Retry Failures</span>
-            </button>
-            <button className={styles.actionBtn}>
-              <div className={styles.iconBox}><Download size={18} /></div>
-              <span>Export Treasury Log</span>
-            </button>
-          </div>
-        </Card>
-
-        {/* AI Treasury Insights */}
-        <Card className={styles.aiCard}>
-          <h3 className={styles.sectionTitle}>AI Treasury Insights</h3>
-          <div className={styles.aiList}>
-            <div className={styles.aiItem}>
-              <ShieldAlert size={16} className={styles.aiIconRed} />
-              <div>
-                <p className={styles.aiText}><strong>MSME Payment compliance warning</strong>: 2 payments to MSME vendors are within 4 days of the 45-day statutory limit.</p>
-                <button className={styles.aiLink}>Expedite Payments</button>
-              </div>
-            </div>
-            <div className={styles.aiItem}>
-              <AlertTriangle size={16} className={styles.aiIconOrange} />
-              <div>
-                <p className={styles.aiText}><strong>Transaction failure risk</strong>: Bank verification returned invalid IFSC format for Fincons Consulting ledger details.</p>
-                <button className={styles.aiLink}>Update Bank Credentials</button>
-              </div>
-            </div>
-            <div className={styles.aiItem}>
-              <Zap size={16} className={styles.aiIconBlue} />
-              <div>
-                <p className={styles.aiText}><strong>Cash discount incentive</strong>: Pay Secure Facilities Ltd by tomorrow to secure a 1.5% prompt settlement rebate (₹7,965).</p>
-                <button className={styles.aiLink}>Release Early Payment</button>
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
     </div>
   );
 };

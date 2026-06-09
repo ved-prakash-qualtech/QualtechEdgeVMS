@@ -17,8 +17,7 @@ const STEPS: Step[] = [
   { number: 5, label: 'Quality Standards', path: '/catalogue/quality' },
   { number: 6, label: 'Rate Configuration', path: '/catalogue/rates' },
   { number: 7, label: 'Approval Workflow', path: '/catalogue/approvals' },
-  { number: 8, label: 'Publish Catalogue', path: '/catalogue/publish' },
-  { number: 9, label: 'Analytics & Insights', path: '/catalogue/analytics' }
+  { number: 8, label: 'Publish Catalogue', path: '/catalogue/publish' }
 ];
 
 interface CatalogueHeaderProps {

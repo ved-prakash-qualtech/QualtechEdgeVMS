@@ -1,0 +1,50 @@
+[
+  {
+    "auditId": "AUD-5349",
+    "vendorId": "VND-001",
+    "action": "Profile Update",
+    "referenceId": "VND-001",
+    "performedBy": "Vendor User",
+    "timestamp": "2026-06-03T08:15:33.203Z"
+  },
+  {
+    "auditId": "AUD-5458",
+    "vendorId": "VND-001",
+    "action": "Profile Update",
+    "referenceId": "VND-001",
+    "performedBy": "Vendor User",
+    "timestamp": "2026-06-04T08:05:03.656Z"
+  },
+  {
+    "auditId": "AUD-2005",
+    "vendorId": "VND-001",
+    "action": "Ticket Creation",
+    "referenceId": "TKT-7526",
+    "performedBy": "Vendor User",
+    "timestamp": "2026-06-04T08:05:25.792Z"
+  },
+  {
+    "auditId": "AUD-1272",
+    "vendorId": "VND-001",
+    "action": "Ticket Creation",
+    "referenceId": "TKT-4913",
+    "performedBy": "Vendor User",
+    "timestamp": "2026-06-04T08:05:43.027Z"
+  },
+  {
+    "auditId": "AUD-9614",
+    "vendorId": "VND-001",
+    "action": "Ticket Creation",
+    "referenceId": "TKT-4859",
+    "performedBy": "Vendor User",
+    "timestamp": "2026-06-04T08:05:48.782Z"
+  },
+  {
+    "auditId": "AUD-8515",
+    "vendorId": "VND-001",
+    "action": "KYC Update",
+    "referenceId": "VND-001",
+    "performedBy": "Vendor User",
+    "timestamp": "2026-06-07T18:20:27.292Z"
+  }
+]
