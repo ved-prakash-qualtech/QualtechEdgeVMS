@@ -12,6 +12,7 @@ export interface VendorProfile {
   bankSecurityNode: boolean;
   onboardingDate: string;
   lastLogin: string;
+  onboardingComplete?: boolean;
 }
 
 export interface VendorKyc {
@@ -20,6 +21,12 @@ export interface VendorKyc {
   panNumber: string;
   msmeNumber: string;
   status: string;
+}
+
+export interface VendorDocumentVersion {
+  fileId: string;
+  uploadDate: string;
+  uploadedBy?: string;
 }
 
 export interface VendorDocument {
@@ -31,6 +38,7 @@ export interface VendorDocument {
   expiryDate: string | null;
   status: 'Verified' | 'Pending Verification' | 'Expired' | 'Rejected';
   fileId: string;
+  versions?: VendorDocumentVersion[];
 }
 
 export interface VendorPO {
@@ -217,5 +225,69 @@ export async function getVendorNotifications(): Promise<VendorNotification[]> {
 
 export async function markNotificationsRead(): Promise<{ success: boolean }> {
   const res = await axios.post('/api/vendor-portal/notifications/read-all');
+  return res.data;
+}
+
+// 10. Complete onboarding
+export async function completeOnboarding(): Promise<{ success: boolean }> {
+  const res = await axios.post('/api/vendor-portal/onboarding/complete');
+  return res.data;
+}
+
+// ── Sprint 3 additions ────────────────────────────────────────────────────
+
+export interface TicketReply {
+  replyId: string;
+  message: string;
+  author: string;
+  createdDate: string;
+}
+
+export interface VendorTicket {
+  ticketId: string;
+  vendorId: string;
+  category: string;
+  subject: string;
+  description: string;
+  status: 'Open' | 'Resolved';
+  createdDate: string;
+  replies?: TicketReply[];
+}
+
+export interface AuditEntry {
+  auditId: string;
+  vendorId: string;
+  action: string;
+  referenceId: string;
+  performedBy: string;
+  timestamp: string;
+}
+
+export interface VendorSettings {
+  theme?: string;
+  language?: string;
+  notifications?: Record<string, boolean>;
+}
+
+// 11. Helpdesk reply
+export async function replyToTicket(ticketId: string, message: string): Promise<{ success: boolean; reply: TicketReply }> {
+  const res = await axios.post(`/api/vendor-portal/tickets/${ticketId}/reply`, { message });
+  return res.data;
+}
+
+// 12. Audit trail
+export async function getVendorAuditTrail(): Promise<AuditEntry[]> {
+  const res = await axios.get('/api/vendor-portal/audit-trail');
+  return res.data;
+}
+
+// 13. Settings persistence
+export async function getVendorSettings(): Promise<VendorSettings> {
+  const res = await axios.get('/api/vendor-portal/settings');
+  return res.data;
+}
+
+export async function saveVendorSettings(settings: Partial<VendorSettings>): Promise<VendorSettings> {
+  const res = await axios.put('/api/vendor-portal/settings', settings);
   return res.data;
 }
