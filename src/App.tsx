@@ -53,17 +53,22 @@ import { AIInsights } from './pages/Reports/AIInsights';
 
 
 
-import { SettingsDashboard } from './pages/Settings/SettingsDashboard';
-import { OrgBrandingSettings } from './pages/Settings/OrgBrandingSettings';
-import { UserRoleManagement } from './pages/Settings/UserRoleManagement';
-import { ApprovalWorkflowSettings } from './pages/Settings/ApprovalWorkflowSettings';
-import { SecurityGovernanceSettings } from './pages/Settings/SecurityGovernanceSettings';
-import { IntegrationHubSettings } from './pages/Settings/IntegrationHubSettings';
-import { PublishDeploySettings } from './pages/Settings/PublishDeploySettings';
 import { GeneralSettings } from './pages/Settings/GeneralSettings';
 import { UsersRoles } from './pages/Settings/UsersRoles';
 import { SystemPreferences } from './pages/Settings/SystemPreferences';
-import { VendorPortalDashboard } from './pages/VendorPortal/VendorPortalDashboard';
+import { VendorLayout } from './components/VendorLayout/VendorLayout';
+import { VendorOverview } from './pages/VendorPortal/VendorOverview';
+import { VendorDocuments } from './pages/VendorPortal/VendorDocuments';
+import { VendorKYC } from './pages/VendorPortal/VendorKYC';
+import { VendorContracts } from './pages/VendorPortal/VendorContracts';
+import { VendorPOs } from './pages/VendorPortal/VendorPOs';
+import { VendorInvoices } from './pages/VendorPortal/VendorInvoices';
+import { VendorPayments } from './pages/VendorPortal/VendorPayments';
+import { VendorProfile } from './pages/VendorPortal/VendorProfile';
+import { VendorHelpdesk } from './pages/VendorPortal/VendorHelpdesk';
+import { VendorAnalytics } from './pages/VendorPortal/VendorAnalytics';
+import { VendorSettings } from './pages/VendorPortal/VendorSettings';
+import { VendorAuditTrail } from './pages/VendorPortal/VendorAuditTrail';
 
 import { CatalogueDashboard } from './pages/Catalogue/CatalogueDashboard';
 import { ItemMaster } from './pages/Catalogue/ItemMaster';
@@ -201,15 +206,32 @@ function App() {
                 <Route path="/settings/publish" element={<Navigate to="/settings/general" replace />} />
               </Route>
 
-              {/* Vendor Portal: restricted to VENDOR */}
-              <Route element={<ProtectedRoute allowedRoles={['VENDOR']} moduleKey="Vendor Portal" />}>
-                <Route path="/vendor-portal" element={<VendorPortalDashboard />} />
-                <Route path="/vendor/dashboard" element={<VendorPortalDashboard />} />
-              </Route>
+              {/* Legacy vendor portal redirect */}
+              <Route path="/vendor-portal" element={<Navigate to="/vendor/overview" replace />} />
+              <Route path="/vendor/dashboard" element={<Navigate to="/vendor/overview" replace />} />
 
 
               {/* Fallback route */}
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Route>
+          </Route>
+
+          {/* ===== VENDOR PORTAL — dedicated layout ===== */}
+          <Route element={<ProtectedRoute allowedRoles={['VENDOR']} />}>
+            <Route element={<VendorLayout />}>
+              <Route path="/vendor/overview" element={<VendorOverview />} />
+              <Route path="/vendor/profile" element={<VendorProfile />} />
+              <Route path="/vendor/documents" element={<VendorDocuments />} />
+              <Route path="/vendor/kyc" element={<VendorKYC />} />
+              <Route path="/vendor/contracts" element={<VendorContracts />} />
+              <Route path="/vendor/purchase-orders" element={<VendorPOs />} />
+              <Route path="/vendor/invoices" element={<VendorInvoices />} />
+              <Route path="/vendor/payments" element={<VendorPayments />} />
+              <Route path="/vendor/analytics" element={<VendorAnalytics />} />
+              <Route path="/vendor/helpdesk" element={<VendorHelpdesk />} />
+              <Route path="/vendor/audit-trail" element={<VendorAuditTrail />} />
+              <Route path="/vendor/settings" element={<VendorSettings />} />
+              <Route path="/vendor/*" element={<Navigate to="/vendor/overview" replace />} />
             </Route>
           </Route>
 

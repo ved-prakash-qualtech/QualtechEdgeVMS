@@ -86,7 +86,7 @@ export const Login: React.FC = () => {
             "portal": "Vendor Portal",
             "username": "vendor",
             "password": "vendor123",
-            "redirectUrl": "/vendor/dashboard",
+            "redirectUrl": "/vendor/overview",
             "color": "teal",
             "initials": "AV"
           }
@@ -108,7 +108,7 @@ export const Login: React.FC = () => {
       } else if (user.role === 'FINANCE') {
         navigate('/finance/dashboard');
       } else if (user.role === 'VENDOR') {
-        navigate('/vendor/dashboard');
+        navigate('/vendor/overview');
       } else {
         navigate('/dashboard');
       }
