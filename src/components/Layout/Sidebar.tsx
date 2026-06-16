@@ -4,7 +4,6 @@ import {
   LayoutDashboard,
   Users,
   FileText,
-  ShieldCheck,
   FileSignature,
   ShoppingCart,
   Receipt,
@@ -30,13 +29,14 @@ interface Props {
 const NAV_ITEMS = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   {
-    name: 'Vendors',
+    name: 'Vendor Onboarding & KYC',
     path: '/vendors',
     icon: Users,
     subItems: [
       { name: 'Vendor List', path: '/vendors' },
-      { name: 'Add Vendor', path: '/vendors/add' },
-      { name: 'Approvals', path: '/vendors/approvals' },
+      { name: 'Register Vendor', path: '/vendors/add' },
+      { name: 'AI Screening & Risk', path: '/kyc/screening' },
+      { name: 'Reviews & Approvals', path: '/kyc/reviews' },
     ],
   },
   {
@@ -50,16 +50,7 @@ const NAV_ITEMS = [
       { name: 'Verification Queue', path: '/documents/approvals' },
     ],
   },
-  {
-    name: 'Due Diligence & KYC',
-    path: '/kyc/dashboard',
-    icon: ShieldCheck,
-    subItems: [
-      { name: 'KYC Dashboard', path: '/kyc/dashboard' },
-      { name: 'AI Screening & Risk', path: '/kyc/screening' },
-      { name: 'Reviews & Approvals', path: '/kyc/reviews' },
-    ],
-  },
+
   {
     name: 'Item & Service Catalogue',
     path: '/catalogue',
@@ -230,9 +221,8 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
     });
 
   const [expandedMenus, setExpandedMenus] = React.useState<Record<string, boolean>>({
-    Vendors: false,
+    'Vendor Onboarding & KYC': false,
     Documents: false,
-    'Due Diligence & KYC': false,
     'Item & Service Catalogue': false,
     'Contracts & SLAs': false,
     'Purchase Orders': false,
@@ -269,6 +259,7 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
     ? user.fullName.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
     : 'A';
 
+<<<<<<< HEAD
   const rawItems = user?.role === 'VENDOR' ? VENDOR_NAV_ITEMS : user?.role === 'FINANCE' ? FINANCE_NAV_ITEMS : NAV_ITEMS;
   const filteredNavItems = rawItems.filter(item => {
     if (['ADMIN', 'PROCUREMENT', 'COMPLIANCE', 'ONBOARDING', 'FINANCE'].includes(user?.role || '')) {
@@ -276,6 +267,44 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
     }
     return hasPermission(item.name);
   });
+=======
+  const rawItems = user?.role === 'VENDOR' ? VENDOR_NAV_ITEMS : NAV_ITEMS;
+  const filteredNavItems = rawItems
+    .filter(item => {
+      if (item.name === 'Documents') return false;
+      if (['ADMIN', 'PROCUREMENT', 'COMPLIANCE', 'ONBOARDING', 'FINANCE'].includes(user?.role || '')) {
+        if (item.name === 'Vendor Portal') return false;
+      }
+      return hasPermission(item.name);
+    })
+    .map(item => {
+      if (item.subItems) {
+        return {
+          ...item,
+          subItems: item.subItems.filter(sub => {
+            if (
+              sub.name === 'My Documents' || 
+              sub.name === 'Document List' || 
+              sub.name === 'Upload Document' || 
+              sub.name === 'Expiry Tracker' || 
+              sub.name === 'Verification Queue'
+            ) {
+              return false;
+            }
+            // Check dynamic subItem routing permissions
+            if (sub.path.startsWith('/kyc/')) {
+              return hasPermission('Vendor Onboarding & KYC');
+            }
+            if (sub.path.startsWith('/vendors/')) {
+              return hasPermission('Vendor Onboarding & KYC');
+            }
+            return true;
+          })
+        };
+      }
+      return item;
+    });
+>>>>>>> dc1643ef147d94ed445cab2a657fdf4ea2a3bd84
 
   return (
     <aside
@@ -356,6 +385,7 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
                       <NavLink
                         key={sub.name}
                         to={sub.path}
+                        state={item.name === 'Vendor Onboarding & KYC' ? { fromOnboarding: true } : undefined}
                         end={END_PATHS.has(sub.path)}
                         className={({ isActive }) =>
                           [styles.subNavItem, isActive ? styles.activeSub : ''].join(' ')

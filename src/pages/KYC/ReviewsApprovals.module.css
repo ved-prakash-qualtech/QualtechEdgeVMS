@@ -11,15 +11,25 @@
 .title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: var(--color-text-primary, #1e293b);
 }
-.subtitle {
-  color: var(--color-text-secondary);
+.breadcrumbs {
+  color: var(--color-text-tertiary);
   font-size: 0.75rem;
   margin-top: 4px;
 }
-.headerActions { display: flex; gap: 12px; align-items: center; }
+.subtitle {
+<<<<<<< HEAD
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+=======
+  color: var(--color-text-secondary, #64748b);
+  font-size: 0.875rem;
+>>>>>>> dc1643ef147d94ed445cab2a657fdf4ea2a3bd84
+  margin-top: 4px;
+}
 
+<<<<<<< HEAD
 /* KPI Row */
 .kpiRow {
   display: grid;
@@ -45,11 +55,23 @@
   transform: translateY(-2px);
 }
 .kpiHeader {
+=======
+/* Table Card */
+.tableCard { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+
+/* Toolbar & Filters */
+.tableToolbar {
+>>>>>>> dc1643ef147d94ed445cab2a657fdf4ea2a3bd84
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
+  align-items: center;
+  padding: 16px 24px;
+  background: white;
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+  gap: 16px;
+  flex-wrap: wrap;
 }
+<<<<<<< HEAD
 .kpiLabel { font-size: 0.75rem; font-weight: 600; color: var(--color-text-secondary); }
 .kpiIcon {
   width: 32px;
@@ -81,26 +103,53 @@
   background: none;
   border-bottom: 2px solid transparent;
   transition: all 0.15s;
+=======
+.searchWrap {
+>>>>>>> dc1643ef147d94ed445cab2a657fdf4ea2a3bd84
   display: flex;
   align-items: center;
+  background: #f8fafc;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--border-radius-md, 6px);
+  padding: 8px 12px;
   gap: 8px;
+  flex: 1;
+  max-width: 400px;
 }
-.tab:hover { color: var(--color-primary); }
-.activeTab {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
-  font-weight: 600;
+.searchIcon {
+  color: var(--color-text-secondary, #64748b);
 }
-.tabCount {
-  background: #f1f5f9;
-  color: var(--color-text-secondary);
-  padding: 2px 7px;
-  border-radius: 100px;
-  font-size: 0.75rem;
-  font-weight: 600;
+.searchInput {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 0.8125rem;
+  color: var(--color-text-primary, #1e293b);
+}
+.toolbarRight {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.filterSelect {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--border-radius-md, 6px);
+  background: white;
+  font-size: 0.8125rem;
+  outline: none;
+  color: var(--color-text-primary, #1e293b);
+  cursor: pointer;
+  min-width: 150px;
+  transition: all 0.15s;
+}
+.filterSelect:hover {
+  border-color: var(--color-primary, #185FA5);
 }
 
-/* Table */
+/* Table styling */
 .tableWrapper { overflow-x: auto; }
 .table { width: max-content;
   min-width: 100%; border-collapse: collapse; text-align: left; }
@@ -110,152 +159,176 @@
   padding: 12px 20px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--color-text-secondary, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
   white-space: nowrap;
 }
 .table td {
   padding: 14px 20px;
   font-size: 0.8125rem;
-  color: var(--color-text-primary);
-  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary, #1e293b);
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
   vertical-align: middle;
 }
-.table tr:last-child td { border-bottom: none; }
 .table tr:hover td { background: #f8fafc; }
-.idCell { font-weight: 600; color: var(--color-primary); font-size: 0.8125rem; }
+.idCell { font-weight: 600; color: var(--color-primary, #185FA5); font-size: 0.8125rem; }
 .vendorCell { display: flex; flex-direction: column; gap: 3px; }
 .vendorName { font-weight: 600; }
-.vendorId   { font-size: 0.75rem; color: var(--color-text-secondary); }
+.vendorId   { font-size: 0.75rem; color: var(--color-text-secondary, #64748b); }
 
-.dueDateCell { display: flex; flex-direction: column; gap: 4px; }
-.dueTag {
-  font-size: 0.65rem; font-weight: 700; color: #f59e0b;
-  background: #fffbeb; padding: 2px 6px; border-radius: 4px; width: fit-content;
-}
-.overdueTag {
-  font-size: 0.65rem; font-weight: 700; color: #dc2626;
-  background: #fee2e2; padding: 2px 6px; border-radius: 4px; width: fit-content;
-}
-.actionsCell { display: flex; gap: 6px; }
-.actionBtn {
-  background: none;
-  border: none;
-  color: var(--color-primary);
+/* Actions cell buttons */
+.actionsCell { display: flex; gap: 6px; align-items: center; }
+.viewBtn, .reviewBtn {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: var(--color-primary, #185FA5);
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background 0.15s;
-}
-.actionBtn:hover { background: #f1f5f9; }
-
-/* Approval Cards */
-.approvalGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 20px;
-  padding: 20px;
-}
-.approvalCard { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
-.approvalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-.approvalVendorName { font-size: 1rem; font-weight: 700; color: var(--color-text-primary); }
-.approvalMeta       { font-size: 0.8125rem; color: var(--color-text-secondary); margin-top: 2px; }
-.approvalInfo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-}
-.stageTag {
-  background: #f0f5ff;
-  color: var(--color-primary);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 100px;
-}
-
-/* Workflow Stepper */
-.workflowRow {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 12px;
-  background: #f8fafc;
-  border-radius: 8px;
-}
-.workflowStep { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
-.workflowDot {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem; font-weight: 700;
-}
-.dotApproved { background: #dcfce7; color: #16a34a; }
-.dotPending  { background: #fffbeb; color: #f59e0b; }
-.dotRejected { background: #fee2e2; color: #dc2626; }
-.workflowLabel { font-size: 0.625rem; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; }
-.workflowArrow { color: var(--color-text-tertiary); flex-shrink: 0; }
-
-/* Approval Actions */
-.approvalActions { display: flex; gap: 8px; }
-.approveBtn, .rejectBtn, .sendBackBtn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 9px 12px;
-  border-radius: var(--border-radius-md);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid;
+  padding: 6px 12px;
+  border-radius: 6px;
   transition: all 0.15s;
-}
-.approveBtn  { background: #dcfce7; color: #16a34a; border-color: #bbf7d0; }
-.approveBtn:hover  { background: #bbf7d0; }
-.rejectBtn   { background: #fee2e2; color: #dc2626; border-color: #fecaca; }
-.rejectBtn:hover   { background: #fecaca; }
-.sendBackBtn { background: #f8fafc; color: var(--color-text-secondary); border-color: var(--color-border); }
-.sendBackBtn:hover { background: #f1f5f9; }
-
-/* Filter Pill Row */
-.filterPillRow {
-  display: flex;
-  gap: 8px;
-  padding: 10px 24px;
-  border-bottom: 1px solid var(--color-border);
-  background: #f8fafc;
-}
-.filterPill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: var(--color-primary);
+  gap: 4px;
+}
+.viewBtn:hover, .reviewBtn:hover {
+  background: var(--color-primary, #185FA5);
   color: white;
-  padding: 4px 12px;
-  border-radius: 100px;
-  font-size: 0.8125rem;
+  border-color: var(--color-primary, #185FA5);
+}
+
+.emptyRow {
+  text-align: center;
+  padding: 40px !important;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.pagination {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--color-border, #e2e8f0);
+  background: #f8fafc;
+}
+.pageInfo {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #64748b);
+}
+
+/* Expanded Row & Container */
+.expandedRow {
+  background-color: #f8fafc;
+}
+.expandedRow td {
+  padding: 0 !important;
+  border-bottom: 1.5px solid #cbd5e1;
+}
+.expandedContainer {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  background-color: #f8fafc;
+  animation: slideDown 0.2s ease-out;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.summaryCard, .decisionCard {
+  flex: 1;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.cardSectionTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-primary, #185FA5);
+  margin-bottom: 16px;
+  border-bottom: 2px solid #eff6ff;
+  padding-bottom: 8px;
+  text-align: left;
+}
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  text-align: left;
+}
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.summaryLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.summaryValue {
+  font-size: 0.85rem;
   font-weight: 500;
+  color: var(--color-text-primary, #1e293b);
 }
-.pillClear {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1rem;
-  line-height: 1;
+
+/* Decision Form */
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 12px;
+  text-align: left;
+}
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+.formLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #1e293b);
+}
+.formSelect {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  outline: none;
+  background-color: white;
+  color: #1e293b;
   cursor: pointer;
-  padding: 0;
-  opacity: 0.8;
+  transition: border-color 0.15s;
 }
-.pillClear:hover { opacity: 1; }
+.formSelect:focus {
+  border-color: var(--color-primary, #185FA5);
+}
+.formTextarea {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  color: #1e293b;
+  transition: border-color 0.15s;
+}
+.formTextarea:focus {
+  border-color: var(--color-primary, #185FA5);
+}
+.btnGroup {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}

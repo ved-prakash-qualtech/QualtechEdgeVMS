@@ -152,5 +152,49 @@
     "ipAddress": "127.0.0.1",
     "status": "Success",
     "severity": "High"
+  },
+  {
+    "id": "AUD-82091",
+    "timestamp": "12/6/2026, 5:39:34 pm",
+    "actor": "Saurabh Anand",
+    "role": "Procurement Checker",
+    "tenant": "Qualtech Corporate",
+    "action": "Verification Approved for document DOC-2026-0001 (PAN Card) of vendor ABC Infotech Private Limited",
+    "ipAddress": "127.0.0.1",
+    "status": "Success",
+    "severity": "High"
+  },
+  {
+    "id": "AUD-35382",
+    "timestamp": "12/6/2026, 5:39:37 pm",
+    "actor": "Saurabh Anand",
+    "role": "Procurement Checker",
+    "tenant": "Qualtech Corporate",
+    "action": "Verification Approved for document DOC-2026-0002 (PAN Card) of vendor HDFC Bank Limited",
+    "ipAddress": "127.0.0.1",
+    "status": "Success",
+    "severity": "High"
+  },
+  {
+    "id": "AUD-34418",
+    "timestamp": "15/6/2026, 4:02:04 pm",
+    "actor": "Saurabh Anand",
+    "role": "Procurement Maker",
+    "tenant": "Qualtech Corporate",
+    "action": "Created Vendor registration VND-2026-45682 (New Age Software Solutions)",
+    "ipAddress": "127.0.0.1",
+    "status": "Success",
+    "severity": "Low"
+  },
+  {
+    "id": "AUD-16980",
+    "timestamp": "16/6/2026, 1:07:56 pm",
+    "actor": "Saurabh Anand",
+    "role": "Procurement Maker",
+    "tenant": "Qualtech Corporate",
+    "action": "Created Vendor registration VND-2026-55028 (Global Logistics Partners )",
+    "ipAddress": "127.0.0.1",
+    "status": "Success",
+    "severity": "Low"
   }
 ]

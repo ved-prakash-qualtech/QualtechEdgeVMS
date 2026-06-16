@@ -8,6 +8,7 @@ import {
   Building2, CheckCircle2,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import rolesConfig from '../../data/roles.json';
 import styles from './Login.module.css';
 
 /* ─── Validation helpers ─────────────────────────────── */
@@ -69,6 +70,74 @@ export const Login: React.FC = () => {
         { id: 'USR-004', name: 'Amit Gupta',      role: 'Finance Manager',           portal: 'Finance Portal',     username: 'finance',     password: 'finance123',     redirectUrl: '/finance/dashboard',       color: 'orange', initials: 'AG' },
         { id: 'USR-005', name: 'Acme Vendor',     role: 'Vendor Portal User',        portal: 'Vendor Portal',      username: 'vendor',      password: 'vendor123',      redirectUrl: '/vendor/overview',         color: 'teal',   initials: 'AV' },
       ]));
+    async function loadDemoUsers() {
+      try {
+        const res = await fetch('/api/auth/demo-users');
+        const data = await res.json();
+        setDemoUsers(data);
+      } catch (err) {
+        console.error("Failed to load demo users from backend:", err);
+        // Fallback demo users list
+        setDemoUsers([
+          {
+            "id": "USR-001",
+            "name": "Saurabh Anand",
+            "role": "Tenant Admin",
+            "portal": "Admin Portal",
+            "username": "admin",
+            "password": "admin123",
+            "redirectUrl": "/administrator/dashboard",
+            "color": "blue",
+            "initials": "SA"
+          },
+          {
+            "id": "USR-002",
+            "name": "Priya Sharma",
+            "role": "Procurement Manager",
+            "portal": "Procurement Portal",
+            "username": "procurement",
+            "password": "procurement123",
+            "redirectUrl": "/catalogue/dashboard",
+            "color": "green",
+            "initials": "PS"
+          },
+          {
+            "id": "USR-003",
+            "name": "Rahul Verma",
+            "role": "Vendor Onboarding Officer",
+            "portal": "Onboarding Portal",
+            "username": "onboarding",
+            "password": "onboarding123",
+            "redirectUrl": "/vendors",
+            "color": "purple",
+            "initials": "RV"
+          },
+          {
+            "id": "USR-004",
+            "name": "Amit Gupta",
+            "role": "Finance Manager",
+            "portal": "Finance Portal",
+            "username": "finance",
+            "password": "finance123",
+            "redirectUrl": "/finance/dashboard",
+            "color": "orange",
+            "initials": "AG"
+          },
+          {
+            "id": "USR-005",
+            "name": "Acme Vendor",
+            "role": "Vendor Portal User",
+            "portal": "Vendor Portal",
+            "username": "vendor",
+            "password": "vendor123",
+            "redirectUrl": "/vendor/overview",
+            "color": "teal",
+            "initials": "AV"
+          }
+        ]);
+      }
+    }
+    loadDemoUsers();
   }, []);
 
   useEffect(() => {
@@ -82,6 +151,16 @@ export const Login: React.FC = () => {
       VENDOR: '/vendor/overview',
     };
     navigate(map[user.role] ?? '/dashboard');
+    if (user) {
+      let rId = user.role;
+      if (user.role === 'COMPLIANCE') rId = 'ONBOARDING';
+      const roleConfig = rolesConfig.roles.find(r => r.id === rId);
+      if (roleConfig?.defaultRoute) {
+        navigate(roleConfig.defaultRoute);
+      } else {
+        navigate('/dashboard');
+      }
+    }
   }, [user, navigate]);
 
   // Close demo modal on Escape
@@ -151,6 +230,55 @@ export const Login: React.FC = () => {
     setServerError(null);
     setUsernameTouched(false);
     setPasswordTouched(false);
+  const renderDemoSection = () => {
+    if (demoUsers.length === 0) return null;
+    return (
+      <div className={styles.demoSection}>
+        <div className={styles.demoDivider}>
+          <span>or continue as demo</span>
+        </div>
+        
+        <div className={styles.demoHeader}>
+          <div className={styles.demoBadge}>
+            <span className={styles.badgePulse}></span>
+            Demo Ready User
+          </div>
+          <span className={styles.demoCount}>{demoUsers.length} Roles Available</span>
+        </div>
+        
+        <p className={styles.demoNote}>
+          Select a role below to explore the platform. Click card to fill credentials, or click <strong>Go →</strong> for instant entry.
+        </p>
+
+        <div className={styles.demoUsersGrid}>
+          {demoUsers.map(u => (
+            <div 
+              key={u.id} 
+              className={`${styles.demoCard} ${styles[u.color || 'blue']}`} 
+              onClick={() => handleDemoCardClick(u)}
+              title="Click to populate credentials"
+            >
+              <div className={styles.demoAvatar}>
+                {u.initials}
+              </div>
+              <div className={styles.demoInfo}>
+                <div className={styles.demoName}>{u.name}</div>
+                <div className={styles.demoRole}>{u.role}</div>
+                <div className={styles.demoPortal}>{u.portal}</div>
+              </div>
+              <button 
+                type="button"
+                className={styles.quickLoginBtn} 
+                onClick={(e) => { e.stopPropagation(); handleQuickLogin(u); }}
+                title={`Quick login as ${u.role}`}
+              >
+                Go →
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -567,3 +695,4 @@ export const Login: React.FC = () => {
     </div>
   );
 };
+}

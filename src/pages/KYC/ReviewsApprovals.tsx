@@ -1,74 +1,158 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, CheckCircle2, Clock, AlertTriangle, ChevronRight, ThumbsUp, ThumbsDown, RotateCcw } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Search, Eye, ThumbsUp
+} from 'lucide-react';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
 import { Badge } from '../../components/Badge/Badge';
-import { useAuth } from '../../context/AuthContext';
 import styles from './ReviewsApprovals.module.css';
-import { getReviewsAndApprovals } from '../../services/reviewService';
-import type { Review, Approval, CompletedReview } from '../../services/reviewService';
+import { toast } from 'sonner';
+import { useAuth } from '../../context/AuthContext';
+import { useVendors } from '../../context/VendorContext';
 
-type TabKey = 'Schedule' | 'Approvals' | 'Completed';
+type StatusFilterKey = 'All' | 'Pending' | 'Conditional' | 'Approved' | 'Rejected';
 
-const daysUntil = (dateStr: string) => Math.ceil((new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-
-const priorityVariant = (p: string): 'danger' | 'warning' | 'info' | 'default' => {
-  if (p === 'Critical') return 'danger';
-  if (p === 'High')     return 'warning';
-  if (p === 'Medium')   return 'info';
-  return 'default';
+const riskVariant = (r: string): 'success' | 'warning' | 'danger' | 'default' => {
+  switch (r) {
+    case 'Low':      return 'success';
+    case 'Medium':   return 'warning';
+    case 'High':     return 'danger';
+    case 'Critical': return 'danger';
+    default:         return 'default';
+  }
 };
 
-const statusVariant = (s: string): 'success' | 'danger' | 'warning' | 'info' | 'default' => {
-  if (s === 'Scheduled')  return 'info';
-  if (s === 'In Review')  return 'warning';
-  if (s === 'Overdue')    return 'danger';
-  if (s === 'Completed')  return 'success';
-  return 'default';
-};
-
-const workflowSteps = ['procurement', 'compliance', 'legal', 'final'] as const;
-const stepLabel: Record<typeof workflowSteps[number], string> = {
-  procurement: 'Procurement', compliance: 'Compliance', legal: 'Legal', final: 'Final',
+const getRiskScoreStyle = (score: number) => {
+  if (score === 0) return { backgroundColor: '#f1f5f9', color: '#64748b', padding: '4px 10px', borderRadius: '100px', fontWeight: 600, fontSize: '0.75rem' };
+  if (score <= 30) return { backgroundColor: '#dcfce7', color: '#16a34a', padding: '4px 10px', borderRadius: '100px', fontWeight: 600, fontSize: '0.75rem' };
+  if (score <= 60) return { backgroundColor: '#fffbeb', color: '#d97706', padding: '4px 10px', borderRadius: '100px', fontWeight: 600, fontSize: '0.75rem' };
+  if (score <= 80) return { backgroundColor: '#fef2f2', color: '#dc2626', padding: '4px 10px', borderRadius: '100px', fontWeight: 600, fontSize: '0.75rem' };
+  return { backgroundColor: '#fee2e2', color: '#991b1b', padding: '4px 10px', borderRadius: '100px', fontWeight: 600, fontSize: '0.75rem' };
 };
 
 export const ReviewsApprovals: React.FC = () => {
-  const { hasActionPermission } = useAuth();
-  const [activeTab, setActiveTab] = useState<TabKey>('Schedule');
-  const [showOverdueOnly, setShowOverdueOnly] = useState(false);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [approvals, setApprovals] = useState<Approval[]>([]);
-  const [completed, setCompleted] = useState<CompletedReview[]>([]);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { vendors, kycData, submitDecision, loading } = useVendors();
 
-  useEffect(() => {
-    getReviewsAndApprovals()
-      .then(data => {
-        setReviews(data.reviews || []);
-        setApprovals(data.pendingApprovals || []);
-        setCompleted(data.completedReviews || []);
-      })
-      .catch(err => {
-        console.error('Failed to load reviews and approvals data', err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+  // Filters State
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilterKey>('All');
 
-  if (loading) {
+  // Expanded row ID
+  const [expandedVendorId, setExpandedVendorId] = useState<string | null>(null);
+
+  // Decision Form state
+  const [decision, setDecision] = useState<string>('Approve');
+  const [authority, setAuthority] = useState<string>('Procurement Manager');
+  const [remarks, setRemarks] = useState<string>('Vendor KYC verified and cleared. Approved and empanelled.');
+
+  // Aliases for compatibility with existing layout code
+  const kycStore = kycData;
+  const masterVendors = vendors;
+
+
+
+  const getVendorDetail = (vendorId: string) => {
+    const master = masterVendors.find(v => v.vendorId === vendorId);
+    return {
+      pan: master?.basicDetails?.panNumber || 'N/A',
+      gstin: master?.basicDetails?.gstin || 'N/A',
+      docCount: master?.documents?.length || 0
+    };
+  };
+
+  // Filter reviews
+  const filteredApprovals = useMemo(() => {
+    if (!kycStore) return [];
+    
+    return kycStore.approvals.filter((app: any) => {
+      const vendor = kycStore.vendors.find((v: any) => v.vendorId === app.vendorId);
+      const name = vendor ? vendor.vendorName : '';
+      
+      // Search filter (Vendor Name or ID)
+      if (search) {
+        const q = search.toLowerCase();
+        const matchesName = name.toLowerCase().includes(q);
+        const matchesId = app.vendorId.toLowerCase().includes(q);
+        if (!matchesName && !matchesId) return false;
+      }
+
+      // Status filter
+      if (statusFilter !== 'All') {
+        if (statusFilter === 'Pending') {
+          return app.approvalStatus === 'Pending';
+        }
+        if (statusFilter === 'Conditional') {
+          return app.approvalStatus === 'Conditional' || app.approvalStatus === 'Conditional Approval';
+        }
+        if (statusFilter === 'Approved') {
+          return app.approvalStatus === 'Approved';
+        }
+        if (statusFilter === 'Rejected') {
+          return app.approvalStatus === 'Rejected';
+        }
+      }
+
+      return true;
+    });
+  }, [kycStore, search, statusFilter]);
+
+  const handleDecisionChange = (val: string) => {
+    setDecision(val);
+    if (val === 'Approve') {
+      setRemarks('Vendor KYC verified and cleared. Approved and empanelled.');
+    } else if (val === 'Conditional Approval') {
+      setRemarks('Vendor KYC approved conditionally subject to annual re-verification.');
+    } else if (val === 'Hold') {
+      setRemarks('Vendor KYC held pending clarification on adverse media audit trail.');
+    } else if (val === 'Reject') {
+      setRemarks('Vendor KYC checks failed. Debarred from onboarding.');
+    }
+  };
+
+  const toggleExpandRow = (vendorId: string) => {
+    if (expandedVendorId === vendorId) {
+      setExpandedVendorId(null);
+    } else {
+      setExpandedVendorId(vendorId);
+      // Pre-fill initial form
+      setDecision('Approve');
+      setAuthority('Procurement Manager');
+      setRemarks('Vendor KYC verified and cleared. Approved and empanelled.');
+    }
+  };
+
+  const handleSubmitDecision = async (actionType: 'Approve' | 'Reject') => {
+    if (!expandedVendorId || !kycStore) return;
+
+    const vendor = kycStore.vendors.find((v: any) => v.vendorId === expandedVendorId);
+    if (!vendor) return;
+
+    try {
+      if (actionType === 'Approve') {
+        await submitDecision(expandedVendorId, decision as any, remarks, authority);
+        toast.success(`${vendor.vendorName} approved and empanelled successfully.`);
+      } else {
+        await submitDecision(expandedVendorId, 'Reject', remarks, authority);
+        toast.success(`${vendor.vendorName} rejected.`);
+      }
+    } catch (e) {
+      console.error("Failed to submit decision:", e);
+      toast.error("An error occurred while submitting the decision.");
+    }
+
+    setExpandedVendorId(null);
+  };
+
+  if (loading || !kycStore) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px', color: '#64748b' }}>
-        <p>Loading Reviews & Approvals...</p>
+        <p>Loading Reviews & Approvals Work Queue...</p>
       </div>
     );
   }
-
-  const tabs: { key: TabKey; label: string; count: number }[] = [
-    { key: 'Schedule',  label: 'Review Schedule',   count: reviews.length   },
-    { key: 'Approvals', label: 'Pending Approvals',  count: approvals.length },
-    { key: 'Completed', label: 'Completed Reviews',  count: completed.length },
-  ];
 
   return (
     <div className={styles.container}>
@@ -76,233 +160,379 @@ export const ReviewsApprovals: React.FC = () => {
       <header className={styles.pageHeader}>
         <div>
           <h1 className={styles.title}>Reviews & Approvals</h1>
-          <p className={styles.subtitle}>Re-KYC scheduling, vendor approval workflows, and completed review history</p>
-        </div>
-        <div className={styles.headerActions}>
-          {hasActionPermission('INITIATE_RE_KYC') && (
-            <Button icon={<Calendar size={16} />} variant="outline">Schedule Review</Button>
-          )}
+          <p className={styles.breadcrumbs}>Home / Vendor Onboarding & KYC / Reviews & Approvals</p>
+          <p className={styles.subtitle}>Unified workflow queue for KYC verification checks, risk compliance approvals, and final decisioning</p>
         </div>
       </header>
 
-      {/* Summary KPIs */}
-      <div className={styles.kpiRow}>
-        <Card
-          className={`${styles.kpiCard} ${activeTab === 'Schedule' && !showOverdueOnly ? styles.kpiCardActive : ''}`}
-          onClick={() => { setActiveTab('Schedule'); setShowOverdueOnly(false); }}
-        >
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Scheduled Reviews</span>
-            <div className={styles.kpiIcon} style={{ background: '#eff6ff', color: '#1d4ed8' }}><Calendar size={18} /></div>
+      {/* Main Reviews Queue Workspace */}
+      <Card className={styles.tableCard}>
+        {/* Toolbar with Filters */}
+        <div className={styles.tableToolbar}>
+          <div className={styles.searchWrap}>
+            <Search size={16} className={styles.searchIcon} />
+            <input
+              type="text"
+              placeholder="Search by Vendor Name or ID..."
+              className={styles.searchInput}
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
           </div>
-          <div className={styles.kpiValue}>{reviews.length}</div>
-          <div className={styles.kpiFooter}>Upcoming due dates</div>
-        </Card>
-        <Card
-          className={`${styles.kpiCard} ${activeTab === 'Approvals' ? styles.kpiCardActive : ''}`}
-          onClick={() => { setActiveTab('Approvals'); setShowOverdueOnly(false); }}
-        >
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Pending Approvals</span>
-            <div className={styles.kpiIcon} style={{ background: '#fffbeb', color: '#f59e0b' }}><Clock size={18} /></div>
-          </div>
-          <div className={styles.kpiValue}>{approvals.length}</div>
-          <div className={styles.kpiFooter}>Awaiting decision</div>
-        </Card>
-        <Card
-          className={`${styles.kpiCard} ${activeTab === 'Schedule' && showOverdueOnly ? styles.kpiCardActive : ''}`}
-          onClick={() => { setActiveTab('Schedule'); setShowOverdueOnly(true); }}
-        >
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Overdue Reviews</span>
-            <div className={styles.kpiIcon} style={{ background: '#fee2e2', color: '#dc2626' }}><AlertTriangle size={18} /></div>
-          </div>
-          <div className={styles.kpiValue}>{reviews.filter(r => r.status === 'Overdue').length}</div>
-          <div className={styles.kpiFooterRed}>Needs immediate action</div>
-        </Card>
-        <Card
-          className={`${styles.kpiCard} ${activeTab === 'Completed' ? styles.kpiCardActive : ''}`}
-          onClick={() => { setActiveTab('Completed'); setShowOverdueOnly(false); }}
-        >
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Completed Reviews</span>
-            <div className={styles.kpiIcon} style={{ background: '#dcfce7', color: '#16a34a' }}><CheckCircle2 size={18} /></div>
-          </div>
-          <div className={styles.kpiValue}>{completed.length}</div>
-          <div className={styles.kpiFooterGreen}>This quarter</div>
-        </Card>
-      </div>
-
-      {/* Tab Panel */}
-      <Card className={styles.tabCard}>
-        <div className={styles.tabs}>
-          {tabs.map(t => (
-            <button
-              key={t.key}
-              className={`${styles.tab} ${activeTab === t.key ? styles.activeTab : ''}`}
-              onClick={() => { setActiveTab(t.key); setShowOverdueOnly(false); }}
+          <div className={styles.toolbarRight}>
+            {/* Status Filter */}
+            <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#475569' }}>Status:</span>
+            <select
+              className={styles.filterSelect}
+              value={statusFilter}
+              onChange={e => setStatusFilter(e.target.value as StatusFilterKey)}
             >
-              {t.label} <span className={styles.tabCount}>{t.count}</span>
-            </button>
-          ))}
+              <option value="All">All</option>
+              <option value="Pending">Pending</option>
+              <option value="Conditional">Conditional</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
         </div>
 
-        {/* Active Filter Pill */}
-        {activeTab === 'Schedule' && showOverdueOnly && (
-          <div className={styles.filterPillRow}>
-            <span className={styles.filterPill}>
-              Overdue Reviews Only
-              <button className={styles.pillClear} onClick={() => setShowOverdueOnly(false)}>×</button>
-            </span>
-          </div>
-        )}
+        {/* Table Workspace */}
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Vendor ID</th>
+                <th>Vendor Name</th>
+                <th>Risk Score</th>
+                <th>Risk Tier</th>
+                <th>Screening Result</th>
+                <th>Submitted By</th>
+                <th>Submitted On</th>
+                <th>Decision</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredApprovals.map((app: any) => {
+                const vendor = kycStore.vendors.find((v: any) => v.vendorId === app.vendorId) || {
+                  vendorName: 'Unknown Vendor',
+                  riskScore: 0,
+                  riskLevel: 'Low',
+                  category: 'IT Services'
+                };
 
-        {/* ── Review Schedule Tab ── */}
-        {activeTab === 'Schedule' && (
-          <div className={styles.tableWrapper}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Review ID</th>
-                  <th>Vendor</th>
-                  <th>Review Type</th>
-                  <th>Due Date</th>
-                  <th>Assigned To</th>
-                  <th>Priority</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reviews.filter(r => !showOverdueOnly || r.status === 'Overdue').map(r => {
-                  const days = daysUntil(r.dueDate);
-                  return (
-                    <tr key={r.reviewId}>
-                      <td className={styles.idCell}>{r.reviewId}</td>
+                const screening = kycStore.screeningResults.find((s: any) => s.vendorId === app.vendorId);
+                let screeningText = 'Not yet screened';
+                if (screening && screening.completed) {
+                  const clearCount = screening.checks.filter((c: any) => c.status === 'Clear').length;
+                  const advisoryCount = screening.checks.filter((c: any) => c.status === 'Advisory').length;
+                  if (advisoryCount === 0) {
+                    screeningText = 'All clear';
+                  } else {
+                    screeningText = `${clearCount}/8 Clear + ${advisoryCount} advisory`;
+                  }
+                }
+
+                const vendorDetail = getVendorDetail(app.vendorId);
+                const isExpanded = expandedVendorId === app.vendorId;
+                const isPending = app.approvalStatus === 'Pending';
+
+                return (
+                  <React.Fragment key={app.vendorId}>
+                    <tr>
+                      <td className={styles.idCell}>{app.vendorId}</td>
                       <td>
                         <div className={styles.vendorCell}>
-                          <span className={styles.vendorName}>{r.vendorName}</span>
-                          <span className={styles.vendorId}>{r.vendorId}</span>
+                          <span className={styles.vendorName}>{vendor.vendorName}</span>
                         </div>
                       </td>
-                      <td>{r.reviewType}</td>
                       <td>
-                        <div className={styles.dueDateCell}>
-                          <span>{r.dueDate}</span>
-                          {days <= 30 && (
-                            <span className={days < 0 ? styles.overdueTag : styles.dueTag}>
-                              {days < 0 ? `${Math.abs(days)}d overdue` : `${days}d left`}
-                            </span>
-                          )}
-                        </div>
+                        <span style={getRiskScoreStyle(vendor.riskScore)}>
+                          {vendor.riskScore > 0 ? vendor.riskScore : '——'}
+                        </span>
                       </td>
-                      <td>{r.assignedTo}</td>
-                      <td><Badge variant={priorityVariant(r.priority)}>{r.priority}</Badge></td>
-                      <td><Badge variant={statusVariant(r.status)}>{r.status}</Badge></td>
+                      <td>
+                        <Badge variant={riskVariant(vendor.riskLevel)}>
+                          {vendor.riskLevel}
+                        </Badge>
+                      </td>
+                      <td>
+                        <Badge variant={
+                          screeningText === 'All clear' ? 'success' : 
+                          screeningText === 'Not yet screened' ? 'default' : 'warning'
+                        }>
+                          {screeningText}
+                        </Badge>
+                      </td>
+                      <td>{app.submittedBy}</td>
+                      <td>{app.submittedOn}</td>
+                      <td>
+                        <Badge variant={
+                          app.approvalStatus === 'Approved' ? 'success' :
+                          app.approvalStatus === 'Rejected' ? 'danger' :
+                          app.approvalStatus === 'Conditional' || app.approvalStatus === 'Conditional Approval' ? 'warning' : 'info'
+                        }>
+                          {app.approvalStatus === 'Pending' ? 'Pending Review' : app.approvalStatus}
+                        </Badge>
+                      </td>
                       <td>
                         <div className={styles.actionsCell}>
-                          {hasActionPermission('RUN_SCREENING') && (
-                            <button className={styles.actionBtn}>Start Review</button>
+                          {isPending ? (
+                            <button
+                              className={styles.reviewBtn}
+                              onClick={() => toggleExpandRow(app.vendorId)}
+                            >
+                              <ThumbsUp size={12} /> Review & Decide
+                            </button>
+                          ) : (
+                            <button
+                              className={styles.viewBtn}
+                              onClick={() => navigate(`/kyc/screening?vendor=${app.vendorId}`)}
+                            >
+                              <Eye size={12} /> View
+                            </button>
                           )}
                         </div>
                       </td>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
 
-        {/* ── Pending Approvals Tab ── */}
-        {activeTab === 'Approvals' && (
-          <div className={styles.approvalGrid}>
-            {approvals.map(a => (
-              <Card key={a.approvalId} className={styles.approvalCard}>
-                <div className={styles.approvalHeader}>
-                  <div>
-                    <div className={styles.approvalVendorName}>{a.vendorName}</div>
-                    <div className={styles.approvalMeta}>{a.category} · {a.vendorId}</div>
-                  </div>
-                  <Badge variant={a.riskLevel === 'Critical' ? 'danger' : a.riskLevel === 'Medium' ? 'warning' : 'success'}>
-                    {a.riskLevel} Risk
-                  </Badge>
-                </div>
+                    {/* Inline expanded Row */}
+                    {isExpanded && (
+                      <tr className={styles.expandedRow}>
+                        <td colSpan={9}>
+                          <div className={styles.expandedContainer}>
+                            <div className={styles.summaryCard}>
+                              <h4 className={styles.cardSectionTitle}>Vendor Summary</h4>
+                              <div className={styles.summaryGrid}>
+                                <div className={styles.summaryItem}>
+                                  <span className={styles.summaryLabel}>Vendor Name</span>
+                                  <span className={styles.summaryValue}>{vendor.vendorName}</span>
+                                </div>
+                                <div className={styles.summaryItem}>
+                                  <span className={styles.summaryLabel}>Category</span>
+                                  <span className={styles.summaryValue}>{vendor.category || 'IT Services'}</span>
+                                </div>
+                                <div className={styles.summaryItem}>
+                                  <span className={styles.summaryLabel}>PAN</span>
+                                  <span className={styles.summaryValue}>{vendorDetail.pan}</span>
+                                </div>
+                                <div className={styles.summaryItem}>
+                                  <span className={styles.summaryLabel}>GSTIN</span>
+                                  <span className={styles.summaryValue}>{vendorDetail.gstin}</span>
+                                </div>
+                                <div className={styles.summaryItem}>
+                                  <span className={styles.summaryLabel}>Risk Score</span>
+                                  <span className={styles.summaryValue}>
+                                    <span style={getRiskScoreStyle(vendor.riskScore)}>
+                                      {vendor.riskScore > 0 ? vendor.riskScore : '——'}
+                                    </span>
+                                  </span>
+                                </div>
+                                <div className={styles.summaryItem}>
+                                  <span className={styles.summaryLabel}>Risk Tier</span>
+                                  <span className={styles.summaryValue}>
+                                    <Badge variant={riskVariant(vendor.riskLevel)}>
+                                      {vendor.riskLevel}
+                                    </Badge>
+                                  </span>
+                                </div>
+                                <div className={styles.summaryItem}>
+                                  <span className={styles.summaryLabel}>Screening Result</span>
+                                  <span className={styles.summaryValue}>
+                                    <Badge variant={
+                                      screeningText === 'All clear' ? 'success' : 
+                                      screeningText === 'Not yet screened' ? 'default' : 'warning'
+                                    }>
+                                      {screeningText}
+                                    </Badge>
+                                  </span>
+                                </div>
+                                <div className={styles.summaryItem}>
+                                  <span className={styles.summaryLabel}>Document Count</span>
+                                  <span className={styles.summaryValue}>{vendorDetail.docCount} Documents</span>
+                                </div>
+                              </div>
+                              <div style={{ marginTop: '16px', borderTop: '1px solid #e2e8f0', paddingTop: '12px', display: 'flex', gap: '8px' }}>
+                                <Button 
+                                  variant="outline" 
+                                  onClick={() => navigate(`/kyc/screening?vendor=${app.vendorId}`)}
+                                >
+                                  View Screening
+                                </Button>
+                                <Button 
+                                  variant="outline" 
+                                  onClick={() => navigate(`/vendors/add?id=${app.vendorId}&view=true`)}
+                                >
+                                  View Vendor
+                                </Button>
+                              </div>
+                            </div>
 
-                <div className={styles.approvalInfo}>
-                  <span>Submitted by <strong>{a.submittedBy}</strong> on {a.submittedOn}</span>
-                  <span className={styles.stageTag}>{a.stage}</span>
-                </div>
+                            <div className={styles.decisionCard}>
+                              {/* Final Approver Badge */}
+                              <div style={{
+                                marginBottom: '16px',
+                                padding: '12px 16px',
+                                backgroundColor: '#eff6ff',
+                                border: '1px solid #bfdbfe',
+                                borderRadius: '8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                              }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <span style={{ fontSize: '11px', fontWeight: 600, color: '#1e3a8a', textTransform: 'uppercase' }}>Final Approver:</span>
+                                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#0369a1', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e' }}></span>
+                                    Saurabh Anand
+                                  </span>
+                                </div>
+                                <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Tenant Admin</span>
+                              </div>
 
-                {/* Workflow stepper */}
-                <div className={styles.workflowRow}>
-                  {workflowSteps.map((step, i) => (
-                    <React.Fragment key={step}>
-                      <div className={styles.workflowStep}>
-                        <div className={`${styles.workflowDot} ${
-                          a.workflow[step] === 'Approved' ? styles.dotApproved :
-                          a.workflow[step] === 'Pending'  ? styles.dotPending  : styles.dotRejected
-                        }`}>
-                          {a.workflow[step] === 'Approved' ? <CheckCircle2 size={12} /> : (i + 1)}
-                        </div>
-                        <span className={styles.workflowLabel}>{stepLabel[step]}</span>
-                      </div>
-                      {i < workflowSteps.length - 1 && (
-                        <ChevronRight size={14} className={styles.workflowArrow} />
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
+                              <h4 className={styles.cardSectionTitle}>
+                                {user?.role === 'ADMIN' ? 'Decision Form (Final Approver)' : 'Recommendation Form (Maker/Reviewer)'}
+                              </h4>
+                              
+                              <div className={styles.formGrid}>
+                                <div className={styles.formGroup}>
+                                  <label className={styles.formLabel}>Decision</label>
+                                  {user?.role === 'ADMIN' ? (
+                                    <select
+                                      className={styles.formSelect}
+                                      value={decision}
+                                      onChange={(e) => handleDecisionChange(e.target.value)}
+                                    >
+                                      <option value="Approve">Approve</option>
+                                      <option value="Conditional Approval">Conditional Approval</option>
+                                      <option value="Hold">Hold</option>
+                                      <option value="Reject">Reject</option>
+                                    </select>
+                                  ) : (
+                                    <select
+                                      className={styles.formSelect}
+                                      value={decision === 'Approve' ? 'Recommend Approve' : decision}
+                                      onChange={(e) => setDecision(e.target.value)}
+                                    >
+                                      <option value="Recommend Approve">Recommend Approval</option>
+                                      <option value="Hold">Hold / Clarification Required</option>
+                                    </select>
+                                  )}
+                                </div>
 
-                {/* Actions */}
-                {hasActionPermission('APPROVE_KYC') && (
-                  <div className={styles.approvalActions}>
-                    <button className={styles.approveBtn}><ThumbsUp size={14} /> Approve</button>
-                    <button className={styles.rejectBtn}><ThumbsDown size={14} /> Reject</button>
-                    <button className={styles.sendBackBtn}><RotateCcw size={14} /> Send Back</button>
-                  </div>
-                )}
-              </Card>
-            ))}
-          </div>
-        )}
+                                <div className={styles.formGroup}>
+                                  <label className={styles.formLabel}>Approving Authority</label>
+                                  <select
+                                    className={styles.formSelect}
+                                    value={user?.role === 'ADMIN' ? authority : 'Admin'}
+                                    onChange={(e) => setAuthority(e.target.value)}
+                                    disabled={user?.role !== 'ADMIN'}
+                                  >
+                                    <option value="Procurement Manager">Procurement Manager</option>
+                                    <option value="Compliance Officer">Compliance Officer</option>
+                                    <option value="Admin">Admin</option>
+                                  </select>
+                                </div>
+                              </div>
 
-        {/* ── Completed Reviews Tab ── */}
-        {activeTab === 'Completed' && (
-          <div className={styles.tableWrapper}>
-            <table className={styles.table}>
-              <thead>
+                              <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>Remarks</label>
+                                <textarea
+                                  className={styles.formTextarea}
+                                  value={remarks}
+                                  onChange={(e) => setRemarks(e.target.value)}
+                                  rows={3}
+                                />
+                              </div>
+
+                              <div className={styles.btnGroup}>
+                                {user?.role === 'ADMIN' ? (
+                                  <>
+                                    <Button
+                                      onClick={() => handleSubmitDecision('Approve')}
+                                      variant="primary"
+                                      style={{ backgroundColor: '#16a34a', borderColor: '#16a34a', color: '#fff' }}
+                                    >
+                                      Approve & Empanel
+                                    </Button>
+                                    <Button
+                                      onClick={() => handleSubmitDecision('Reject')}
+                                      variant="outline"
+                                      style={{ color: '#dc2626', borderColor: '#dc2626' }}
+                                    >
+                                      Reject
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Button
+                                      onClick={() => {
+                                        toast.success("Recommendation submitted to Tenant Admin (Saurabh Anand) successfully.");
+                                        setExpandedVendorId(null);
+                                      }}
+                                      variant="primary"
+                                      style={{ backgroundColor: '#185FA5', borderColor: '#185FA5', color: '#fff' }}
+                                    >
+                                      Recommend Approval
+                                    </Button>
+                                    <Button
+                                      onClick={() => {
+                                        toast.success("Clarification request sent to maker.");
+                                        setExpandedVendorId(null);
+                                      }}
+                                      variant="outline"
+                                    >
+                                      Request Clarification
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
+
+                              {/* Workflow Trail */}
+                              <div style={{
+                                marginTop: '20px',
+                                padding: '16px',
+                                backgroundColor: '#f8fafc',
+                                border: '1px solid #e2e8f0',
+                                borderRadius: '8px'
+                              }}>
+                                <h4 style={{ margin: '0 0 12px 0', fontSize: '11px', fontWeight: 600, color: '#334155', textTransform: 'uppercase' }}>Workflow Trail</h4>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                                    <span style={{ color: '#64748b' }}>Created By:</span>
+                                    <span style={{ fontWeight: 600, color: '#334155' }}>Rahul Verma (Vendor Onboarding Officer)</span>
+                                  </div>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                                    <span style={{ color: '#64748b' }}>Reviewed By:</span>
+                                    <span style={{ fontWeight: 600, color: '#334155' }}>Priya Sharma (Procurement Manager)</span>
+                                  </div>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                                    <span style={{ color: '#64748b' }}>Approved By:</span>
+                                    <span style={{ fontWeight: 600, color: '#16a34a' }}>Saurabh Anand (Tenant Admin)</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+              {filteredApprovals.length === 0 && (
                 <tr>
-                  <th>Review ID</th>
-                  <th>Vendor</th>
-                  <th>Review Type</th>
-                  <th>Completed Date</th>
-                  <th>Reviewed By</th>
-                  <th>Outcome</th>
-                  <th>Next Review</th>
+                  <td colSpan={9} className={styles.emptyRow}>No reviews match the current filters.</td>
                 </tr>
-              </thead>
-              <tbody>
-                {completed.map(c => (
-                  <tr key={c.reviewId}>
-                    <td className={styles.idCell}>{c.reviewId}</td>
-                    <td>
-                      <div className={styles.vendorCell}>
-                        <span className={styles.vendorName}>{c.vendorName}</span>
-                        <span className={styles.vendorId}>{c.vendorId}</span>
-                      </div>
-                    </td>
-                    <td>{c.reviewType}</td>
-                    <td>{c.completedDate}</td>
-                    <td>{c.reviewedBy}</td>
-                    <td><Badge variant="success">{c.outcome}</Badge></td>
-                    <td>{c.nextReviewDate}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer info */}
+        <div className={styles.pagination}>
+          <span className={styles.pageInfo}>Showing {filteredApprovals.length} of {kycStore.approvals.length} total approvals</span>
+        </div>
       </Card>
     </div>
   );
