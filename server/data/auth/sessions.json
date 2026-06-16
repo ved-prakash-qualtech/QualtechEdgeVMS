@@ -1172,8 +1172,19 @@
     "role": "FINANCE",
     "loginTime": "16/6/2026, 3:25:06 pm",
     "twoFactorVerified": true,
-    "status": "ACTIVE",
+    "status": "INACTIVE",
     "token": "JWT-DEMO-318562",
     "lastActivity": 1781603706765
+  },
+  {
+    "sessionId": "SESSION-6632",
+    "userId": "USR-1004",
+    "username": "onboarding",
+    "role": "ONBOARDING",
+    "loginTime": "16/6/2026, 3:31:58 pm",
+    "twoFactorVerified": true,
+    "status": "ACTIVE",
+    "token": "JWT-DEMO-233577",
+    "lastActivity": 1781604118387
   }
 ]
