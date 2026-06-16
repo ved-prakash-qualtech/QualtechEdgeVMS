@@ -83,13 +83,54 @@ import { PublishCatalogue } from './pages/Catalogue/PublishCatalogue';
 function App() {
   return (
     <AuthProvider>
-      <VendorProvider>
-        <BrowserRouter>
-          <VendorFilterProvider>
-            <DocumentFilterProvider>
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/auth/2fa" element={<TwoFactorAuth />} />
+      <BrowserRouter>
+        <VendorFilterProvider>
+          <DocumentFilterProvider>
+            <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/auth/2fa" element={<TwoFactorAuth />} />
+          
+          {/* Main layout guarded by general login check */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              <Route path="/access-denied" element={<AccessDenied />} />
+
+              {/* Internal Procurement Modules: restricted to ADMIN, PROCUREMENT, COMPLIANCE, FINANCE */}
+              <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'PROCUREMENT', 'COMPLIANCE', 'FINANCE']} />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/administrator/dashboard" element={<Dashboard />} />
+                <Route path="/procurement/dashboard" element={<Dashboard />} />
+                <Route path="/compliance/dashboard" element={<Dashboard />} />
+                <Route path="/finance/dashboard" element={<Dashboard />} />
+                <Route path="/vendors" element={<VendorList />} />
+                <Route path="/vendors/add" element={<AddVendor />} />
+                <Route path="/vendors/approvals" element={<VendorApprovals />} />
+                <Route path="/documents" element={<DocumentList />} />
+                <Route path="/documents/upload" element={<UploadDocument />} />
+                <Route path="/documents/approvals" element={<DocumentApprovals />} />
+                <Route path="/documents/expiry" element={<ExpiryTracker />} />
+                <Route path="/kyc" element={<Navigate to="/kyc/dashboard" replace />} />
+                <Route path="/kyc/dashboard" element={<KycDashboardNew />} />
+                <Route path="/kyc/screening" element={<ScreeningRisk />} />
+                <Route path="/kyc/reviews" element={<ReviewsApprovals />} />
+                <Route path="/kyc/approval/:vendorId" element={<ApprovalDetail />} />
+                <Route path="/kyc/:id" element={<KycDetail />} />
+                <Route path="/kyc/approvals" element={<KycApprovals />} />
+                <Route path="/kyc/risk" element={<KycRiskAssessment />} />
+                <Route path="/kyc/risk-assessment" element={<KycRiskAssessment />} />
+                <Route path="/kyc/sanctions" element={<KycSanctionsScreening />} />
+                <Route path="/kyc/sanctions-screening" element={<KycSanctionsScreening />} />
+                <Route path="/kyc/blacklist" element={<KycBlacklistCheck />} />
+                <Route path="/kyc/blacklist-check" element={<KycBlacklistCheck />} />
+                <Route path="/kyc/pep" element={<KycPepScreening />} />
+                <Route path="/kyc/pep-screening" element={<KycPepScreening />} />
+                <Route path="/kyc/media" element={<KycAdverseMedia />} />
+                <Route path="/kyc/adverse-media" element={<KycAdverseMedia />} />
+                <Route path="/kyc/shell" element={<KycShellCheck />} />
+                <Route path="/kyc/shell-company-check" element={<KycShellCheck />} />
+                <Route path="/kyc/schedule" element={<KycReKycScheduling />} />
+                <Route path="/kyc/re-kyc" element={<KycReKycScheduling />} />
                 
                 {/* Main layout guarded by general login check */}
                 <Route element={<ProtectedRoute />}>
