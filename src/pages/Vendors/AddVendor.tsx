@@ -981,6 +981,7 @@ export const AddVendor: React.FC = () => {
           {currentStep === 4 && (
             <div className={styles.documentsStep}>
               <h3 className={styles.sectionTitle}>Mandatory Documents</h3>
+              <div className={styles.docTableWrapper}>
               <table className={styles.docTable}>
                 <thead>
                   <tr>
@@ -1047,6 +1048,7 @@ export const AddVendor: React.FC = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
               {!isViewMode && (
                 <Button 
                   variant="ghost" 

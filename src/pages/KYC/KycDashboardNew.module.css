@@ -11,13 +11,13 @@
   align-items: flex-end;
 }
 .title {
-  font-size: 1.5rem;
+  font-size: 1.125rem;
   font-weight: 700;
   color: var(--color-text-primary);
 }
 .subtitle {
   color: var(--color-text-secondary);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   margin-top: 4px;
 }
 .headerActions {
@@ -30,7 +30,7 @@
   background: white;
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary);
 }
 
@@ -121,7 +121,7 @@
   padding: 8px 12px 8px 36px;
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   outline: none;
   transition: border-color 0.15s;
 }
@@ -135,7 +135,7 @@
   padding: 8px 12px;
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: var(--color-text-primary);
   background: white;
   outline: none;
@@ -176,11 +176,13 @@
 /* Table */
 .tableWrapper { overflow-x: auto; }
 .table {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
 .table th {
+  text-align: left;
   background: #f8fafc;
   padding: 12px 20px;
   font-size: 0.75rem;
@@ -193,7 +195,7 @@
 }
 .table td {
   padding: 14px 20px;
-  font-size: 0.8125rem;
+  font-size: 11px;
   color: var(--color-text-primary);
   border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
@@ -256,7 +258,7 @@
   padding: 16px 24px;
   border-top: 1px solid var(--color-border);
 }
-.pageInfo { font-size: 0.875rem; color: var(--color-text-secondary); }
+.pageInfo { font-size: 0.75rem; color: var(--color-text-secondary); }
 .pageControls { display: flex; align-items: center; gap: 4px; }
 .pageBtnActive, .pageBtnNext {
   min-width: 32px;
@@ -265,7 +267,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 6px;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   cursor: pointer;
 }
 .pageBtnActive {
@@ -288,7 +290,7 @@
 }
 .tab {
   padding: 16px 20px;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--color-text-secondary);
   cursor: pointer;

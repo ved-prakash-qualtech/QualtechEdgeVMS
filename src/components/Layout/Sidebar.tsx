@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -13,7 +13,6 @@ import {
   Settings,
   LogOut,
   ChevronDown,
-  ChevronUp,
   ChevronLeft,
   ChevronRight,
   Globe,
@@ -109,7 +108,8 @@ const NAV_ITEMS = [
       { name: 'Upload Invoice', path: '/invoices/upload' },
       { name: 'Goods Receipt (GRN)', path: '/invoices/grn' },
       { name: '3-Way Match Engine', path: '/invoices/match' },
-      { name: 'Approvals', path: '/invoices/approvals' },
+      { name: 'Invoice Approvals', path: '/invoices/approvals' },
+      { name: 'Finance Dashboard', path: '/finance/dashboard' },
     ],
   },
   {
@@ -119,7 +119,9 @@ const NAV_ITEMS = [
     subItems: [
       { name: 'Payments Dashboard', path: '/payments/dashboard' },
       { name: 'Payment Processing', path: '/payments/processing' },
-      { name: 'Approvals', path: '/payments/approvals' },
+      { name: 'Payment Approvals', path: '/payments/approvals' },
+      { name: 'TDS Approvals', path: '/finance/tds' },
+      { name: 'Bank Reconciliation', path: '/finance/reconciliation' },
     ],
   },
   {
@@ -146,6 +148,48 @@ const NAV_ITEMS = [
       { name: 'General Settings', path: '/settings/general' },
       { name: 'Users & Roles', path: '/settings/users' },
       { name: 'System Preferences', path: '/settings/preferences' },
+    ],
+  },
+];
+
+const FINANCE_NAV_ITEMS = [
+  {
+    name: 'Dashboard',
+    path: '/finance/dashboard',
+    icon: LayoutDashboard,
+  },
+  {
+    name: 'Invoices',
+    path: '/invoices',
+    icon: Receipt,
+    subItems: [
+      { name: 'Invoice Dashboard', path: '/invoices/dashboard' },
+      { name: 'Upload Invoice', path: '/invoices/upload' },
+      { name: 'Goods Receipt (GRN)', path: '/invoices/grn' },
+      { name: '3-Way Match Engine', path: '/invoices/match' },
+      { name: 'Invoice Approvals', path: '/invoices/approvals' },
+    ],
+  },
+  {
+    name: 'Payments',
+    path: '/payments',
+    icon: CreditCard,
+    subItems: [
+      { name: 'Payments Dashboard', path: '/payments/dashboard' },
+      { name: 'Payment Processing', path: '/payments/processing' },
+      { name: 'Payment Approvals', path: '/payments/approvals' },
+      { name: 'TDS Approvals', path: '/finance/tds' },
+      { name: 'Bank Reconciliation', path: '/finance/reconciliation' },
+    ],
+  },
+  {
+    name: 'Reports & MIS',
+    path: '/reports',
+    icon: BarChart,
+    subItems: [
+      { name: 'MIS Dashboard', path: '/reports/dashboard' },
+      { name: 'Performance & Analytics', path: '/reports/performance' },
+      { name: 'AI Insights', path: '/reports/insights' },
     ],
   },
 ];
@@ -177,6 +221,13 @@ const END_PATHS = new Set([
 export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOpen }) => {
   const { user, logout, hasPermission } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const isParentActive = (subItems: { path: string }[]) =>
+    subItems.some(sub => {
+      const subPath = sub.path.split('?')[0];
+      return pathname === subPath || pathname.startsWith(subPath + '/');
+    });
 
   const [expandedMenus, setExpandedMenus] = React.useState<Record<string, boolean>>({
     Vendors: false,
@@ -191,6 +242,16 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
     'Vendor Portal': true,
     Settings: false,
   });
+
+  React.useEffect(() => {
+    const rawItems = user?.role === 'VENDOR' ? VENDOR_NAV_ITEMS : user?.role === 'FINANCE' ? FINANCE_NAV_ITEMS : NAV_ITEMS;
+    rawItems.forEach(item => {
+      if (item.subItems && isParentActive(item.subItems)) {
+        setExpandedMenus(prev => ({ ...prev, [item.name]: true }));
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const toggleMenu = (name: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -208,7 +269,7 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
     ? user.fullName.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
     : 'A';
 
-  const rawItems = user?.role === 'VENDOR' ? VENDOR_NAV_ITEMS : NAV_ITEMS;
+  const rawItems = user?.role === 'VENDOR' ? VENDOR_NAV_ITEMS : user?.role === 'FINANCE' ? FINANCE_NAV_ITEMS : NAV_ITEMS;
   const filteredNavItems = rawItems.filter(item => {
     if (['ADMIN', 'PROCUREMENT', 'COMPLIANCE', 'ONBOARDING', 'FINANCE'].includes(user?.role || '')) {
       if (item.name === 'Vendor Portal') return false;
@@ -267,10 +328,11 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
           const isExpanded = expandedMenus[item.name];
 
           if (item.subItems && item.subItems.length > 0) {
+            const parentActive = isParentActive(item.subItems);
             return (
               <div key={item.name} className={styles.navGroup}>
                 <div
-                  className={styles.navItem}
+                  className={[styles.navItem, parentActive ? styles.navItemParentActive : ''].join(' ')}
                   onClick={(e) => toggleMenu(item.name, e)}
                   role="button"
                   aria-expanded={isExpanded}
@@ -281,14 +343,15 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
                   <span className={styles.navIcon}><Icon size={18} /></span>
                   <span className={styles.navLabel}>{item.name}</span>
                   {!collapsed && (
-                    isExpanded
-                      ? <ChevronUp size={14} className={styles.chevron} />
-                      : <ChevronDown size={14} className={styles.chevron} />
+                    <ChevronDown
+                      size={14}
+                      className={[styles.chevron, isExpanded ? styles.chevronOpen : ''].join(' ')}
+                    />
                   )}
                 </div>
 
-                {isExpanded && !collapsed && (
-                  <div className={styles.subMenu}>
+                {!collapsed && (
+                  <div className={[styles.subMenu, isExpanded ? styles.subMenuOpen : ''].join(' ')}>
                     {item.subItems.map(sub => (
                       <NavLink
                         key={sub.name}
