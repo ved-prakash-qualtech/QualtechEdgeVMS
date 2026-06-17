@@ -69,13 +69,13 @@ export const ContractsDashboard: React.FC = () => {
 
   const columns = [
     { header: 'Contract ID', accessor: 'contractId' as keyof ContractRecord },
-    { 
-      header: 'Vendor Name', 
-      accessor: (row: ContractRecord) => row.vendor?.vendorName || 'N/A' 
+    {
+      header: 'Vendor Name',
+      accessor: (row: ContractRecord) => row.vendor?.vendorName || 'N/A'
     },
     { header: 'Type', accessor: 'contractType' as keyof ContractRecord },
-    { 
-      header: 'Value', 
+    {
+      header: 'Value',
       accessor: (row: ContractRecord) => {
         const val = row.commercialTerms?.contractValue;
         if (!val) return '₹0';
@@ -86,18 +86,18 @@ export const ContractsDashboard: React.FC = () => {
     },
     { header: 'Effective', accessor: 'effectiveDate' as keyof ContractRecord },
     { header: 'Expiry', accessor: 'expiryDate' as keyof ContractRecord },
-    { 
-      header: 'Risk', 
+    {
+      header: 'Risk',
       accessor: (row: ContractRecord) => {
         const risk = row.riskInsights?.portfolioRisk || 'Low';
         let variant: 'success' | 'warning' | 'danger' = 'success';
         if (risk === 'Medium') variant = 'warning';
         if (risk === 'High') variant = 'danger';
         return <Badge variant={variant}>{risk}</Badge>;
-      } 
+      }
     },
-    { 
-      header: 'Status', 
+    {
+      header: 'Status',
       accessor: (row: ContractRecord) => {
         let className = styles.statusBadge;
         const status = row.status || 'Draft';
@@ -106,23 +106,23 @@ export const ContractsDashboard: React.FC = () => {
         if (status === 'Draft') className = styles.statusDraft;
         if (status === 'Expired') className = styles.statusExpired;
         return <span className={className}>{status}</span>;
-      } 
+      }
     },
-    { 
-      header: 'Actions', 
+    {
+      header: 'Actions',
       align: 'center' as const,
       accessor: (row: ContractRecord) => (
         <div className={styles.actionsCell}>
           <button className={styles.actionBtn} title="View Details" onClick={() => setSelectedContract(row)}><Eye size={16} /></button>
           <button className={styles.actionBtn} title="Download Document" onClick={() => handleDownload(row)}><Download size={16} /></button>
         </div>
-      ) 
+      )
     },
   ];
 
   // Dynamic KPI Calculations
   const activeCount = allContracts.filter(c => c.status === 'Active').length;
-  
+
   const expiringSoonCount = allContracts.filter(c => {
     if (c.status !== 'Active') return false;
     if (!c.expiryDate) return false;
@@ -133,7 +133,7 @@ export const ContractsDashboard: React.FC = () => {
   }).length;
 
   const pendingReviewCount = allContracts.filter(c => c.status === 'In Review').length;
-  
+
   const highRiskCount = allContracts.filter(c => c.riskInsights?.portfolioRisk === 'High').length;
 
   // Client-Side Combined Filtering
@@ -143,21 +143,21 @@ export const ContractsDashboard: React.FC = () => {
       const targetStatus = activeTab === 'Under Review' ? 'In Review' : activeTab;
       if (c.status?.toLowerCase() !== targetStatus.toLowerCase()) return false;
     }
-    
+
     // 2. Type Filter
     if (typeFilter !== 'All' && typeFilter !== 'Contract Type: All') {
       if (c.contractType?.toLowerCase() !== typeFilter.toLowerCase()) return false;
     }
-    
+
     // 3. Risk Filter
     if (riskFilter !== 'All' && riskFilter !== 'Risk Level: All') {
       if (c.riskInsights?.portfolioRisk?.toLowerCase() !== riskFilter.toLowerCase()) return false;
     }
-    
+
     // 4. Search Query Filter
     if (searchVal) {
       const q = searchVal.toLowerCase();
-      const matchesSearch = 
+      const matchesSearch =
         c.contractId?.toLowerCase().includes(q) ||
         c.vendor?.vendorName?.toLowerCase().includes(q) ||
         c.contractType?.toLowerCase().includes(q) ||
@@ -166,7 +166,7 @@ export const ContractsDashboard: React.FC = () => {
         c.riskInsights?.portfolioRisk?.toLowerCase().includes(q);
       if (!matchesSearch) return false;
     }
-    
+
     // 5. KPI Filter
     if (kpiFilter === 'Total Active Contracts') {
       if (c.status !== 'Active') return false;
@@ -182,7 +182,7 @@ export const ContractsDashboard: React.FC = () => {
     } else if (kpiFilter === 'High Risk Contracts') {
       if (c.riskInsights?.portfolioRisk !== 'High') return false;
     }
-    
+
     return true;
   });
 
@@ -202,7 +202,6 @@ export const ContractsDashboard: React.FC = () => {
           <p className={styles.breadcrumbs}>Home / Contracts / Dashboard</p>
         </div>
         <div className={styles.headerActions}>
-          <Button variant="outline" icon={<UploadCloud size={16} />} onClick={() => navigate('/contracts/create')}>Import Contract</Button>
           <Button icon={<Plus size={16} />} onClick={() => navigate('/contracts/create')}>Create Contract</Button>
         </div>
       </header>
@@ -210,10 +209,10 @@ export const ContractsDashboard: React.FC = () => {
       {/* KPI Row */}
       <div className={styles.kpiGrid}>
         {([
-          { key: 'Total Active Contracts', label: 'Total Active',      icon: <FileText size={16} />,     bg: '#e0f2fe', color: '#0284c7', value: activeCount,          sub: '+5.2% vs last quarter' },
-          { key: 'Expiring Soon (30d)',     label: 'Expiring Soon',     icon: <Clock size={16} />,        bg: '#fef3c7', color: '#d97706', value: expiringSoonCount,    sub: 'Requires renewal action' },
-          { key: 'Pending Legal Reviews',  label: 'Pending Reviews',   icon: <FileSignature size={16} />,bg: '#f3e8ff', color: '#7e22ce', value: pendingReviewCount,   sub: 'Avg TAT: 3.2 Days' },
-          { key: 'High Risk Contracts',    label: 'High Risk',         icon: <AlertCircle size={16} />,  bg: '#fee2e2', color: '#b91c1c', value: highRiskCount,        sub: 'Requires mitigation action' },
+          { key: 'Total Active Contracts', label: 'Total Active', icon: <FileText size={16} />, bg: '#e0f2fe', color: '#0284c7', value: activeCount, sub: '+5.2% vs last quarter' },
+          { key: 'Expiring Soon (30d)', label: 'Expiring Soon', icon: <Clock size={16} />, bg: '#fef3c7', color: '#d97706', value: expiringSoonCount, sub: 'Requires renewal action' },
+          { key: 'Pending Legal Reviews', label: 'Pending Reviews', icon: <FileSignature size={16} />, bg: '#f3e8ff', color: '#7e22ce', value: pendingReviewCount, sub: 'Avg TAT: 3.2 Days' },
+          { key: 'High Risk Contracts', label: 'High Risk', icon: <AlertCircle size={16} />, bg: '#fee2e2', color: '#b91c1c', value: highRiskCount, sub: 'Requires mitigation action' },
         ] as const).map(k => (
           <Card key={k.key} className={`${styles.kpiCard} ${kpiFilter === k.key ? styles.kpiCardActive : ''}`} onClick={() => setKpiFilter(kpiFilter === k.key ? null : k.key)}>
             <div className={styles.kpiIcon} style={{ backgroundColor: k.bg, color: k.color, flexShrink: 0 }}>{k.icon}</div>
@@ -230,11 +229,11 @@ export const ContractsDashboard: React.FC = () => {
       <Card className={styles.tableCard}>
         <div className={styles.pillTabs}>
           {([
-            { key: 'All',          label: 'All Contracts' },
-            { key: 'Active',       label: 'Active' },
+            { key: 'All', label: 'All Contracts' },
+            { key: 'Active', label: 'Active' },
             { key: 'Under Review', label: 'In Review' },
-            { key: 'Draft',        label: 'Drafts' },
-            { key: 'Expired',      label: 'Expired' },
+            { key: 'Draft', label: 'Drafts' },
+            { key: 'Expired', label: 'Expired' },
           ] as const).map(t => (
             <button key={t.key} className={`${styles.pillTab} ${activeTab === t.key ? styles.pillTabActive : ''}`} onClick={() => { setActiveTab(t.key); setKpiFilter(null); }}>
               {t.label}
@@ -245,17 +244,17 @@ export const ContractsDashboard: React.FC = () => {
         <div className={styles.tableToolbar}>
           <div className={styles.filters}>
             <div className={styles.searchWrap}>
-              <Input 
-                placeholder="Search contract ID, vendor..." 
-                fullWidth={false} 
+              <Input
+                placeholder="Search contract ID, vendor..."
+                fullWidth={false}
                 className={styles.searchInput}
                 value={searchVal}
                 onChange={(e) => setSearchVal(e.target.value)}
               />
               <Search size={16} className={styles.searchIcon} />
             </div>
-            
-            <select 
+
+            <select
               className={styles.filterSelect}
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
@@ -270,7 +269,7 @@ export const ContractsDashboard: React.FC = () => {
               <option value="SLA Agreement">SLA Agreement</option>
             </select>
 
-            <select 
+            <select
               className={styles.filterSelect}
               value={riskFilter}
               onChange={(e) => setRiskFilter(e.target.value)}
@@ -282,9 +281,9 @@ export const ContractsDashboard: React.FC = () => {
             </select>
 
             {kpiFilter && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setKpiFilter(null)}
                 style={{ color: '#ef4444', display: 'flex', alignItems: 'center', gap: '4px' }}
               >
@@ -294,10 +293,10 @@ export const ContractsDashboard: React.FC = () => {
           </div>
         </div>
 
-        <DataTable 
-          columns={columns} 
-          data={filteredContracts} 
-          keyExtractor={(row) => row.contractId || ''} 
+        <DataTable
+          columns={columns}
+          data={filteredContracts}
+          keyExtractor={(row) => row.contractId || ''}
         />
       </Card>
 
@@ -333,7 +332,7 @@ export const ContractsDashboard: React.FC = () => {
               justifyContent: 'space-between'
             }}>
               <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>Contract Summary</h3>
-              <button 
+              <button
                 onClick={() => setSelectedContract(null)}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}
               >

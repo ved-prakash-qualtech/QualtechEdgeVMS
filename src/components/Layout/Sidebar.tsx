@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import styles from './Sidebar.module.css';
+import { APP_BRAND } from '../../constants/branding';
 
 interface Props {
   collapsed: boolean;
@@ -60,11 +61,6 @@ const NAV_ITEMS = [
       { name: 'Item Master', path: '/catalogue/items' },
       { name: 'Service Master', path: '/catalogue/services' },
       { name: 'Vendor Mapping', path: '/catalogue/vendor-mapping' },
-      { name: 'Category Management', path: '/catalogue/categories' },
-      { name: 'HSN/SAC Mapping', path: '/catalogue/hsn-sac' },
-      { name: 'UOM Management', path: '/catalogue/uom' },
-      { name: 'Rate & Price Reference', path: '/catalogue/rates' },
-      { name: 'Quality Standards', path: '/catalogue/quality' },
       { name: 'Approval Workflow', path: '/catalogue/approvals' },
     ],
   },
@@ -75,7 +71,6 @@ const NAV_ITEMS = [
     subItems: [
       { name: 'Dashboard', path: '/contracts/dashboard' },
       { name: 'Create Contract', path: '/contracts/create' },
-      { name: 'Clause Library', path: '/contracts/clauses' },
       { name: 'Renewals', path: '/contracts/renewals' },
       { name: 'Approvals', path: '/contracts/approvals' },
     ],
@@ -286,8 +281,8 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
         </div>
         {!collapsed && (
           <div className={styles.logoText}>
-            <h2>Qualtech Edge VMS</h2>
-            <p>AI-Powered Vendor Management</p>
+            <h2>{APP_BRAND.name}</h2>
+            <p>{APP_BRAND.tagline}</p>
           </div>
         )}
       </div>
@@ -342,19 +337,26 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
 
                 {!collapsed && (
                   <div className={[styles.subMenu, isExpanded ? styles.subMenuOpen : ''].join(' ')}>
-                    {item.subItems.map(sub => (
-                      <NavLink
-                        key={sub.name}
-                        to={sub.path}
-                        state={item.name === 'Vendor Onboarding & KYC' ? { fromOnboarding: true } : undefined}
-                        end={END_PATHS.has(sub.path)}
-                        className={({ isActive }) =>
-                          [styles.subNavItem, isActive ? styles.activeSub : ''].join(' ')
+                    {item.subItems
+                      .filter(sub => {
+                        if (item.name === 'Vendor Onboarding & KYC' && user?.role === 'PROCUREMENT') {
+                          return sub.path === '/vendors';
                         }
-                      >
-                        {sub.name}
-                      </NavLink>
-                    ))}
+                        return true;
+                      })
+                      .map(sub => (
+                        <NavLink
+                          key={sub.name}
+                          to={sub.path}
+                          state={item.name === 'Vendor Onboarding & KYC' ? { fromOnboarding: true } : undefined}
+                          end={END_PATHS.has(sub.path)}
+                          className={({ isActive }) =>
+                            [styles.subNavItem, isActive ? styles.activeSub : ''].join(' ')
+                          }
+                        >
+                          {sub.name}
+                        </NavLink>
+                      ))}
                   </div>
                 )}
               </div>

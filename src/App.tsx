@@ -32,7 +32,6 @@ import { ApprovalDetail } from './pages/KYC/ApprovalDetail';
 import { ContractsDashboard } from './pages/Contracts/ContractsDashboard';
 import { CreateContract } from './pages/Contracts/CreateContract';
 import { ContractApprovals } from './pages/Contracts/ContractApprovals';
-import { ClauseLibrary } from './pages/Contracts/ClauseLibrary';
 import { Renewals } from './pages/Contracts/Renewals';
 
 import { PODashboard } from './pages/PurchaseOrders/PODashboard';
@@ -80,11 +79,6 @@ import { CatalogueDashboard } from './pages/Catalogue/CatalogueDashboard';
 import { ItemMaster } from './pages/Catalogue/ItemMaster';
 import { ServiceMaster } from './pages/Catalogue/ServiceMaster';
 import { VendorMapping } from './pages/Catalogue/VendorMapping';
-import { CategoryManagement } from './pages/Catalogue/CategoryManagement';
-import { HsnSacMapping } from './pages/Catalogue/HsnSacMapping';
-import { UomManagement } from './pages/Catalogue/UomManagement';
-import { RatePriceReference } from './pages/Catalogue/RatePriceReference';
-import { QualityStandards } from './pages/Catalogue/QualityStandards';
 import { CatalogueApprovals } from './pages/Catalogue/CatalogueApprovals';
 import { PublishCatalogue } from './pages/Catalogue/PublishCatalogue';
 
@@ -157,13 +151,9 @@ function App() {
                       <Route path="/catalogue/items" element={<ItemMaster />} />
                       <Route path="/catalogue/services" element={<ServiceMaster />} />
                       <Route path="/catalogue/vendor-mapping" element={<VendorMapping />} />
-                      <Route path="/catalogue/categories" element={<CategoryManagement />} />
-                      <Route path="/catalogue/hsn-sac" element={<HsnSacMapping />} />
-                      <Route path="/catalogue/uom" element={<UomManagement />} />
-                      <Route path="/catalogue/rates" element={<RatePriceReference />} />
-                      <Route path="/catalogue/pricing" element={<RatePriceReference />} />
-                      <Route path="/catalogue/quality" element={<QualityStandards />} />
-                      <Route path="/catalogue/quality-standards" element={<QualityStandards />} />
+
+
+
                       <Route path="/catalogue/approvals" element={<CatalogueApprovals />} />
                       <Route path="/catalogue/approval-workflow" element={<CatalogueApprovals />} />
                       <Route path="/catalogue/published" element={<PublishCatalogue />} />
@@ -175,7 +165,7 @@ function App() {
                       <Route path="/contracts/repository" element={<Navigate to="/contracts/dashboard" replace />} />
                       <Route path="/contracts/create" element={<CreateContract />} />
                       <Route path="/contracts/approvals" element={<ContractApprovals />} />
-                      <Route path="/contracts/clauses" element={<ClauseLibrary />} />
+
                       <Route path="/contracts/renewals" element={<Renewals />} />
 
                       {/* Purchase Orders */}

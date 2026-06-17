@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, AlertTriangle, ShieldAlert, Award, FileText, ChevronLeft, Upload, Download, Zap } from 'lucide-react';
+import { Sparkles, AlertTriangle, ShieldAlert, Award, ChevronLeft, Zap } from 'lucide-react';
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip as RechartsTooltip, PieChart, Pie, Cell
@@ -27,28 +27,6 @@ const typeIcon = (t: string) => {
 
 export const AIInsights: React.FC = () => {
   const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadedFiles, setUploadedFiles] = useState<{ name: string; size: string; date: string }[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
-
-  const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    processFiles(Array.from(e.dataTransfer.files));
-  };
-
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) processFiles(Array.from(e.target.files));
-  };
-
-  const processFiles = (files: File[]) => {
-    const newFiles = files.map(f => ({
-      name: f.name,
-      size: f.size > 1024 * 1024 ? `${(f.size / 1024 / 1024).toFixed(1)} MB` : `${(f.size / 1024).toFixed(0)} KB`,
-      date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
-    }));
-    setUploadedFiles(prev => [...prev, ...newFiles]);
-  };
 
   return (
     <div className={styles.container}>
@@ -156,58 +134,7 @@ export const AIInsights: React.FC = () => {
         </div>
       </Card>
 
-      {/* Report Upload Section */}
-      <Card className={styles.uploadCard}>
-        <div className={styles.uploadHeader}>
-          <div>
-            <h3 className={styles.sectionTitle}>Upload Reports & Documents</h3>
-            <p className={styles.uploadSubtitle}>Upload reports for AI analysis. Uploaded files are preserved for future reference.</p>
-          </div>
-        </div>
 
-        {/* Drop Zone */}
-        <div
-          className={`${styles.dropZone} ${isDragging ? styles.dropZoneActive : ''}`}
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-          onDragLeave={() => setIsDragging(false)}
-          onDrop={handleFileDrop}
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept=".pdf,.xlsx,.xls,.csv,.docx"
-            style={{ display: 'none' }}
-            onChange={handleFileInput}
-          />
-          <Upload size={28} className={styles.uploadIcon} />
-          <p className={styles.dropText}>Drag & drop files here, or <span className={styles.browseLink}>browse</span></p>
-          <p className={styles.dropSub}>Supports: PDF, Excel, CSV, Word documents</p>
-        </div>
-
-        {/* Uploaded Files List */}
-        {uploadedFiles.length > 0 && (
-          <div className={styles.fileList}>
-            {uploadedFiles.map((f, i) => (
-              <div key={i} className={styles.fileItem}>
-                <FileText size={16} className={styles.fileIcon} />
-                <div className={styles.fileMeta}>
-                  <span className={styles.fileName}>{f.name}</span>
-                  <span className={styles.fileInfo}>{f.size} · Uploaded {f.date}</span>
-                </div>
-                <button className={styles.downloadBtn} title="Download">
-                  <Download size={14} />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {uploadedFiles.length === 0 && (
-          <p className={styles.emptyUpload}>No files uploaded yet. Upload reports to enable AI analysis.</p>
-        )}
-      </Card>
     </div>
   );
 };

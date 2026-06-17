@@ -555,7 +555,6 @@ export const CreateContract: React.FC = () => {
             <div className={styles.clauseSection}>
               <div className={styles.clauseHeader}>
                 <h3>Clause Library Integration</h3>
-                <Button variant="outline" size="sm" onClick={() => navigate('/contracts/clauses')}>Browse Library</Button>
               </div>
               
               <div className={styles.clauseList}>

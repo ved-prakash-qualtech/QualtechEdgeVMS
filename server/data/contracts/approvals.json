@@ -186,5 +186,25 @@
         "dateTime": "8/6/2026, 4:34:05 pm"
       }
     ]
+  },
+  {
+    "approvalId": "APP-CTR-5624",
+    "contractId": "CTR-2026-80977",
+    "vendorName": "Global Secure Tech",
+    "contractType": "Master Service Agreement",
+    "contractValue": 12000000,
+    "risk": "High",
+    "currentStage": "Procurement",
+    "assignedTo": "Procurement Team",
+    "status": "Pending",
+    "remarks": "",
+    "uploadedFiles": [],
+    "history": [
+      {
+        "action": "Submitted",
+        "by": "Saurabh Anand",
+        "dateTime": "17/6/2026, 10:41:51 am"
+      }
+    ]
   }
 ]

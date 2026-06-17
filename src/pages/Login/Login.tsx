@@ -7,6 +7,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import rolesConfig from '../../data/roles.json';
 import styles from './Login.module.css';
+import { APP_BRAND } from '../../constants/branding';
 
 /* ─── Validation helpers ─────────────────────────────── */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -172,8 +173,8 @@ export const Login: React.FC = () => {
             </svg>
           </div>
           <div className={styles.logoText}>
-            <span className={styles.logoName}>Qualtech Edge VMS</span>
-            <span className={styles.logoTagline}>AI-Powered Vendor Management</span>
+            <span className={styles.logoName}>{APP_BRAND.name}</span>
+            <span className={styles.logoTagline}>{APP_BRAND.tagline}</span>
           </div>
         </div>
 
@@ -293,7 +294,7 @@ export const Login: React.FC = () => {
                     aria-invalid={domainTouched && !!domainError ? 'true' : undefined}
                     aria-required="true"
                   />
-                  <span className={styles.domainSuffix}>.vms.qualtechedge.com</span>
+                  <span className={styles.domainSuffix}>.vms.axismaxlife.com</span>
                 </div>
                 {domainTouched && domainError && (
                   <span id={`${formId}-domain-err`} role="alert" className={styles.fieldErrorMsg}>
@@ -355,7 +356,7 @@ export const Login: React.FC = () => {
                 <p className={styles.formSubtitle}>
                   to&nbsp;
                   <span className={styles.domainPill}>
-                    <Building2 size={11} aria-hidden="true" /> {domain}.vms.qualtechedge.com
+                    <Building2 size={11} aria-hidden="true" /> {domain}.vms.axismaxlife.com
                   </span>
                 </p>
               </div>

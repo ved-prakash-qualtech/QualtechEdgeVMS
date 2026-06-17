@@ -16,21 +16,21 @@ import { useAuth } from '../../context/AuthContext';
 
 const kycStatusVariant = (s: string): 'success' | 'warning' | 'info' | 'danger' | 'default' => {
   switch (s) {
-    case 'Verified':    return 'success';
-    case 'Pending':     return 'warning';
+    case 'Verified': return 'success';
+    case 'Pending': return 'warning';
     case 'In Progress': return 'info';
-    case 'Rejected':    return 'danger';
-    default:            return 'default';
+    case 'Rejected': return 'danger';
+    default: return 'default';
   }
 };
 
 const riskVariant = (r: string): 'success' | 'warning' | 'danger' | 'default' => {
   switch (r) {
-    case 'Low':      return 'success';
-    case 'Medium':   return 'warning';
-    case 'High':     return 'danger';
+    case 'Low': return 'success';
+    case 'Medium': return 'warning';
+    case 'High': return 'danger';
     case 'Critical': return 'danger';
-    default:         return 'default';
+    default: return 'default';
   }
 };
 
@@ -68,8 +68,8 @@ const getRiskScoreStyle = (score: number) => {
 const getRiskBadge = (r: string) => {
   if (r === 'Critical') {
     return (
-      <Badge 
-        variant="danger" 
+      <Badge
+        variant="danger"
         style={{ backgroundColor: '#7f1d1d', color: '#fca5a5', borderColor: '#991b1b' }}
       >
         {r}
@@ -83,7 +83,7 @@ export const ApprovalDetail: React.FC = () => {
   const { vendorId } = useParams<{ vendorId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  
+
   const [data, setData] = useState<ApprovalDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState('');
@@ -116,7 +116,7 @@ export const ApprovalDetail: React.FC = () => {
       toast.warning('Please enter reviewer comments before submitting decision.');
       return;
     }
-    
+
     setSubmittingAction(true);
     try {
       const res = await submitApprovalAction(vendorId, action, commentText.trim());
@@ -189,10 +189,10 @@ export const ApprovalDetail: React.FC = () => {
 
       {/* 2-Column Dashboard Grid */}
       <div className={styles.dashboardGrid}>
-        
+
         {/* Left Hand Column (KYC and AI Screening summaries) */}
         <div className={styles.gridColumn}>
-          
+
           {/* Section 1: KYC Summary */}
           <Card className={styles.sectionCard}>
             <h2 className={styles.sectionTitle}>Section 1: KYC Verification Checklist</h2>
@@ -274,7 +274,7 @@ export const ApprovalDetail: React.FC = () => {
                     <span className={styles.watchlistLabel}>{check.label}</span>
                     <Badge variant={
                       check.status === 'Clear' || check.status === 'No Findings' || check.status === 'Low Risk' ? 'success' :
-                      check.status === 'Match Found' || check.status === 'Blacklisted' || check.status === 'High Risk' ? 'danger' : 'warning'
+                        check.status === 'Match Found' || check.status === 'Blacklisted' || check.status === 'High Risk' ? 'danger' : 'warning'
                     }>
                       {check.status}
                     </Badge>
@@ -291,7 +291,7 @@ export const ApprovalDetail: React.FC = () => {
 
         {/* Right Hand Column (Document stats, risk radar, and workflow triggers) */}
         <div className={styles.gridColumn}>
-          
+
           {/* Section 3: Document Summary */}
           <Card className={styles.sectionCard}>
             <h2 className={styles.sectionTitle}>Section 3: Documents Registry Summary</h2>
@@ -325,7 +325,7 @@ export const ApprovalDetail: React.FC = () => {
                 <p className={styles.riskLevelText}>Assessed Level: <strong>{data.riskAssessment.level} Risk</strong></p>
               </div>
             </div>
-            
+
             <div className={styles.riskBreakdown}>
               <span className={styles.breakdownTitle}>Risk Vectors Breakdown</span>
               {[
@@ -340,8 +340,8 @@ export const ApprovalDetail: React.FC = () => {
                     <span className={styles.breakdownVal}>{item.value}%</span>
                   </div>
                   <div className={styles.progressBarBg}>
-                    <div 
-                      className={styles.progressBarFill} 
+                    <div
+                      className={styles.progressBarFill}
                       style={{ width: `${Math.min(item.value, 100)}%`, backgroundColor: item.color }}
                     />
                   </div>
@@ -371,7 +371,7 @@ export const ApprovalDetail: React.FC = () => {
                 </div>
               )}
             </div>
-            
+
             {/* Notes Input Box */}
             <div className={styles.commentForm}>
               <label className={styles.commentInputLabel}>Compliance Notes / Reviewer Remarks</label>
@@ -415,7 +415,7 @@ export const ApprovalDetail: React.FC = () => {
             <div className={styles.decisionInfo}>
               <Info size={16} className={styles.infoIcon} />
               <p>
-                {user?.role === 'ADMIN' 
+                {user?.role === 'ADMIN'
                   ? 'Submitting a decision will instantly update the vendor registry status, recalculate statistics, and log audits.'
                   : 'Recommending an action will log your compliance notes and escalate the decision queue to the final approver (Saurabh Anand).'}
               </p>
@@ -469,31 +469,7 @@ export const ApprovalDetail: React.FC = () => {
               )}
             </div>
 
-            {/* Workflow Trail */}
-            <div style={{
-              marginTop: '16px',
-              padding: '16px',
-              backgroundColor: '#f8fafc',
-              border: '1px solid #e2e8f0',
-              borderRadius: '8px',
-              width: '100%'
-            }}>
-              <h4 style={{ margin: '0 0 12px 0', fontSize: '11px', fontWeight: 600, color: '#334155', textTransform: 'uppercase' }}>Workflow Trail</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                  <span style={{ color: '#64748b' }}>Created By:</span>
-                  <span style={{ fontWeight: 600, color: '#334155' }}>Rahul Verma (Vendor Onboarding Officer)</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                  <span style={{ color: '#64748b' }}>Reviewed By:</span>
-                  <span style={{ fontWeight: 600, color: '#334155' }}>Priya Sharma (Procurement Manager)</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                  <span style={{ color: '#64748b' }}>Approved By:</span>
-                  <span style={{ fontWeight: 600, color: '#16a34a' }}>Saurabh Anand (Tenant Admin)</span>
-                </div>
-              </div>
-            </div>
+
           </Card>
 
         </div>

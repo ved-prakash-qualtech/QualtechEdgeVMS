@@ -985,5 +985,78 @@
         "dateTime": "8/6/2026, 4:34:05 pm"
       }
     ]
+  },
+  {
+    "vendor": {
+      "vendorId": "VND-2025-00029",
+      "vendorName": "Global Secure Tech",
+      "vendorRiskLevel": "Low",
+      "vendorComplianceScore": 92
+    },
+    "contractName": "Global Secure Tech - MSA 2026",
+    "contractType": "Master Service Agreement",
+    "department": "IT Services",
+    "effectiveDate": "2026-06-01",
+    "expiryDate": "2028-05-31",
+    "commercialTerms": {
+      "contractValue": 12000000,
+      "currency": "INR",
+      "paymentTerms": "Net 30",
+      "billingFrequency": "Monthly"
+    },
+    "slaAndLegal": {
+      "selectedClauses": [
+        "RBI Outsourcing Guidelines Clause",
+        "Standard NDA Clause",
+        "Data Privacy & Security Clause"
+      ],
+      "slaMetrics": {
+        "uptime": "99.95%",
+        "responseTime": "2 Hours",
+        "resolutionTime": "8 Hours"
+      },
+      "penaltyTerms": {
+        "slaBreachPenalty": "5%",
+        "maxPenaltyCap": "10%"
+      }
+    },
+    "uploadedDocuments": [],
+    "contractId": "CTR-2026-80977",
+    "vendorName": "Global Secure Tech",
+    "contractValue": 12000000,
+    "currency": "INR",
+    "paymentTerms": "Net 30",
+    "billingFrequency": "Monthly",
+    "riskLevel": "High",
+    "uploadedFiles": [],
+    "status": "Pending Approval",
+    "approvalStage": "Procurement",
+    "createdDate": "2026-06-17",
+    "lastModified": "17/6/2026, 10:41:51 am",
+    "approvalWorkflow": {
+      "currentStage": "Procurement",
+      "workflowStep": 1,
+      "approvalStatus": "Pending",
+      "currentApprover": "Procurement Team",
+      "submittedBy": "Saurabh Anand",
+      "submittedOn": "17/6/2026, 10:41:51 am"
+    },
+    "riskInsights": {
+      "portfolioRisk": "High",
+      "legalExposure": 51,
+      "complianceRisk": 18,
+      "financialRisk": 72,
+      "aiAlerts": [
+        "Missing explicit data residency clause",
+        "Penalty cap set to 5% instead of standard 10%"
+      ]
+    },
+    "auditTrail": [
+      {
+        "action": "Contract Created",
+        "user": "Saurabh Anand",
+        "dateTime": "17/6/2026, 10:41:51 am"
+      }
+    ]
   }
 ]

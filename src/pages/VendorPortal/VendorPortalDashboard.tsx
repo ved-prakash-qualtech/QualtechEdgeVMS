@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
+import { APP_BRAND } from '../../constants/branding';
 import { Badge } from '../../components/Badge/Badge';
 import {
   getVendorDashboard,
@@ -284,7 +285,7 @@ export const VendorPortalDashboard: React.FC = () => {
           <p className={styles.bannerSubtitle}>Logged in as: <strong>{profile?.vendorName || "Acme Cloud Solutions Pvt Ltd"} ({profile?.vendorId || "VND-001"})</strong></p>
         </div>
         <div className={styles.orgBadge}>
-          <Lock size={16} /> Qualtech Edge Bank Security Node
+          <Lock size={16} /> {APP_BRAND.name} Security Node
         </div>
       </div>
 
