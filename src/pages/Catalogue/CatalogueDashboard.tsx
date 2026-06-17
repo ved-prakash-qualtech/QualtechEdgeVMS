@@ -6,10 +6,7 @@ import {
   Users, 
   Layers, 
   CheckSquare, 
-  FileSignature, 
-  RefreshCw, 
   Plus, 
-  BrainCircuit, 
   TrendingDown, 
   Search, 
   LayoutGrid, 
@@ -69,9 +66,7 @@ export const CatalogueDashboard: React.FC = () => {
     { name: 'Total Items', val: totalItemsCount.toLocaleString('en-IN'), icon: Package, color: '#1D4ED8', bg: '#EAF2FF', trend: '+12.5%', isUp: true },
     { name: 'Total Services', val: totalServicesCount.toLocaleString('en-IN'), icon: Layers, color: '#7C3AED', bg: '#F3E8FF', trend: '+5.2%', isUp: true },
     { name: 'Active Sourced Vendors', val: activeVendorsCount.toString(), icon: Users, color: '#16A34A', bg: '#DCFCE7', trend: '+8.4%', isUp: true },
-    { name: 'Pending Approvals', val: pendingApprovalsCount.toString(), icon: CheckSquare, color: '#F59E0B', bg: '#FEF3C7', trend: '-2.1%', isUp: false },
-    { name: 'Published Catalogue', val: publishedCount.toLocaleString('en-IN'), icon: FileSignature, color: '#10B981', bg: '#ECFDF5', trend: 'Stable', isUp: true },
-    { name: 'Draft Catalogue', val: draftCount.toLocaleString('en-IN'), icon: BrainCircuit, color: '#6B7280', bg: '#F3F4F6', trend: '-10%', isUp: false }
+    { name: 'Pending Approvals', val: pendingApprovalsCount.toString(), icon: CheckSquare, color: '#F59E0B', bg: '#FEF3C7', trend: '-2.1%', isUp: false }
   ];
 
   const filteredItems = items.filter(item => {
@@ -111,10 +106,7 @@ export const CatalogueDashboard: React.FC = () => {
         title="ITEM & SERVICE CATALOGUE" 
         subtitle="End-to-End Procurement Catalogue Lifecycle Sourcing & Sizing Dashboard"
         actions={
-          <>
-            <Button variant="outline" icon={<RefreshCw size={16} />} onClick={fetchDashboardData}>Sync ERP</Button>
-            <Button icon={<Plus size={16} />} onClick={() => navigate('/catalogue/items')}>Add Item</Button>
-          </>
+          <Button icon={<Plus size={16} />} onClick={() => navigate('/catalogue/items')}>Add Item</Button>
         }
       />
 

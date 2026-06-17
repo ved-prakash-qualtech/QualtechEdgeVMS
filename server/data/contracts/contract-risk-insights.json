@@ -218,5 +218,22 @@
         "message": "Penalty cap set below enterprise standard"
       }
     ]
+  },
+  {
+    "contractId": "CTR-2026-80977",
+    "portfolioRisk": "High",
+    "legalExposure": 51,
+    "complianceRisk": 18,
+    "financialRisk": 72,
+    "alerts": [
+      {
+        "severity": "High",
+        "message": "Missing explicit data residency clause"
+      },
+      {
+        "severity": "Medium",
+        "message": "Penalty cap set below enterprise standard"
+      }
+    ]
   }
 ]

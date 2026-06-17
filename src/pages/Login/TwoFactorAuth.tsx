@@ -5,6 +5,7 @@ import { Button } from '../../components/Button/Button';
 import { useAuth } from '../../context/AuthContext';
 import rolesConfig from '../../data/roles.json';
 import styles from './TwoFactorAuth.module.css';
+import { APP_BRAND } from '../../constants/branding';
 
 export const TwoFactorAuth: React.FC = () => {
   const navigate = useNavigate();
@@ -155,8 +156,8 @@ export const TwoFactorAuth: React.FC = () => {
             </svg>
           </div>
           <div className={styles.logoText}>
-            <h1>Qualtech Edge VMS</h1>
-            <p>AI-Powered Vendor Management System</p>
+            <h1>{APP_BRAND.name}</h1>
+            <p>{APP_BRAND.tagline}</p>
           </div>
         </div>
 
@@ -189,7 +190,7 @@ export const TwoFactorAuth: React.FC = () => {
         </div>
 
         <div className={styles.copyright}>
-          © 2026 Qualtech Edge. All rights reserved.
+          {APP_BRAND.copyright}
         </div>
       </div>
 

@@ -163,7 +163,7 @@ export const VendorSettings: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>
             Password changes and two-factor authentication are managed by your account administrator.
-            Contact <a href="mailto:procurement@qualtechedge.com" style={{ color: 'var(--color-primary)' }}>procurement@qualtechedge.com</a> to reset credentials.
+            Contact <a href="mailto:procurement@axismaxlife.com" style={{ color: 'var(--color-primary)' }}>procurement@axismaxlife.com</a> to reset credentials.
           </div>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <button className={s.btnOutline} disabled style={{ opacity: 0.6, fontSize: 12 }} aria-disabled="true">
