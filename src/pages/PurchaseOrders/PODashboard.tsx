@@ -177,20 +177,6 @@ export const PODashboard: React.FC = () => {
 
       {/* PO List Embedded Section */}
       <Card className={styles.tableCard} style={{ marginTop: '24px', marginBottom: '24px' }}>
-        <div className={styles.pillTabs}>
-          {([
-            { key: 'All',                label: 'All POs',            count: tabCounts.All },
-            { key: 'Pending Approval',   label: 'Pending Approval',   count: tabCounts['Pending Approval'] },
-            { key: 'Sent to Vendor',     label: 'Sent to Vendor',     count: tabCounts['Sent to Vendor'] },
-            { key: 'Partially Received', label: 'Partially Received', count: tabCounts['Partially Received'] },
-            { key: 'Closed',             label: 'Closed',             count: tabCounts.Closed },
-          ] as const).map(t => (
-            <button key={t.key} className={`${styles.pillTab} ${activeTab === t.key ? styles.pillTabActive : ''}`} onClick={() => setActiveTab(t.key)}>
-              {t.label} <span className={styles.pillCount}>{t.count}</span>
-            </button>
-          ))}
-        </div>
-
         <div className={styles.tableToolbar}>
           <div className={styles.filters}>
             <div className={styles.searchWrap}>
