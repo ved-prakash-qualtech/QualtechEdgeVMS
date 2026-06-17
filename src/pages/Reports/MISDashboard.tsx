@@ -1,13 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Users, FileText, DollarSign, Clock, ShieldCheck, Percent,
-  Download, TrendingUp, PieChart as PieIcon, BarChart2, Calendar
+  Download, Calendar
 } from 'lucide-react';
-import {
-  PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip,
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Legend
-} from 'recharts';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
 import styles from './MISDashboard.module.css';
@@ -21,13 +17,7 @@ const PERIODS: { label: string; months: string[] }[] = [
 
 export const MISDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'spend' | 'category' | 'risk'>('spend');
   const [periodIdx, setPeriodIdx] = useState(0);
-
-  const filteredSpend = useMemo(() => {
-    const allowed = new Set(PERIODS[periodIdx].months);
-    return reportData.spendTrend.filter(d => allowed.has(d.name));
-  }, [periodIdx]);
 
   const kpis = [
     { label: 'Total Vendors',      value: reportData.kpis.totalVendors,     trend: reportData.kpis.totalVendorsTrend,    icon: <Users size={18} />,      bg: '#eff6ff', color: '#1d4ed8', trendColor: 'green' },
@@ -80,90 +70,7 @@ export const MISDashboard: React.FC = () => {
         ))}
       </div>
 
-      {/* Chart Section with Tabs */}
-      <Card className={styles.chartCard}>
-        <div className={styles.chartHeader}>
-          <h3 className={styles.sectionTitle}>
-            Spend &amp; Risk Analytics
-            <span className={styles.periodBadge}>{PERIODS[periodIdx].label}</span>
-          </h3>
-          <div className={styles.chartTabs}>
-            <button className={`${styles.chartTab} ${activeTab === 'spend' ? styles.activeChartTab : ''}`} onClick={() => setActiveTab('spend')}>
-              <TrendingUp size={14} /> Spend Trend
-            </button>
-            <button className={`${styles.chartTab} ${activeTab === 'category' ? styles.activeChartTab : ''}`} onClick={() => setActiveTab('category')}>
-              <PieIcon size={14} /> Category Split
-            </button>
-            <button className={`${styles.chartTab} ${activeTab === 'risk' ? styles.activeChartTab : ''}`} onClick={() => setActiveTab('risk')}>
-              <BarChart2 size={14} /> Risk Profile
-            </button>
-          </div>
-        </div>
 
-        {activeTab === 'spend' && (
-          <div className={styles.chartArea}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={filteredSpend} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                <RechartsTooltip />
-                <Legend iconSize={10} verticalAlign="top" height={32} />
-                <Line type="monotone" dataKey="budget" stroke="#94a3b8" strokeDasharray="5 5" strokeWidth={2} dot={false} name="Budget (₹ Cr)" />
-                <Line type="monotone" dataKey="actual" stroke="#1d4ed8" strokeWidth={3} dot={{ r: 4, fill: '#1d4ed8' }} name="Actual (₹ Cr)" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-
-        {activeTab === 'category' && (
-          <div className={styles.chartAreaPie}>
-            <ResponsiveContainer width="45%" height={220}>
-              <PieChart>
-                <Pie data={reportData.spendByCategory} innerRadius={55} outerRadius={90} paddingAngle={2} dataKey="value">
-                  {reportData.spendByCategory.map((entry, idx) => (
-                    <Cell key={idx} fill={entry.color} />
-                  ))}
-                </Pie>
-                <RechartsTooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className={styles.pieLegend}>
-              {reportData.spendByCategory.map(item => (
-                <div key={item.name} className={styles.legendItem}>
-                  <span className={styles.legendDot} style={{ background: item.color }} />
-                  <span className={styles.legendName}>{item.name}</span>
-                  <span className={styles.legendVal}>₹{item.value} Cr</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'risk' && (
-          <div className={styles.chartAreaPie}>
-            <ResponsiveContainer width="45%" height={220}>
-              <PieChart>
-                <Pie data={reportData.riskDistribution} innerRadius={55} outerRadius={90} paddingAngle={2} dataKey="value">
-                  {reportData.riskDistribution.map((entry, idx) => (
-                    <Cell key={idx} fill={entry.color} />
-                  ))}
-                </Pie>
-                <RechartsTooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className={styles.pieLegend}>
-              {reportData.riskDistribution.map(item => (
-                <div key={item.name} className={styles.legendItem}>
-                  <span className={styles.legendDot} style={{ background: item.color }} />
-                  <span className={styles.legendName}>{item.name}</span>
-                  <span className={styles.legendVal}>{item.value} vendors</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </Card>
 
       {/* Spend Breakdown Table */}
       <Card className={styles.tableCard}>

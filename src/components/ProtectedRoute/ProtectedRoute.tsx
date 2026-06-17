@@ -57,6 +57,14 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Normalize allowedRoles to support role transition (COMPLIANCE -> ONBOARDING)
   const userRole = user.role;
+
+  // Procurement Manager restricted routes check
+  if (userRole === 'PROCUREMENT') {
+    const restrictedPaths = ['/vendors/add', '/kyc/screening', '/kyc/reviews'];
+    if (restrictedPaths.includes(location.pathname)) {
+      return <Navigate to="/vendors" replace />;
+    }
+  }
   const matchesAllowedRole = allowedRoles ? allowedRoles.some(r => {
     if (r === userRole) return true;
     if (r === 'COMPLIANCE' && userRole === 'ONBOARDING') return true;

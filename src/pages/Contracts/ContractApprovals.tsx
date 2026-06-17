@@ -5,15 +5,15 @@ import { toast } from 'sonner';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
 import { Badge } from '../../components/Badge/Badge';
-import { 
-  getPendingApprovals, 
-  getContractById, 
-  approveContract, 
-  rejectContract 
+import {
+  getPendingApprovals,
+  getContractById,
+  approveContract,
+  rejectContract
 } from '../../services/contractService';
-import type { 
-  ApprovalQueueItem, 
-  ContractRecord 
+import type {
+  ApprovalQueueItem,
+  ContractRecord
 } from '../../services/contractService';
 import styles from './ContractApprovals.module.css';
 import { useAuth } from '../../context/AuthContext';
@@ -95,9 +95,9 @@ export const ContractApprovals: React.FC = () => {
         res = await approveContract(selectedContract.contractId!, remarks, 'Saurabh Anand');
       } else {
         res = await rejectContract(
-          selectedContract.contractId!, 
-          remarks, 
-          'Saurabh Anand', 
+          selectedContract.contractId!,
+          remarks,
+          'Saurabh Anand',
           action === 'Send Back' ? 'Send Back' : 'Reject'
         );
       }
@@ -151,15 +151,15 @@ export const ContractApprovals: React.FC = () => {
           </div>
           <div className={styles.searchBox}>
             <Search size={16} className={styles.searchIcon} />
-            <input 
-              type="text" 
-              placeholder="Search contracts..." 
-              className={styles.searchInput} 
+            <input
+              type="text"
+              placeholder="Search contracts..."
+              className={styles.searchInput}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          
+
           <div className={styles.listContainer}>
             {listLoading ? (
               <div style={{ padding: '20px', textAlign: 'center', color: '#64748b' }}>
@@ -167,8 +167,8 @@ export const ContractApprovals: React.FC = () => {
               </div>
             ) : filteredQueue.length > 0 ? (
               filteredQueue.map(item => (
-                <div 
-                  key={item.approvalId} 
+                <div
+                  key={item.approvalId}
                   className={`${styles.listItem} ${item.approvalId === selectedApprovalId ? styles.listActive : ''}`}
                   onClick={() => handleSelectApproval(item)}
                 >
@@ -206,7 +206,7 @@ export const ContractApprovals: React.FC = () => {
                 <h3 className={styles.detailTitle}>Contract Summary</h3>
                 <Badge variant="warning">{selectedContract.status}</Badge>
               </div>
-              
+
               <div className={styles.infoGrid}>
                 <div className={styles.infoRow}>
                   <span className={styles.infoLabel}>Contract ID</span>
@@ -262,8 +262,8 @@ export const ContractApprovals: React.FC = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', backgroundColor: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px' }}>
                     <FileText size={16} color="#64748b" />
                     <span style={{ fontSize: '12px', fontWeight: '500', flex: 1 }}>{selectedContract.uploadedDocuments[0].fileName}</span>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => {
                         const link = document.createElement('a');
@@ -313,24 +313,24 @@ export const ContractApprovals: React.FC = () => {
               <div className={styles.actionButtons}>
                 {user?.role === 'ADMIN' ? (
                   <>
-                    <Button 
-                      className={styles.approveBtn} 
+                    <Button
+                      className={styles.approveBtn}
                       icon={<CheckCircle2 size={16} />}
                       onClick={() => handleResolution('Approve')}
                       disabled={actionLoading}
                     >
                       Approve Contract
                     </Button>
-                    <Button 
-                      className={styles.rejectBtn} 
+                    <Button
+                      className={styles.rejectBtn}
                       icon={<XCircle size={16} />}
                       onClick={() => handleResolution('Reject')}
                       disabled={actionLoading}
                     >
                       Reject
                     </Button>
-                    <Button 
-                      className={styles.sendBackBtn} 
+                    <Button
+                      className={styles.sendBackBtn}
                       icon={<Send size={16} />}
                       onClick={() => handleResolution('Send Back')}
                       disabled={actionLoading}
@@ -340,8 +340,8 @@ export const ContractApprovals: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <Button 
-                      className={styles.approveBtn} 
+                    <Button
+                      className={styles.approveBtn}
                       icon={<CheckCircle2 size={16} />}
                       onClick={() => {
                         toast.success("Contract recommendation submitted to Tenant Admin successfully.");
@@ -351,8 +351,8 @@ export const ContractApprovals: React.FC = () => {
                     >
                       Recommend Approval
                     </Button>
-                    <Button 
-                      className={styles.sendBackBtn} 
+                    <Button
+                      className={styles.sendBackBtn}
                       icon={<Send size={16} />}
                       onClick={() => {
                         toast.success("Contract sent back for revisions.");
@@ -366,41 +366,9 @@ export const ContractApprovals: React.FC = () => {
                 )}
               </div>
 
-              <div className={styles.remarksSection}>
-                <label className={styles.remarksLabel}>Legal Notes / Remarks</label>
-                <textarea 
-                  className={styles.remarksInput} 
-                  placeholder="Enter remarks required for rejection or revision..."
-                  value={remarks}
-                  onChange={(e) => setRemarks(e.target.value)}
-                ></textarea>
-              </div>
 
-              {/* Workflow Trail */}
-              <div style={{
-                marginTop: '16px',
-                padding: '16px',
-                backgroundColor: '#f8fafc',
-                border: '1px solid #e2e8f0',
-                borderRadius: '8px',
-                width: '100%'
-              }}>
-                <h4 style={{ margin: '0 0 12px 0', fontSize: '11px', fontWeight: 600, color: '#334155', textTransform: 'uppercase' }}>Workflow Trail</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                    <span style={{ color: '#64748b' }}>Created By:</span>
-                    <span style={{ fontWeight: 600, color: '#334155' }}>Rahul Verma (Vendor Onboarding Officer)</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                    <span style={{ color: '#64748b' }}>Reviewed By:</span>
-                    <span style={{ fontWeight: 600, color: '#334155' }}>Priya Sharma (Procurement Manager)</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                    <span style={{ color: '#64748b' }}>Approved By:</span>
-                    <span style={{ fontWeight: 600, color: '#16a34a' }}>Saurabh Anand (Tenant Admin)</span>
-                  </div>
-                </div>
-              </div>
+
+
             </Card>
           ) : (
             <Card className={styles.detailCard}>

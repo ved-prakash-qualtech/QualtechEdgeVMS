@@ -70,5 +70,13 @@
     "action": "Contract Created & Submitted for Approval",
     "performedBy": "Saurabh Anand",
     "details": "Contract with Global Secure Tech created and routed to Procurement."
+  },
+  {
+    "id": "AUD-CTR-83108",
+    "timestamp": "2026-06-17T05:11:51.411Z",
+    "contractId": "CTR-2026-80977",
+    "action": "Contract Created & Submitted for Approval",
+    "performedBy": "Saurabh Anand",
+    "details": "Contract with Global Secure Tech created and routed to Procurement."
   }
 ]

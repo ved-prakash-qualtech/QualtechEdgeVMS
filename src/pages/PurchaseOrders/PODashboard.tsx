@@ -6,7 +6,6 @@ import {
   CheckCircle2, 
   Truck, 
   FileText, 
-  ArrowRight,
   Plus,
   Download,
   Eye,
@@ -234,25 +233,6 @@ export const PODashboard: React.FC = () => {
         </div>
       </Card>
 
-      {/* End to End Flow Visualizer */}
-      <div className={styles.flowContainer}>
-        <h3 className={styles.flowTitle}>Purchase Orders – End to End Flow</h3>
-        <div className={styles.flowSteps}>
-          <div className={styles.flowStepActive} onClick={() => navigate('/purchase-orders/create')} style={{ cursor: 'pointer' }}>1. Create Requisition</div>
-          <ArrowRight size={16} color="#cbd5e1" />
-          <div className={styles.flowStep} onClick={() => navigate('/purchase-orders/approvals')} style={{ cursor: 'pointer' }}>2. PO Approval</div>
-          <ArrowRight size={16} color="#cbd5e1" />
-          <div className={styles.flowStep} onClick={() => navigate('/purchase-orders/list')} style={{ cursor: 'pointer' }}>3. PO Generation</div>
-          <ArrowRight size={16} color="#cbd5e1" />
-          <div className={styles.flowStep} onClick={() => navigate('/purchase-orders/list')} style={{ cursor: 'pointer' }}>4. PO Sent to Vendor</div>
-          <ArrowRight size={16} color="#cbd5e1" />
-          <div className={styles.flowStep} onClick={() => navigate('/invoices/grn')} style={{ cursor: 'pointer' }}>5. Goods Receipt (GRN)</div>
-          <ArrowRight size={16} color="#cbd5e1" />
-          <div className={styles.flowStep} onClick={() => navigate('/invoices/match')} style={{ cursor: 'pointer' }}>6. Invoice & 3-Way Match</div>
-          <ArrowRight size={16} color="#cbd5e1" />
-          <div className={styles.flowStep}>7. Payment Processing</div>
-        </div>
-      </div>
     </div>
   );
 };

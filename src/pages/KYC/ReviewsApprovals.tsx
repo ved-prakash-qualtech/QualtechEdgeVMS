@@ -15,11 +15,11 @@ type StatusFilterKey = 'All' | 'Pending' | 'Conditional' | 'Approved' | 'Rejecte
 
 const riskVariant = (r: string): 'success' | 'warning' | 'danger' | 'default' => {
   switch (r) {
-    case 'Low':      return 'success';
-    case 'Medium':   return 'warning';
-    case 'High':     return 'danger';
+    case 'Low': return 'success';
+    case 'Medium': return 'warning';
+    case 'High': return 'danger';
     case 'Critical': return 'danger';
-    default:         return 'default';
+    default: return 'default';
   }
 };
 
@@ -66,11 +66,11 @@ export const ReviewsApprovals: React.FC = () => {
   // Filter reviews
   const filteredApprovals = useMemo(() => {
     if (!kycStore) return [];
-    
+
     return kycStore.approvals.filter((app: any) => {
       const vendor = kycStore.vendors.find((v: any) => v.vendorId === app.vendorId);
       const name = vendor ? vendor.vendorName : '';
-      
+
       // Search filter (Vendor Name or ID)
       if (search) {
         const q = search.toLowerCase();
@@ -258,8 +258,8 @@ export const ReviewsApprovals: React.FC = () => {
                       </td>
                       <td>
                         <Badge variant={
-                          screeningText === 'All clear' ? 'success' : 
-                          screeningText === 'Not yet screened' ? 'default' : 'warning'
+                          screeningText === 'All clear' ? 'success' :
+                            screeningText === 'Not yet screened' ? 'default' : 'warning'
                         }>
                           {screeningText}
                         </Badge>
@@ -269,8 +269,8 @@ export const ReviewsApprovals: React.FC = () => {
                       <td>
                         <Badge variant={
                           app.approvalStatus === 'Approved' ? 'success' :
-                          app.approvalStatus === 'Rejected' ? 'danger' :
-                          app.approvalStatus === 'Conditional' || app.approvalStatus === 'Conditional Approval' ? 'warning' : 'info'
+                            app.approvalStatus === 'Rejected' ? 'danger' :
+                              app.approvalStatus === 'Conditional' || app.approvalStatus === 'Conditional Approval' ? 'warning' : 'info'
                         }>
                           {app.approvalStatus === 'Pending' ? 'Pending Review' : app.approvalStatus}
                         </Badge>
@@ -340,8 +340,8 @@ export const ReviewsApprovals: React.FC = () => {
                                   <span className={styles.summaryLabel}>Screening Result</span>
                                   <span className={styles.summaryValue}>
                                     <Badge variant={
-                                      screeningText === 'All clear' ? 'success' : 
-                                      screeningText === 'Not yet screened' ? 'default' : 'warning'
+                                      screeningText === 'All clear' ? 'success' :
+                                        screeningText === 'Not yet screened' ? 'default' : 'warning'
                                     }>
                                       {screeningText}
                                     </Badge>
@@ -353,14 +353,14 @@ export const ReviewsApprovals: React.FC = () => {
                                 </div>
                               </div>
                               <div style={{ marginTop: '16px', borderTop: '1px solid #e2e8f0', paddingTop: '12px', display: 'flex', gap: '8px' }}>
-                                <Button 
-                                  variant="outline" 
+                                <Button
+                                  variant="outline"
                                   onClick={() => navigate(`/kyc/screening?vendor=${app.vendorId}`)}
                                 >
                                   View Screening
                                 </Button>
-                                <Button 
-                                  variant="outline" 
+                                <Button
+                                  variant="outline"
                                   onClick={() => navigate(`/vendors/add?id=${app.vendorId}&view=true`)}
                                 >
                                   View Vendor
@@ -393,7 +393,7 @@ export const ReviewsApprovals: React.FC = () => {
                               <h4 className={styles.cardSectionTitle}>
                                 {user?.role === 'ADMIN' ? 'Decision Form (Final Approver)' : 'Recommendation Form (Maker/Reviewer)'}
                               </h4>
-                              
+
                               <div className={styles.formGrid}>
                                 <div className={styles.formGroup}>
                                   <label className={styles.formLabel}>Decision</label>
@@ -488,30 +488,7 @@ export const ReviewsApprovals: React.FC = () => {
                                 )}
                               </div>
 
-                              {/* Workflow Trail */}
-                              <div style={{
-                                marginTop: '20px',
-                                padding: '16px',
-                                backgroundColor: '#f8fafc',
-                                border: '1px solid #e2e8f0',
-                                borderRadius: '8px'
-                              }}>
-                                <h4 style={{ margin: '0 0 12px 0', fontSize: '11px', fontWeight: 600, color: '#334155', textTransform: 'uppercase' }}>Workflow Trail</h4>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                                    <span style={{ color: '#64748b' }}>Created By:</span>
-                                    <span style={{ fontWeight: 600, color: '#334155' }}>Rahul Verma (Vendor Onboarding Officer)</span>
-                                  </div>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                                    <span style={{ color: '#64748b' }}>Reviewed By:</span>
-                                    <span style={{ fontWeight: 600, color: '#334155' }}>Priya Sharma (Procurement Manager)</span>
-                                  </div>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                                    <span style={{ color: '#64748b' }}>Approved By:</span>
-                                    <span style={{ fontWeight: 600, color: '#16a34a' }}>Saurabh Anand (Tenant Admin)</span>
-                                  </div>
-                                </div>
-                              </div>
+
                             </div>
                           </div>
                         </td>

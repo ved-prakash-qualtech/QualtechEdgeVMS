@@ -4,7 +4,7 @@
     "vendorName": "Global Secure Tech",
     "contractType": "Master Service Agreement",
     "expiryDate": "2028-05-31",
-    "daysRemaining": 723,
+    "daysRemaining": 714,
     "renewalStatus": "Active",
     "status": "Auto-Renew",
     "owner": "Saurabh Anand"
@@ -14,7 +14,7 @@
     "vendorName": "Global Secure Tech",
     "contractType": "Master Service Agreement",
     "expiryDate": "2027-12-31",
-    "daysRemaining": 571,
+    "daysRemaining": 562,
     "renewalStatus": "Active",
     "status": "Auto-Renew",
     "owner": "Saurabh Anand"
@@ -24,7 +24,7 @@
     "vendorName": "Office Supplies Inc",
     "contractType": "Vendor Agreement",
     "expiryDate": "2026-03-14",
-    "daysRemaining": -86,
+    "daysRemaining": -95,
     "renewalStatus": "Expired",
     "status": "Expired",
     "owner": "Priya Sharma"
@@ -34,7 +34,7 @@
     "vendorName": "CloudNet Systems",
     "contractType": "SaaS Agreement",
     "expiryDate": "2028-03-31",
-    "daysRemaining": 662,
+    "daysRemaining": 653,
     "renewalStatus": "Active",
     "status": "Auto-Renew",
     "owner": "Rahul Desai"
@@ -44,7 +44,7 @@
     "vendorName": "Legal Associates",
     "contractType": "Retainer",
     "expiryDate": "2025-02-09",
-    "daysRemaining": -484,
+    "daysRemaining": -493,
     "renewalStatus": "Expired",
     "status": "Expired",
     "owner": "Saurabh Anand"
@@ -54,7 +54,7 @@
     "vendorName": "BuildRight Infra",
     "contractType": "Facility Lease",
     "expiryDate": "2030-12-31",
-    "daysRemaining": 1667,
+    "daysRemaining": 1658,
     "renewalStatus": "Active",
     "status": "Auto-Renew",
     "owner": "Saurabh Anand"
@@ -64,7 +64,7 @@
     "vendorName": "Tech Solutions Pvt Ltd",
     "contractType": "SLA Agreement",
     "expiryDate": "2025-06-14",
-    "daysRemaining": -359,
+    "daysRemaining": -368,
     "renewalStatus": "Expired",
     "status": "Expired",
     "owner": "Saurabh Anand"
@@ -74,7 +74,7 @@
     "vendorName": "CloudNet Systems",
     "contractType": "SaaS Agreement",
     "expiryDate": "2029-06-30",
-    "daysRemaining": 1118,
+    "daysRemaining": 1109,
     "renewalStatus": "Active",
     "status": "Auto-Renew",
     "owner": "Saurabh Anand"
@@ -84,7 +84,7 @@
     "vendorName": "Global Secure Tech",
     "contractType": "Master Service Agreement",
     "expiryDate": "2028-05-31",
-    "daysRemaining": 723,
+    "daysRemaining": 714,
     "renewalStatus": "Active",
     "status": "Auto-Renew",
     "owner": "Saurabh Anand"
@@ -94,7 +94,7 @@
     "vendorName": "Global Secure Tech",
     "contractType": "Master Service Agreement",
     "expiryDate": "2028-05-31",
-    "daysRemaining": 723,
+    "daysRemaining": 714,
     "renewalStatus": "Active",
     "status": "Auto-Renew",
     "owner": "Saurabh Anand"
@@ -104,7 +104,7 @@
     "vendorName": "Global Secure Tech",
     "contractType": "Master Service Agreement",
     "expiryDate": "2028-05-31",
-    "daysRemaining": 723,
+    "daysRemaining": 714,
     "renewalStatus": "Active",
     "status": "Auto-Renew",
     "owner": "Saurabh Anand"
@@ -114,7 +114,7 @@
     "vendorName": "Global Secure Tech",
     "contractType": "Master Service Agreement",
     "expiryDate": "2028-05-31",
-    "daysRemaining": 723,
+    "daysRemaining": 714,
     "renewalStatus": "Active",
     "status": "Auto-Renew",
     "owner": "Saurabh Anand"
@@ -124,7 +124,7 @@
     "vendorName": "Global Secure Tech",
     "contractType": "Master Service Agreement",
     "expiryDate": "2028-05-31",
-    "daysRemaining": 723,
+    "daysRemaining": 714,
     "renewalStatus": "Active",
     "status": "Auto-Renew",
     "owner": "Saurabh Anand"
@@ -134,7 +134,7 @@
     "vendorName": "Global Secure Tech",
     "contractType": "Master Service Agreement",
     "expiryDate": "2028-05-31",
-    "daysRemaining": 723,
+    "daysRemaining": 714,
     "renewalStatus": "Active",
     "status": "Auto-Renew",
     "owner": "Saurabh Anand"
@@ -144,7 +144,17 @@
     "vendorName": "Global Secure Tech",
     "contractType": "Master Service Agreement",
     "expiryDate": "2028-05-31",
-    "daysRemaining": 723,
+    "daysRemaining": 714,
+    "renewalStatus": "Active",
+    "status": "Auto-Renew",
+    "owner": "Saurabh Anand"
+  },
+  {
+    "contractId": "CTR-2026-80977",
+    "vendorName": "Global Secure Tech",
+    "contractType": "Master Service Agreement",
+    "expiryDate": "2028-05-31",
+    "daysRemaining": 714,
     "renewalStatus": "Active",
     "status": "Auto-Renew",
     "owner": "Saurabh Anand"

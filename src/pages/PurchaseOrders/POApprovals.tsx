@@ -4,15 +4,15 @@ import { toast } from 'sonner';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
 import { Badge } from '../../components/Badge/Badge';
-import { 
-  getPendingApprovals, 
-  approvePO, 
-  rejectPO, 
-  getRequisitionById 
+import {
+  getPendingApprovals,
+  approvePO,
+  rejectPO,
+  getRequisitionById
 } from '../../services/purchaseOrderService';
-import type { 
-  ApprovalQueueItem, 
-  RequisitionRecord 
+import type {
+  ApprovalQueueItem,
+  RequisitionRecord
 } from '../../services/purchaseOrderService';
 import { useAuth } from '../../context/AuthContext';
 import styles from './POApprovals.module.css';
@@ -133,15 +133,15 @@ export const POApprovals: React.FC = () => {
             </div>
             <div className={styles.searchBox}>
               <Search size={16} className={styles.searchIcon} />
-              <input 
-                type="text" 
-                placeholder="Search POs..." 
-                className={styles.searchInput} 
+              <input
+                type="text"
+                placeholder="Search POs..."
+                className={styles.searchInput}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            
+
             <div className={styles.listContainer}>
               {filteredApprovals.length === 0 ? (
                 <div style={{ padding: '24px', textAlign: 'center', fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
@@ -149,8 +149,8 @@ export const POApprovals: React.FC = () => {
                 </div>
               ) : (
                 filteredApprovals.map(item => (
-                  <div 
-                    key={item.approvalId} 
+                  <div
+                    key={item.approvalId}
                     className={`${styles.listItem} ${selectedApproval?.approvalId === item.approvalId ? styles.listActive : ''}`}
                     onClick={() => setSelectedApproval(item)}
                     style={{ cursor: 'pointer' }}
@@ -180,7 +180,7 @@ export const POApprovals: React.FC = () => {
                 <div className={styles.detailHeader}>
                   <h3 className={styles.detailTitle}>Requisition Summary ({selectedApproval.currentStage})</h3>
                 </div>
-                
+
                 <div className={styles.infoGrid}>
                   <div className={styles.infoRow}>
                     <span className={styles.infoLabel}>Requisition ID</span>
@@ -213,11 +213,11 @@ export const POApprovals: React.FC = () => {
                       <span className={styles.infoLabel}>Attached Drawing / Specification</span>
                       <span className={styles.infoValue}>
                         {selectedReq.uploadedDocuments.map(doc => (
-                          <a 
-                            key={doc.fileId} 
-                            href={doc.filePath} 
-                            target="_blank" 
-                            rel="noreferrer" 
+                          <a
+                            key={doc.fileId}
+                            href={doc.filePath}
+                            target="_blank"
+                            rel="noreferrer"
                             style={{ display: 'block', textDecoration: 'underline', color: 'var(--color-primary)' }}
                           >
                             📄 {doc.fileName} ({doc.fileSize})
@@ -238,9 +238,9 @@ export const POApprovals: React.FC = () => {
                     <div className={styles.budgetPendingFill} style={{ width: `${reqPct}%`, left: `${consumedPct}%` }}></div>
                   </div>
                   <div className={styles.budgetLegend}>
-                    <span className={styles.legendDotConsumed}>Consumed (₹{(consumed/100000).toFixed(1)} L)</span>
-                    <span className={styles.legendDotCurrent}>Current Requisition (₹{(reqVal/100000).toFixed(1)} L)</span>
-                    <span className={styles.legendDotAvailable}>Available (₹{(availableVal/100000).toFixed(1)} L)</span>
+                    <span className={styles.legendDotConsumed}>Consumed (₹{(consumed / 100000).toFixed(1)} L)</span>
+                    <span className={styles.legendDotCurrent}>Current Requisition (₹{(reqVal / 100000).toFixed(1)} L)</span>
+                    <span className={styles.legendDotAvailable}>Available (₹{(availableVal / 100000).toFixed(1)} L)</span>
                   </div>
                 </div>
 
@@ -291,24 +291,24 @@ export const POApprovals: React.FC = () => {
                   <>
                     <h3 className={styles.actionTitle}>Approval Action (Final Checker)</h3>
                     <div className={styles.actionButtons}>
-                      <Button 
-                        className={styles.approveBtn} 
+                      <Button
+                        className={styles.approveBtn}
                         icon={<CheckCircle2 size={16} />}
                         onClick={() => handleAction('Approve')}
                         disabled={actionLoading}
                       >
                         {selectedApproval.currentStage === 'Procurement Head Approval' ? 'Approve & Generate PO' : 'Approve Requisition'}
                       </Button>
-                      <Button 
-                        className={styles.rejectBtn} 
+                      <Button
+                        className={styles.rejectBtn}
                         icon={<XCircle size={16} />}
                         onClick={() => handleAction('Reject')}
                         disabled={actionLoading}
                       >
                         Reject Requisition
                       </Button>
-                      <Button 
-                        className={styles.sendBackBtn} 
+                      <Button
+                        className={styles.sendBackBtn}
                         icon={<Send size={16} />}
                         onClick={() => handleAction('Send Back')}
                         disabled={actionLoading}
@@ -317,22 +317,14 @@ export const POApprovals: React.FC = () => {
                       </Button>
                     </div>
 
-                    <div className={styles.remarksSection}>
-                      <label className={styles.remarksLabel}>Approval Notes / Remarks</label>
-                      <textarea 
-                        className={styles.remarksInput} 
-                        placeholder="Enter remarks required for rejection or send-back..."
-                        value={remarks}
-                        onChange={(e) => setRemarks(e.target.value)}
-                      ></textarea>
-                    </div>
+
                   </>
                 ) : (
                   <>
                     <h3 className={styles.actionTitle}>Review Action (Maker/Reviewer)</h3>
                     <div className={styles.actionButtons}>
-                      <Button 
-                        className={styles.approveBtn} 
+                      <Button
+                        className={styles.approveBtn}
                         icon={<CheckCircle2 size={16} />}
                         onClick={() => {
                           toast.success("PO Requisition recommendation submitted to Tenant Admin successfully.");
@@ -342,8 +334,8 @@ export const POApprovals: React.FC = () => {
                       >
                         Recommend Approval
                       </Button>
-                      <Button 
-                        className={styles.sendBackBtn} 
+                      <Button
+                        className={styles.sendBackBtn}
                         icon={<Send size={16} />}
                         onClick={() => {
                           toast.success("PO Requisition sent back.");
@@ -357,8 +349,8 @@ export const POApprovals: React.FC = () => {
 
                     <div className={styles.remarksSection}>
                       <label className={styles.remarksLabel}>Reviewer Notes / Remarks</label>
-                      <textarea 
-                        className={styles.remarksInput} 
+                      <textarea
+                        className={styles.remarksInput}
                         placeholder="Enter remarks or justification note for the checker..."
                         value={remarks}
                         onChange={(e) => setRemarks(e.target.value)}
@@ -367,31 +359,7 @@ export const POApprovals: React.FC = () => {
                   </>
                 )}
 
-                {/* Workflow Trail */}
-                <div style={{
-                  marginTop: '16px',
-                  padding: '16px',
-                  backgroundColor: '#f8fafc',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  width: '100%'
-                }}>
-                  <h4 style={{ margin: '0 0 12px 0', fontSize: '11px', fontWeight: 600, color: '#334155', textTransform: 'uppercase' }}>Workflow Trail</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                      <span style={{ color: '#64748b' }}>Created By:</span>
-                      <span style={{ fontWeight: 600, color: '#334155' }}>Rahul Verma (Vendor Onboarding Officer)</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                      <span style={{ color: '#64748b' }}>Reviewed By:</span>
-                      <span style={{ fontWeight: 600, color: '#334155' }}>Priya Sharma (Procurement Manager)</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                      <span style={{ color: '#64748b' }}>Approved By:</span>
-                      <span style={{ fontWeight: 600, color: '#16a34a' }}>Saurabh Anand (Tenant Admin)</span>
-                    </div>
-                  </div>
-                </div>
+
               </Card>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '300px', border: '1px dashed var(--color-border)', borderRadius: '12px', color: 'var(--color-text-secondary)' }}>

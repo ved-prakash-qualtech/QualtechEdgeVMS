@@ -1,23 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Bell, Link, Shield, FileText, CheckCircle, RefreshCw, Settings, Zap, Lock, Clock
+  Bell, Shield, FileText, CheckCircle, RefreshCw, Settings, Zap, Lock, Clock
 } from 'lucide-react';
 import { getSettings, saveSettings } from '../../services/settingsService';
-import type { NotificationSettings, Integration, SecuritySettings, AuditLogEntry } from '../../services/settingsService';
+import type { NotificationSettings, SecuritySettings } from '../../services/settingsService';
 import styles from './SystemPreferences.module.css';
-
-const INT_ICONS: Record<string, string> = {
-  'ERP': 'ERP',
-  'Tax & Compliance': 'TAX',
-  'Payment Gateway': 'PAY',
-  'Document Signing': 'DOC'
-};
 
 export const SystemPreferences: React.FC = () => {
   const [notifications, setNotifications] = useState<NotificationSettings | null>(null);
-  const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [security, setSecurity] = useState<SecuritySettings | null>(null);
-  const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -29,9 +20,7 @@ export const SystemPreferences: React.FC = () => {
     try {
       const data = await getSettings();
       setNotifications(data.notifications);
-      setIntegrations(data.integrations || []);
       setSecurity(data.security);
-      setAuditLogs(data.auditLogs || []);
     } catch (err) {
       console.error('Failed to load preferences:', err);
     } finally {
@@ -62,11 +51,7 @@ export const SystemPreferences: React.FC = () => {
     }
   };
 
-  const severityClass = (s: string) => {
-    if (s === 'High') return styles.severityHigh;
-    if (s === 'Medium') return styles.severityMedium;
-    return styles.severityLow;
-  };
+
 
   if (loading) {
     return (
@@ -86,7 +71,7 @@ export const SystemPreferences: React.FC = () => {
         <div className={styles.titleRow}>
           <span className={styles.badge}><Settings size={12} /> System Configuration</span>
           <h1 className={styles.title}>System Preferences</h1>
-          <p className={styles.subtitle}>Manage notifications, integrations, security policies and view system audit logs</p>
+          <p className={styles.subtitle}>Manage notification settings and security access policies</p>
         </div>
         <div className={styles.headerActions}>
           {saved && <span className={styles.savedBanner}><CheckCircle size={14} /> Preferences saved</span>}
@@ -221,80 +206,6 @@ export const SystemPreferences: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
-
-      {/* Integrations */}
-      <div className={styles.card}>
-        <div className={styles.cardHeader}>
-          <Link size={15} className={`${styles.cardIcon} ${styles.cardIconGreen}`} />
-          <h3 className={styles.cardTitle}>Integration Hub ({integrations.filter(i => i.status === 'Connected').length}/{integrations.length} Connected)</h3>
-        </div>
-        <div className={styles.cardBody}>
-          <div className={styles.intList}>
-            {integrations.map(int => (
-              <div key={int.id} className={styles.intItem}>
-                <div className={styles.intLeft}>
-                  <div className={`${styles.intIcon} ${int.status === 'Connected' ? styles.intIconGreen : styles.intIconOrange}`}>
-                    {INT_ICONS[int.category] || 'API'}
-                  </div>
-                  <div>
-                    <div className={styles.intName}>{int.name}</div>
-                    <div className={styles.intCat}>{int.category} · Uptime: {int.uptime}</div>
-                  </div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div className={styles.intStatus}>
-                    <span className={`${styles.statusDot} ${int.status === 'Connected' ? styles.dotGreen : styles.dotRed}`} />
-                    <span className={`${styles.statusText} ${int.status === 'Connected' ? styles.textGreen : styles.textRed}`}>{int.status}</span>
-                  </div>
-                  <div className={styles.syncTime}>
-                    Last sync: {new Date(int.lastSync).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Audit Logs */}
-      <div className={styles.card}>
-        <div className={styles.cardHeader}>
-          <FileText size={15} className={`${styles.cardIcon} ${styles.cardIconPurple}`} />
-          <h3 className={styles.cardTitle}>Settings Audit Log</h3>
-        </div>
-        <div className={styles.tableWrapper}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Log ID</th>
-                <th>Action</th>
-                <th>Performed By</th>
-                <th>Role</th>
-                <th>Timestamp</th>
-                <th>Severity</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {auditLogs.slice(0, 10).map(log => (
-                <tr key={log.id}>
-                  <td style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: '#7c3aed' }}>{log.id}</td>
-                  <td style={{ maxWidth: 280, color: '#1e293b' }}>{log.action}</td>
-                  <td style={{ fontWeight: 600 }}>{log.performedBy}</td>
-                  <td style={{ color: '#64748b' }}>{log.role}</td>
-                  <td style={{ fontSize: '0.76rem', color: '#64748b', whiteSpace: 'nowrap' }}>
-                    {new Date(log.timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
-                  </td>
-                  <td>
-                    <span className={`${styles.severityBadge} ${severityClass(log.severity)}`}>{log.severity}</span>
-                  </td>
-                  <td style={{ color: '#16a34a', fontWeight: 600, fontSize: '0.8rem' }}>{log.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </div>
     </div>
   );

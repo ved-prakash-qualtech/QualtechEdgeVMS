@@ -41,7 +41,7 @@ export const PaymentApprovals: React.FC = () => {
         setBatches(r.data);
         if (r.data.length > 0) setSelectedBatchId(r.data[0].batchId);
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false));
   }, []);
 
@@ -217,41 +217,9 @@ export const PaymentApprovals: React.FC = () => {
                   </Button>
                 </div>
 
-                <div className={styles.remarksSection}>
-                  <label className={styles.remarksLabel}>Audit Log & Remarks (Required for Return/Rejection)</label>
-                  <textarea
-                    className={styles.remarksInput}
-                    placeholder="Enter audit validation comments..."
-                    value={remarks}
-                    onChange={e => setRemarks(e.target.value)}
-                  />
-                </div>
 
-                {/* Workflow Trail */}
-                <div style={{
-                  marginTop: '16px',
-                  padding: '16px',
-                  backgroundColor: '#f8fafc',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  width: '100%'
-                }}>
-                  <h4 style={{ margin: '0 0 12px 0', fontSize: '11px', fontWeight: 600, color: '#334155', textTransform: 'uppercase' }}>Workflow Trail</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                      <span style={{ color: '#64748b' }}>Created By:</span>
-                      <span style={{ fontWeight: 600, color: '#334155' }}>Rahul Verma (Vendor Onboarding Officer)</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                      <span style={{ color: '#64748b' }}>Reviewed By:</span>
-                      <span style={{ fontWeight: 600, color: '#334155' }}>Priya Sharma (Procurement Manager)</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                      <span style={{ color: '#64748b' }}>Approved By:</span>
-                      <span style={{ fontWeight: 600, color: '#16a34a' }}>Saurabh Anand (Tenant Admin)</span>
-                    </div>
-                  </div>
-                </div>
+
+
               </Card>
             )}
           </div>

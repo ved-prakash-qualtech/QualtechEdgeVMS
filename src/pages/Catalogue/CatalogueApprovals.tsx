@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Check, 
-  X, 
-  HelpCircle, 
-  User, 
+import {
+  ArrowLeft,
+  Check,
+  X,
+  HelpCircle,
+  User,
   FileText,
   FileCheck
 } from 'lucide-react';
@@ -14,9 +14,9 @@ import { Button } from '../../components/Button/Button';
 import { Card } from '../../components/Card/Card';
 import { Badge } from '../../components/Badge/Badge';
 import styles from './CatalogueApprovals.module.css';
-import { 
-  getPendingApprovals, 
-  resolveApproval 
+import {
+  getPendingApprovals,
+  resolveApproval
 } from '../../services/itemMasterService';
 import { useAuth } from '../../context/AuthContext';
 
@@ -135,9 +135,9 @@ export const CatalogueApprovals: React.FC = () => {
 
     try {
       const res = await resolveApproval(
-        selectedReq.approvalId || selectedReq.id, 
-        actionName, 
-        remarksInput, 
+        selectedReq.approvalId || selectedReq.id,
+        actionName,
+        remarksInput,
         'Neha Sharma'
       );
       if (res.success) {
@@ -153,7 +153,7 @@ export const CatalogueApprovals: React.FC = () => {
     }
   };
 
-  const filteredRequests = requests.filter(req => 
+  const filteredRequests = requests.filter(req =>
     req.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     req.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     req.preferredVendor.toLowerCase().includes(searchTerm.toLowerCase())
@@ -161,8 +161,8 @@ export const CatalogueApprovals: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <CatalogueHeader 
-        title="CATALOGUE MAKER-CHECKER WORKFLOW" 
+      <CatalogueHeader
+        title="CATALOGUE MAKER-CHECKER WORKFLOW"
         subtitle="Review, approve, reject, or request clarification on newly added items, services, rate configurations, and sourcing vendor mappings"
         actions={
           <Button variant="outline" icon={<ArrowLeft size={16} />} onClick={() => navigate('/catalogue/dashboard')}>
@@ -179,9 +179,9 @@ export const CatalogueApprovals: React.FC = () => {
               <span>Pending Queue</span>
               <Badge variant="warning">{filteredRequests.length} Awaiting</Badge>
             </div>
-            <input 
-              type="text" 
-              className={styles.searchBox} 
+            <input
+              type="text"
+              className={styles.searchBox}
               placeholder="Search workflow requests..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -194,8 +194,8 @@ export const CatalogueApprovals: React.FC = () => {
               ) : filteredRequests.map(req => {
                 const isActive = selectedReq && req.id === selectedReq.id;
                 return (
-                  <div 
-                    key={req.id} 
+                  <div
+                    key={req.id}
                     className={`${styles.itemRow} ${isActive ? styles.itemRowActive : ''}`}
                     onClick={() => {
                       setSelectedReq(req);
@@ -281,68 +281,13 @@ export const CatalogueApprovals: React.FC = () => {
                 </div>
               </div>
 
-              {/* Multi-Level Workflow Timeline */}
-              <div className={styles.sectionTitle}>Maker-Checker Levels Sign-Off Status</div>
-              <div className={styles.timeline}>
-                {selectedReq.timeline.map((step, idx) => {
-                  let stepClass = styles.timelineStepPending;
-                  let statusText = <span className={styles.textMuted}>Pending Stage</span>;
 
-                  if (step.status === 'Approved') {
-                    stepClass = styles.timelineStepCompleted;
-                    statusText = <span className={styles.textSuccess}>Approved ✓ ({step.date})</span>;
-                  } else if (step.status === 'In Progress') {
-                    stepClass = styles.timelineStepActive;
-                    statusText = <span className={styles.textWarning}>In Review (Awaiting Action)</span>;
-                  }
-
-                  return (
-                    <div key={idx} className={`${styles.timelineStep} ${stepClass}`}>
-                      <div className={styles.timelineIndicator}>
-                        {step.status === 'Approved' ? '✓' : step.level}
-                      </div>
-                      <div className={styles.timelineContent}>
-                        <div className={styles.timelineRole}>{step.role}</div>
-                        <div className={styles.timelineUser}>{step.user}</div>
-                        <div className={styles.timelineStatus}>{statusText}</div>
-                        {step.remarks && (
-                          <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginTop: '4px', fontStyle: 'italic' }}>
-                            <strong>Remark:</strong> {step.remarks}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Final Approver Badge */}
-              <div style={{
-                marginTop: '16px',
-                padding: '12px 16px',
-                backgroundColor: '#eff6ff',
-                border: '1px solid #bfdbfe',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '100%'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 600, color: '#1e3a8a', textTransform: 'uppercase' }}>Final Approver:</span>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#0369a1', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e' }}></span>
-                    Saurabh Anand
-                  </span>
-                </div>
-                <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Tenant Admin</span>
-              </div>
 
               {/* Interactive approval actions panel */}
               <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '20px', marginTop: '20px' }}>
                 <span className={styles.detailLabel}>Approval / Clarification Remarks *</span>
-                <textarea 
-                  className={styles.textareaField} 
+                <textarea
+                  className={styles.textareaField}
                   style={{ width: '100%', height: '80px', marginTop: '8px', padding: '10px 14px', border: '1px solid var(--color-border)', borderRadius: '6px', fontSize: '14px' }}
                   placeholder="Enter evaluation notes, justification review comments, or clarification requests..."
                   value={remarksInput}
@@ -353,22 +298,22 @@ export const CatalogueApprovals: React.FC = () => {
               <div className={styles.actionRow}>
                 {user?.role === 'ADMIN' ? (
                   <>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       icon={<HelpCircle size={16} />}
                       onClick={() => handleAction('clarify')}
                     >
                       Send Back for Clarification
                     </Button>
-                    <Button 
-                      variant="danger" 
+                    <Button
+                      variant="danger"
                       icon={<X size={16} />}
                       onClick={() => handleAction('reject')}
                     >
                       Reject Item
                     </Button>
-                    <Button 
-                      variant="primary" 
+                    <Button
+                      variant="primary"
                       icon={<Check size={16} />}
                       onClick={() => handleAction('approve')}
                     >
@@ -377,15 +322,15 @@ export const CatalogueApprovals: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       icon={<HelpCircle size={16} />}
                       onClick={() => handleAction('clarify')}
                     >
                       Send Back for Clarification
                     </Button>
-                    <Button 
-                      variant="primary" 
+                    <Button
+                      variant="primary"
                       icon={<Check size={16} />}
                       onClick={() => {
                         alert("Recommendation submitted to Tenant Admin successfully.");

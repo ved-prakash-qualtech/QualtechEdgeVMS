@@ -9,6 +9,7 @@ import { Input } from '../../components/Input/Input';
 import { DataTable } from '../../components/DataTable/DataTable';
 import type { Column } from '../../components/DataTable/DataTable';
 import styles from './ExpiryTracker.module.css';
+import { APP_BRAND } from '../../constants/branding';
 
 interface Document {
   documentId: string;
@@ -193,9 +194,9 @@ export const ExpiryTracker: React.FC = () => {
     const days = calculateDaysRemaining(doc.expiryDate);
     const status = getExpiryStatus(days);
     
-    setReminderSubject(`URGENT: Renewal required for ${doc.documentName} - Qualtech Edge VMS`);
+    setReminderSubject(`URGENT: Renewal required for ${doc.documentName} - ${APP_BRAND.name}`);
     setReminderBody(
-      `Dear Team,\n\nThis is a compliance reminder that your document "${doc.documentName}" (No: ${doc.documentNumber || 'N/A'}) registered with Qualtech Edge VMS is currently ${status === 'Expired' ? 'EXPIRED' : 'EXPIRING SOON'} (Expiry Date: ${doc.expiryDate}).\n\nPlease login to the Vendor Portal and upload the latest renewed copy to ensure compliance.\n\nRegards,\nProcurement Compliance Team\nQualtech Edge VMS`
+      `Dear Team,\n\nThis is a compliance reminder that your document "${doc.documentName}" (No: ${doc.documentNumber || 'N/A'}) registered with ${APP_BRAND.name} is currently ${status === 'Expired' ? 'EXPIRED' : 'EXPIRING SOON'} (Expiry Date: ${doc.expiryDate}).\n\nPlease login to the Vendor Portal and upload the latest renewed copy to ensure compliance.\n\nRegards,\nProcurement Compliance Team\n${APP_BRAND.name}`
     );
     setIsModalOpen(true);
   };

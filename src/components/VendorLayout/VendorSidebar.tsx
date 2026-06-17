@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import styles from './VendorSidebar.module.css';
+import { APP_BRAND } from '../../constants/branding';
 
 interface Props {
   collapsed: boolean;
@@ -100,7 +101,7 @@ export const VendorSidebar: React.FC<Props> = ({
         </div>
         {!collapsed && (
           <div className={styles.logoText}>
-            <h2>Qualtech Edge VMS</h2>
+            <h2>{APP_BRAND.name}</h2>
             <p>Vendor Self-Service Portal</p>
           </div>
         )}

@@ -9,48 +9,14 @@ import {
   Calendar,
   FileSignature,
   DollarSign,
-  Activity,
   ArrowRight,
   UserPlus
 } from 'lucide-react';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
-} from 'recharts';
+
 import { Card } from '../../components/Card/Card';
 import styles from './Dashboard.module.css';
 
 // Mock Data
-const onboardingTrend = [
-  { name: 'Dec', onboarded: 40, pending: 24 },
-  { name: 'Jan', onboarded: 60, pending: 35 },
-  { name: 'Feb', onboarded: 85, pending: 40 },
-  { name: 'Mar', onboarded: 110, pending: 45 },
-  { name: 'Apr', onboarded: 140, pending: 50 },
-  { name: 'May', onboarded: 160, pending: 30 },
-];
-
-const riskDistribution = [
-  { name: 'Low Risk', value: 773, color: '#16A34A' },
-  { name: 'Medium Risk', value: 299, color: '#F59E0B' },
-  { name: 'High Risk', value: 124, color: '#EA580C' },
-  { name: 'Critical Risk', value: 52, color: '#DC2626' },
-];
-
-const spendOverview = [
-  { name: 'IT Services', value: 48.6, color: '#1D4ED8' },
-  { name: 'Facility Management', value: 28.3, color: '#16A34A' },
-  { name: 'Legal & Professional', value: 18.7, color: '#9333EA' },
-  { name: 'Others', value: 29.2, color: '#F59E0B' },
-];
 
 const recentActivity = [
   { id: 1, title: 'New vendor "XYZ Infra Pvt Ltd" onboarded', time: '12 May 2026, 11:30 AM', status: 'Onboarded', icon: 'UserPlus' },
@@ -75,7 +41,7 @@ export const Dashboard: React.FC = () => {
     return (
       <div className={styles.dashboard}>
         <div className={styles.kpiGrid}>
-          {[1, 2, 3, 4, 5, 6].map(i => (
+          {[1, 2, 3, 4, 5].map(i => (
             <div key={i} style={{ height: 100, borderRadius: 12, padding: 16, background: 'var(--color-surface)', border: '1px solid var(--color-border)', display: 'flex', gap: 14 }}>
               <div className="skeleton" style={{ width: 44, height: 44, borderRadius: 10, flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
@@ -85,10 +51,7 @@ export const Dashboard: React.FC = () => {
             </div>
           ))}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-          <div className="skeleton" style={{ height: 280, borderRadius: 12 }} />
-          <div className="skeleton" style={{ height: 280, borderRadius: 12 }} />
-        </div>
+
       </div>
     );
   }
@@ -174,132 +137,8 @@ export const Dashboard: React.FC = () => {
             <span className={styles.neutralText}>Due in next 7 days</span>
           </div>
         </Card>
-
-        <Card className={styles.kpiCard}>
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>SLA Breaches</span>
-            <div className={styles.kpiIconWrapper} style={{ backgroundColor: '#fee2e2', color: '#dc2626' }}>
-              <Activity size={20} />
-            </div>
-          </div>
-          <div className={styles.kpiValue}>12</div>
-          <div className={styles.kpiFooter}>
-            <span className={styles.trendDown}>High Priority</span>
-          </div>
-        </Card>
       </div>
 
-      {/* Charts Grid */}
-      <div className={styles.chartsGrid}>
-        <Card className={styles.chartCard}>
-          <div className={styles.chartHeader}>
-            <h3>Vendor Onboarding Trend</h3>
-            <select className={styles.chartSelect}>
-              <option>This Month</option>
-              <option>Last 6 Months</option>
-            </select>
-          </div>
-          <div className={styles.legendRow}>
-            <span className={styles.legendItemInline}><div style={{background: '#1D4ED8'}}></div> Onboarded</span>
-            <span className={styles.legendItemInline}><div style={{background: '#93c5fd'}}></div> Pending</span>
-          </div>
-          <div className={styles.chartContainer}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={onboardingTrend} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
-                <Tooltip cursor={{ stroke: '#e2e8f0', strokeWidth: 1 }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                <Line type="monotone" dataKey="onboarded" stroke="#1D4ED8" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{ r: 6 }} />
-                <Line type="monotone" dataKey="pending" stroke="#93c5fd" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        <Card className={styles.chartCard}>
-          <div className={styles.chartHeader}>
-            <h3>Risk Distribution</h3>
-          </div>
-          <div className={styles.pieContainer}>
-            <div className={styles.pieChartWrapper}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={riskDistribution}
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {riskDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className={styles.pieCenterText}>
-                <span>1,248</span>
-                <p>Total Vendors</p>
-              </div>
-            </div>
-            <div className={styles.pieLegend}>
-              {riskDistribution.map((item) => (
-                <div key={item.name} className={styles.legendItem}>
-                  <div className={styles.legendColor} style={{ backgroundColor: item.color }}></div>
-                  <span className={styles.legendLabel}>{item.name}</span>
-                  <span className={styles.legendValue}>{((item.value / 1248) * 100).toFixed(0)}%</span>
-                  <span className={styles.legendCount}>({item.value})</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
-
-        <Card className={styles.chartCard}>
-          <div className={styles.chartHeader}>
-            <h3>Spend Overview</h3>
-          </div>
-          <div className={styles.pieContainer}>
-            <div className={styles.pieChartWrapper}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={spendOverview}
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {spendOverview.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className={styles.pieCenterText}>
-                <span>₹ 124.8 Cr</span>
-                <p>Total Spend</p>
-              </div>
-            </div>
-            <div className={styles.pieLegend}>
-              {spendOverview.map((item) => (
-                <div key={item.name} className={styles.legendItemBlock}>
-                  <div className={styles.legendHeader}>
-                    <div className={styles.legendColor} style={{ backgroundColor: item.color }}></div>
-                    <span className={styles.legendLabel}>{item.name}</span>
-                  </div>
-                  <div className={styles.legendValueBlock}>
-                    ₹ {item.value} Cr <span className={styles.legendCount}>({((item.value / 124.8) * 100).toFixed(1)}%)</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
-      </div>
 
       {/* Bottom Widgets Row */}
       <div className={styles.widgetsGrid}>
