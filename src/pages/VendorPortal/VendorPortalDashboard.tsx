@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { 
   Upload, 
   CheckCircle, 
@@ -54,6 +54,7 @@ import styles from './VendorPortalDashboard.module.css';
 export const VendorPortalDashboard: React.FC = () => {
   const [searchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
+  const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Loading and active states
@@ -305,10 +306,10 @@ export const VendorPortalDashboard: React.FC = () => {
       {activeTab === 'overview' && (
         <div className={styles.tabContent}>
           <div className={styles.kpiGrid}>
-            <Card className={styles.kpiCard}>
+            <Card className={styles.kpiCard} onClick={() => navigate('/vendor/purchase-orders')} style={{ cursor: 'pointer' }}>
               <div className={styles.kpiHeader}>
                 <div>
-                  <span className={styles.kpiLabel}>Pending POs Radhe</span>
+                  <span className={styles.kpiLabel}>Pending POs</span>
                   <div className={styles.kpiValue} style={{ color: '#F59E0B' }}>
                     {dashboardStats?.pendingPOs || 0} Orders
                   </div>
@@ -320,7 +321,7 @@ export const VendorPortalDashboard: React.FC = () => {
               <span className={styles.kpiTrend}>Requires acknowledgement</span>
             </Card>
 
-            <Card className={styles.kpiCard}>
+            <Card className={styles.kpiCard} onClick={() => navigate('/vendor/invoices')} style={{ cursor: 'pointer' }}>
               <div className={styles.kpiHeader}>
                 <div>
                   <span className={styles.kpiLabel}>Paid Invoices</span>
@@ -335,7 +336,7 @@ export const VendorPortalDashboard: React.FC = () => {
               <span className={styles.kpiTrend}>Cleared via automated pipeline</span>
             </Card>
 
-            <Card className={styles.kpiCard}>
+            <Card className={styles.kpiCard} onClick={() => navigate('/vendor/kyc')} style={{ cursor: 'pointer' }}>
               <div className={styles.kpiHeader}>
                 <div>
                   <span className={styles.kpiLabel}>Compliance Health</span>
@@ -350,7 +351,7 @@ export const VendorPortalDashboard: React.FC = () => {
               <span className={styles.kpiTrend}>Renewals required immediately</span>
             </Card>
 
-            <Card className={styles.kpiCard}>
+            <Card className={styles.kpiCard} onClick={() => navigate('/vendor/helpdesk')} style={{ cursor: 'pointer' }}>
               <div className={styles.kpiHeader}>
                 <div>
                   <span className={styles.kpiLabel}>Active Tickets</span>
