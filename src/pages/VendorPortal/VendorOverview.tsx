@@ -4,6 +4,7 @@ import {
   Clock, CheckCircle, AlertTriangle, HelpCircle, ArrowRight, Bell,
   Package, FileText, ShieldAlert, MessageSquare, User,
   CheckSquare, Zap, ShieldCheck, ChevronRight, CreditCard,
+  Search, Filter, X,
 } from 'lucide-react';
 import {
   useVendorDashboard, useVendorPOs, useVendorDocuments,
@@ -164,6 +165,9 @@ const ALERT_STYLES: Record<SmartAlert['level'], { bg: string; border: string; ic
 export const VendorOverview: React.FC = () => {
   const navigate = useNavigate();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [poSearch, setPoSearch] = useState('');
+  const [poStatusFilter, setPoStatusFilter] = useState('All');
+  const [poFiltersOpen, setPoFiltersOpen] = useState(false);
 
   const { data: profile }                      = useVendorProfile();
   const { data: stats,  isLoading: statsLoading } = useVendorDashboard();
@@ -309,6 +313,47 @@ export const VendorOverview: React.FC = () => {
               <div className={s.cardTitle}><Package size={16} /> Latest Purchase Orders</div>
               <button className={s.btnGhost} onClick={() => navigate('/vendor/purchase-orders')}>View All <ArrowRight size={13} /></button>
             </div>
+
+            {/* Search & Filter Toolbar */}
+            <div className={s.vendorToolbar} style={{ padding: '12px 0', borderBottom: 'none' }}>
+              <div className={s.searchWrap}>
+                <Search size={14} className={s.searchIcon} />
+                <input
+                  type="text"
+                  placeholder="Search by PO ID or status..."
+                  className={s.searchInput}
+                  value={poSearch}
+                  onChange={e => setPoSearch(e.target.value)}
+                />
+              </div>
+              <button className={s.filterBtn} onClick={() => setPoFiltersOpen(v => !v)}>
+                <Filter size={14} /> Filters
+                {poStatusFilter !== 'All' && <span className={s.filterBadge}>1</span>}
+              </button>
+            </div>
+
+            {poFiltersOpen && (
+              <div className={s.filterPanel} style={{ padding: '14px 0', borderBottom: 'none' }}>
+                <div className={s.filterPanelRow}>
+                  <div className={s.filterGroup}>
+                    <label className={s.filterLabel}>Status</label>
+                    <select className={s.filterSelect} value={poStatusFilter} onChange={e => setPoStatusFilter(e.target.value)}>
+                      <option value="All">All Statuses</option>
+                      <option value="Pending Acknowledgement">Pending Acknowledgement</option>
+                      <option value="Acknowledged">Acknowledged</option>
+                      <option value="Delivered">Delivered</option>
+                      <option value="Invoiced">Invoiced</option>
+                    </select>
+                  </div>
+                  {poStatusFilter !== 'All' && (
+                    <button className={s.clearFiltersBtn} onClick={() => setPoStatusFilter('All')}>
+                      <X size={12} /> Clear
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
             {pos.length === 0 ? (
               <div className={s.emptyState}>
                 <div className={s.emptyIcon}><Package size={24} /></div>
@@ -320,7 +365,12 @@ export const VendorOverview: React.FC = () => {
                 <table className={s.table}>
                   <thead><tr><th>PO Ref</th><th>Date</th><th>Value</th><th>Status</th><th>Action</th></tr></thead>
                   <tbody>
-                    {pos.slice(0, 5).map(po => (
+                    {pos.filter(po => {
+                      const q = poSearch.toLowerCase();
+                      const matchSearch = !q || po.poId.toLowerCase().includes(q) || po.status.toLowerCase().includes(q);
+                      const matchStatus = poStatusFilter === 'All' || po.status === poStatusFilter;
+                      return matchSearch && matchStatus;
+                    }).slice(0, 5).map(po => (
                       <tr key={po.poId}>
                         <td style={{ fontWeight: 600, fontSize: 12 }}>{po.poId}</td>
                         <td>{po.issueDate}</td>
