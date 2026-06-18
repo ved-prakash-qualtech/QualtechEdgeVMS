@@ -139,7 +139,7 @@ const NAV_ITEMS = [
 
 const FINANCE_NAV_ITEMS = [
   {
-    name: 'Dashboard',
+    name: 'Finance Dashboard',
     path: '/finance/dashboard',
     icon: LayoutDashboard,
   },
@@ -153,7 +153,6 @@ const FINANCE_NAV_ITEMS = [
       { name: 'Goods Receipt (GRN)', path: '/invoices/grn' },
       { name: '3-Way Match Engine', path: '/invoices/match' },
       { name: 'Invoice Approvals', path: '/invoices/approvals' },
-      { name: 'Finance Dashboard', path: '/finance/dashboard' },
     ],
   },
   {
