@@ -29,11 +29,13 @@
     "department": "IT",
     "poValue": 3780000,
     "status": "Approved",
-    "deliveryStatus": "Pending",
+    "deliveryStatus": "Acknowledged",
     "createdDate": "2026-06-18",
     "approvedDate": "2026-06-18",
     "approvedBy": "Saurabh Anand",
-    "lineItems": []
+    "lineItems": [],
+    "vendorAcknowledged": true,
+    "vendorAcknowledgedAt": "2026-06-19T05:02:05.522Z"
   },
   {
     "poId": "PO-2026-0004",

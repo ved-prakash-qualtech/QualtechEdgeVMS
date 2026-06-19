@@ -180,3 +180,12 @@ export async function getActiveVendors(): Promise<VendorSelection[]> {
   const res = await axios.get('/api/catalogue/vendors');
   return res.data;
 }
+
+// 14. Import items and services in bulk
+export async function importCatalogue(
+  type: 'Items' | 'Services' | 'Both',
+  records: any[]
+): Promise<{ success: boolean; itemsImported: number; servicesImported: number; totalImported: number; message: string }> {
+  const res = await axios.post('/api/catalogue/import', { type, records });
+  return res.data;
+}

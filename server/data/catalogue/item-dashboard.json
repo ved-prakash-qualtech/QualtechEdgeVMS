@@ -1,12 +1,12 @@
 {
   "totalItems": 1,
   "totalServices": 1,
-  "activeVendors": 1,
+  "activeVendors": 2,
   "pendingApprovals": 1,
   "pendingVendorMapping": 0,
-  "publishedServices": 0,
-  "compliancePending": 1,
-  "rateConfigurationPending": 1,
+  "publishedServices": 1,
+  "compliancePending": 0,
+  "rateConfigurationPending": 0,
   "criticalCategories": 1,
   "rateRevisionsDue": 0,
   "catalogueUtilization": 50

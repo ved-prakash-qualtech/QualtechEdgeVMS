@@ -160,5 +160,48 @@
         "fileType": "application/pdf"
       }
     ]
+  },
+  {
+    "contractId": "CTR-2026-50508",
+    "contractName": "ABC Infotech Pvt Ltd - MSA 2026",
+    "vendorId": "VND-001",
+    "vendorName": "ABC Infotech Pvt Ltd",
+    "contractType": "Master Service Agreement",
+    "department": "IT Services",
+    "effectiveDate": "2026-06-01",
+    "expiryDate": "2028-05-31",
+    "contractValue": 12000000,
+    "currency": "INR",
+    "status": "Pending Approval",
+    "riskLevel": "High",
+    "approvalStatus": "Pending",
+    "renewalStatus": "Auto-Renew",
+    "createdBy": "Saurabh Anand",
+    "createdDate": "2026-06-19",
+    "paymentTerms": "Net 30",
+    "billingFrequency": "Monthly",
+    "vendorComplianceScore": 85,
+    "selectedClauses": [
+      "RBI Outsourcing Guidelines Clause",
+      "Standard NDA Clause",
+      "Data Privacy & Security Clause"
+    ],
+    "slaMetrics": {
+      "uptime": "99.95%",
+      "responseTime": "2 Hours",
+      "resolutionTime": "8 Hours"
+    },
+    "penaltyTerms": {
+      "slaBreachPenalty": "5%",
+      "maxPenaltyCap": "10%"
+    },
+    "legalExposure": 56,
+    "complianceRisk": 34,
+    "financialRisk": 75,
+    "aiAlerts": [
+      "Missing explicit data residency clause",
+      "Penalty cap set to 5% instead of standard 10%"
+    ],
+    "uploadedDocuments": []
   }
 ]

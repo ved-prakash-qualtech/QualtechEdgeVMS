@@ -332,45 +332,64 @@ export const RFQApprovals: React.FC = () => {
 
                 {/* Action Buttons */}
                 {selectedApproval.status === 'Pending Approval' && (
-                  <>
-                    <h3 className={styles.actionTitle}>Approval Action</h3>
-                    <div className={styles.remarksSection}>
-                      <label className={styles.remarksLabel}>Remarks / Comments</label>
-                      <textarea
-                        className={styles.remarksInput}
-                        placeholder="Enter approval remarks or clarification notes..."
-                        value={remarks}
-                        onChange={e => setRemarks(e.target.value)}
-                        rows={3}
-                      />
+                  user?.role === 'PROCUREMENT_EXECUTIVE' ? (
+                    <div style={{
+                      marginTop: '20px',
+                      padding: '16px',
+                      backgroundColor: '#fffbeb',
+                      border: '1px solid #fde68a',
+                      borderRadius: '8px',
+                      color: '#b45309',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}>
+                      <Bot size={18} />
+                      <span>View Only Access. RFQ approval rights are restricted to Procurement Manager.</span>
                     </div>
-                    <div className={styles.actionButtons}>
-                      <Button
-                        className={styles.approveBtn}
-                        icon={<CheckCircle2 size={16} />}
-                        onClick={() => handleAction('Approve')}
-                        disabled={actionLoading}
-                      >
-                        {selectedApproval.currentStage === 'Tenant Admin Review' ? 'Approve & Generate PO' : 'Recommend Approval'}
-                      </Button>
-                      <Button
-                        className={styles.rejectBtn}
-                        icon={<XCircle size={16} />}
-                        onClick={() => handleAction('Reject')}
-                        disabled={actionLoading}
-                      >
-                        Reject RFQ
-                      </Button>
-                      <Button
-                        className={styles.sendBackBtn}
-                        icon={<Send size={16} />}
-                        onClick={() => handleAction('Send Back')}
-                        disabled={actionLoading}
-                      >
-                        Send Back
-                      </Button>
-                    </div>
-                  </>
+                  ) : (
+                    <>
+                      <h3 className={styles.actionTitle}>Approval Action</h3>
+                      <div className={styles.remarksSection}>
+                        <label className={styles.remarksLabel}>Remarks / Comments</label>
+                        <textarea
+                          className={styles.remarksInput}
+                          placeholder="Enter approval remarks or clarification notes..."
+                          value={remarks}
+                          onChange={e => setRemarks(e.target.value)}
+                          rows={3}
+                        />
+                      </div>
+                      <div className={styles.actionButtons}>
+                        <Button
+                          className={styles.approveBtn}
+                          icon={<CheckCircle2 size={16} />}
+                          onClick={() => handleAction('Approve')}
+                          disabled={actionLoading}
+                        >
+                          {user?.role === 'PROCUREMENT' ? 'Approve RFQ Award' : (selectedApproval.currentStage === 'Tenant Admin Review' ? 'Approve & Generate PO' : 'Recommend Approval')}
+                        </Button>
+                        <Button
+                          className={styles.rejectBtn}
+                          icon={<XCircle size={16} />}
+                          onClick={() => handleAction('Reject')}
+                          disabled={actionLoading}
+                        >
+                          {user?.role === 'PROCUREMENT' ? 'Reject RFQ Award' : 'Reject RFQ'}
+                        </Button>
+                        <Button
+                          className={styles.sendBackBtn}
+                          icon={<Send size={16} />}
+                          onClick={() => handleAction('Send Back')}
+                          disabled={actionLoading}
+                        >
+                          {user?.role === 'PROCUREMENT' ? 'Send Back RFQ' : 'Send Back'}
+                        </Button>
+                      </div>
+                    </>
+                  )
                 )}
 
                 {selectedApproval.status === 'Approved' && (

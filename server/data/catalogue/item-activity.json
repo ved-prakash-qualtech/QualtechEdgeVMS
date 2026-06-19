@@ -40,5 +40,12 @@
     "action": "Catalogue unit Approved by Checker",
     "user": "Saurabh Anand",
     "dateTime": "2026-06-17 10:50:05"
+  },
+  {
+    "activityId": "ACT-71059",
+    "itemId": "SVC-2026-0001",
+    "action": "Service Created as Draft",
+    "user": "Admin",
+    "dateTime": "2026-06-19 13:06:58"
   }
 ]

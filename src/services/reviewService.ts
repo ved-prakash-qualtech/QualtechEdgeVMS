@@ -106,12 +106,14 @@ export async function getApprovalDetail(vendorId: string): Promise<ApprovalDetai
 export async function submitApprovalAction(
   vendorId: string,
   action: 'Approve' | 'Reject' | 'SendBack',
-  comment: string
+  comment: string,
+  performedBy?: string
 ): Promise<{ success: boolean; message: string }> {
   const res = await axios.post<{ success: boolean; message: string }>('/api/kyc/reviews/action', {
     vendorId,
     action,
-    comment
+    comment,
+    performedBy
   });
   return res.data;
 }

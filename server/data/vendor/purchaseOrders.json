@@ -144,12 +144,13 @@
     "issueDate": "2026-06-18",
     "items": 1,
     "value": 3780000,
-    "status": "Pending Acknowledgement",
+    "status": "Acknowledged",
     "category": "IT Hardware",
     "description": "IT Hardware — Ref: PO-2026-0003",
     "issuedBy": "Axis Max Life Insurance — Procurement",
     "paymentTerms": "Net 30",
-    "adminSynced": true
+    "adminSynced": true,
+    "acknowledgedAt": "2026-06-19T05:02:05.520Z"
   },
   {
     "poId": "PO-2026-0004",

@@ -25,7 +25,7 @@ export const AddVendor: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editVendorId = searchParams.get('id');
-  const { hasActionPermission } = useAuth();
+  const { user, hasActionPermission } = useAuth();
   const { vendors, registerVendor, updateVendor } = useVendors();
 
   const isEdit = !!editVendorId;
@@ -517,7 +517,7 @@ export const AddVendor: React.FC = () => {
         },
         documents: form.documents,
         approvalWorkflow: {
-          submittedBy: 'Saurabh Anand',
+          submittedBy: user?.role === 'ONBOARDING' || user?.role === 'COMPLIANCE' ? 'Vendor Onboarding Officer' : (user?.name || 'Saurabh Anand'),
           submittedDate: new Date().toISOString(),
           currentStage: 'Procurement Approval',
           approvalStatus: 'Pending'
@@ -525,7 +525,7 @@ export const AddVendor: React.FC = () => {
         auditTrail: [
           {
             action: editVendorId ? 'Vendor Updated' : 'Vendor Onboarding Created',
-            performedBy: 'Saurabh Anand',
+            performedBy: user?.role === 'ONBOARDING' || user?.role === 'COMPLIANCE' ? 'Vendor Onboarding Officer' : (user?.name || 'Saurabh Anand'),
             timestamp: new Date().toISOString()
           }
         ]

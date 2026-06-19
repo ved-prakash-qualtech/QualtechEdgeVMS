@@ -31,5 +31,38 @@
     "filePath": "/uploads/catalogue/services/MSA_GlobalSecureTech.pdf",
     "uploadedBy": "Admin",
     "uploadedDate": "2026-06-17"
+  },
+  {
+    "attachmentId": "ATT-SRV-004",
+    "serviceId": "SVC-2026-0001",
+    "documentType": "SLA",
+    "fileName": "catalogue_export_2026-06-19.xlsx",
+    "fileType": "xlsx",
+    "fileSize": "1.0 MB",
+    "filePath": "/uploads/catalogue/services/catalogue_export_2026-06-19.xlsx",
+    "uploadedBy": "Admin",
+    "uploadedDate": "2026-06-19"
+  },
+  {
+    "attachmentId": "ATT-SRV-005",
+    "serviceId": "SVC-2026-0001",
+    "documentType": "SOW",
+    "fileName": "ChatGPT Image May 14, 2026, 05_06_16 PM.png",
+    "fileType": "png",
+    "fileSize": "1.0 MB",
+    "filePath": "/uploads/catalogue/services/ChatGPT Image May 14, 2026, 05_06_16 PM.png",
+    "uploadedBy": "Admin",
+    "uploadedDate": "2026-06-19"
+  },
+  {
+    "attachmentId": "ATT-SRV-006",
+    "serviceId": "SVC-2026-0001",
+    "documentType": "SUPP",
+    "fileName": "ChatGPT Image May 19, 2026, 01_31_57 PM.png",
+    "fileType": "png",
+    "fileSize": "1.0 MB",
+    "filePath": "/uploads/catalogue/services/ChatGPT Image May 19, 2026, 01_31_57 PM.png",
+    "uploadedBy": "Admin",
+    "uploadedDate": "2026-06-19"
   }
 ]

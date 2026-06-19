@@ -14,7 +14,7 @@
     "permissions": [
       "FULL_ENTERPRISE_ACCESS"
     ],
-    "lastLogin": "19/6/2026, 9:30:10 am"
+    "lastLogin": "19/6/2026, 7:08:17 pm"
   },
   {
     "userId": "USR-1002",
@@ -31,7 +31,7 @@
     "permissions": [
       "VENDOR_PORTAL_ACCESS"
     ],
-    "lastLogin": "19/6/2026, 9:26:54 am"
+    "lastLogin": "19/6/2026, 6:50:42 pm"
   },
   {
     "userId": "USR-1003",
@@ -48,7 +48,7 @@
     "permissions": [
       "PROCUREMENT_ACCESS"
     ],
-    "lastLogin": "19/6/2026, 9:26:35 am"
+    "lastLogin": "19/6/2026, 7:11:31 pm"
   },
   {
     "userId": "USR-1004",
@@ -65,7 +65,7 @@
     "permissions": [
       "ONBOARDING_ACCESS"
     ],
-    "lastLogin": "19/6/2026, 9:26:41 am"
+    "lastLogin": "19/6/2026, 7:10:55 pm"
   },
   {
     "userId": "USR-1005",
@@ -82,6 +82,40 @@
     "permissions": [
       "FINANCE_ACCESS"
     ],
-    "lastLogin": "19/6/2026, 9:26:45 am"
+    "lastLogin": "19/6/2026, 7:05:21 pm"
+  },
+  {
+    "userId": "ROLE-006",
+    "username": "finance_executive",
+    "password": "finance123",
+    "fullName": "Neha Gupta",
+    "email": "neha@qualtechedge.com",
+    "role": "FINANCE_EXECUTIVE",
+    "status": "Active",
+    "dashboardRoute": "/finance/dashboard",
+    "profileImage": "/assets/profile/finance.png",
+    "twoFactorEnabled": true,
+    "defaultOtp": "123456",
+    "permissions": [
+      "FINANCE_ACCESS"
+    ],
+    "lastLogin": "19/6/2026, 7:11:48 pm"
+  },
+  {
+    "userId": "ROLE-007",
+    "username": "procurement_executive",
+    "password": "procurement123",
+    "fullName": "Rohit Mehta",
+    "email": "rohit@qualtechedge.com",
+    "role": "PROCUREMENT_EXECUTIVE",
+    "status": "Active",
+    "dashboardRoute": "/purchase-orders/dashboard",
+    "profileImage": "/assets/profile/procurement.png",
+    "twoFactorEnabled": true,
+    "defaultOtp": "123456",
+    "permissions": [
+      "PROCUREMENT_ACCESS"
+    ],
+    "lastLogin": "19/6/2026, 7:11:16 pm"
   }
 ]

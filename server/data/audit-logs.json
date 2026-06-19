@@ -317,5 +317,38 @@
     "ipAddress": "127.0.0.1",
     "status": "Success",
     "severity": "Medium"
+  },
+  {
+    "id": "AUD-34024",
+    "timestamp": "19/6/2026, 9:38:36 am",
+    "actor": "Saurabh Anand",
+    "role": "Procurement Maker",
+    "tenant": "Qualtech Corporate",
+    "action": "Created Vendor registration VND-2026-49442 (ABC Infotech Pvt Ltd)",
+    "ipAddress": "127.0.0.1",
+    "status": "Success",
+    "severity": "Low"
+  },
+  {
+    "id": "AUD-39186",
+    "timestamp": "19/6/2026, 10:34:40 am",
+    "actor": "Finance Manager",
+    "role": "Finance Manager",
+    "tenant": "Qualtech Corporate",
+    "action": "Approved invoice INV-2026-9908",
+    "ipAddress": "127.0.0.1",
+    "status": "Success",
+    "severity": "High"
+  },
+  {
+    "id": "AUD-63772",
+    "timestamp": "19/6/2026, 10:35:35 am",
+    "actor": "Finance Manager",
+    "role": "Finance Manager",
+    "tenant": "Qualtech Corporate",
+    "action": "Approved invoice INV-2026-9907",
+    "ipAddress": "127.0.0.1",
+    "status": "Success",
+    "severity": "High"
   }
 ]

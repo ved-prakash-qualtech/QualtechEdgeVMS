@@ -115,5 +115,106 @@
       "score": 5,
       "level": "Low"
     }
+  },
+  {
+    "vendorId": "VND-2026-49442",
+    "status": "Pending Approval",
+    "basicDetails": {
+      "legalName": "ABC Infotech Pvt Ltd",
+      "tradeName": "ABC Infotech",
+      "dateOfIncorporation": "2026-06-16",
+      "cinNumber": "U72900MH2015PTC123456",
+      "panNumber": "AAACA1234A",
+      "gstin": "27AAACA1234A1Z5",
+      "msmeClassification": "Small",
+      "companyWebsite": "",
+      "businessType": "Private Limited Company"
+    },
+    "businessDetails": {
+      "vendorCategory": "IT Hardware",
+      "subCategory": "Hardware Supply",
+      "serviceAreas": [
+        "Mumbai",
+        "Pune",
+        "Bengaluru"
+      ],
+      "productsServicesOffered": "Laptops, Desktops, IT Equipment",
+      "annualTurnover": 50000000,
+      "employeeCount": 120,
+      "majorClients": [
+        ""
+      ],
+      "criticalVendor": true
+    },
+    "bankDetails": {
+      "bankName": "HDFC Bank",
+      "accountNumber": "5785748953",
+      "accountType": "Current Account",
+      "ifscCode": "hdfc0000060",
+      "branchName": "Mumbai - Andheri East",
+      "cancelledChequeFile": "Screenshot 2026-06-18 230807.png",
+      "bankVerificationStatus": "Verified"
+    },
+    "documents": [
+      {
+        "documentType": "PAN Card",
+        "fileName": "WhatsApp Image 2026-05-14 at 16.53.52.jpeg",
+        "savedFileName": "file-1781842036752-778729349.jpeg",
+        "filePath": "/uploads/file-1781842036752-778729349.jpeg",
+        "status": "Verified",
+        "expiryDate": null
+      },
+      {
+        "documentType": "GST Certificate",
+        "fileName": "WhatsApp Image 2026-05-14 at 16.53.52.jpeg",
+        "savedFileName": "file-1781842040541-503907767.jpeg",
+        "filePath": "/uploads/file-1781842040541-503907767.jpeg",
+        "status": "Verified",
+        "expiryDate": null
+      },
+      {
+        "documentType": "Certificate of Incorporation",
+        "fileName": "download (2).jpg",
+        "savedFileName": "file-1781842044020-882866451.jpg",
+        "filePath": "/uploads/file-1781842044020-882866451.jpg",
+        "status": "Verified",
+        "expiryDate": null
+      },
+      {
+        "documentType": "MSME Certificate",
+        "fileName": "ChatGPT Image May 19, 2026, 01_31_57 PM.png",
+        "savedFileName": "file-1781842047373-497237824.png",
+        "filePath": "/uploads/file-1781842047373-497237824.png",
+        "status": "Verified",
+        "expiryDate": "2026-03-15"
+      },
+      {
+        "documentType": "new doc ",
+        "fileName": "WhatsApp Image 2026-05-14 at 16.53.52.jpeg",
+        "savedFileName": "file-1781842078190-888011204.jpeg",
+        "filePath": "/uploads/file-1781842078190-888011204.jpeg",
+        "status": "Verified",
+        "expiryDate": null
+      }
+    ],
+    "approvalWorkflow": {
+      "submittedBy": "Saurabh Anand",
+      "submittedDate": "2026-06-19T04:08:36.099Z",
+      "currentStage": "Procurement Approval",
+      "approvalStatus": "Pending"
+    },
+    "auditTrail": [
+      {
+        "action": "Vendor Onboarding Created",
+        "performedBy": "Saurabh Anand",
+        "timestamp": "2026-06-19T04:08:36.099Z"
+      }
+    ],
+    "createdAt": "2026-06-19T04:08:36.155Z",
+    "risk": {
+      "score": 5,
+      "level": "Low"
+    },
+    "riskLevel": "Low"
   }
 ]

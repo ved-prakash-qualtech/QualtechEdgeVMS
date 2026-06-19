@@ -1,1 +1,72 @@
-[]
+[
+  {
+    "serviceCode": "AMC-IT-01",
+    "serviceName": " IT Annual Maintenance Contract",
+    "serviceCategory": "IT Services",
+    "serviceSubCategory": "Maintenance ",
+    "description": " IT Annual Maintenance Contract,",
+    "department": "IT",
+    "businessFunction": "website support ",
+    "serviceOwner": "Admin",
+    "serviceType": "Recurring SLA",
+    "preferredVendor": "ABC Infotech Pvt Ltd",
+    "alternateVendors": [],
+    "deliveryModel": "Onsite",
+    "serviceFrequency": "Monthly",
+    "serviceDuration": "12 Months",
+    "serviceLocation": "delhi",
+    "slaCommitment": "99% uptime",
+    "responseTime": "4 hours",
+    "resolutionTime": "24 hours",
+    "escalationMatrix": "",
+    "riskClassification": "Low Risk",
+    "complianceRequirements": "BRI ",
+    "certifications": [
+      "ISO 27001"
+    ],
+    "qualityStandards": "ISO 9001",
+    "kpiMeasurement": "KPI Measurement Criteria ",
+    "status": "Published",
+    "createdBy": "Admin",
+    "uploadedFiles": [
+      {
+        "fileId": "FILE-9708",
+        "fileName": "catalogue_export_2026-06-19.xlsx",
+        "fileType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "filePath": "/uploads/catalogue/services/catalogue_export_2026-06-19.xlsx",
+        "uploadedOn": "2026-06-19",
+        "fileSize": "1.0 MB",
+        "attachmentId": "ATT-SRV-004",
+        "documentType": "SLA"
+      },
+      {
+        "fileId": "FILE-1515",
+        "fileName": "ChatGPT Image May 14, 2026, 05_06_16 PM.png",
+        "fileType": "image/png",
+        "filePath": "/uploads/catalogue/services/ChatGPT Image May 14, 2026, 05_06_16 PM.png",
+        "uploadedOn": "2026-06-19",
+        "fileSize": "1.0 MB",
+        "attachmentId": "ATT-SRV-005",
+        "documentType": "SOW"
+      },
+      {
+        "fileId": "FILE-5685",
+        "fileName": "ChatGPT Image May 19, 2026, 01_31_57 PM.png",
+        "fileType": "image/png",
+        "filePath": "/uploads/catalogue/services/ChatGPT Image May 19, 2026, 01_31_57 PM.png",
+        "uploadedOn": "2026-06-19",
+        "fileSize": "1.0 MB",
+        "attachmentId": "ATT-SRV-006",
+        "documentType": "SUPP"
+      }
+    ],
+    "serviceId": "SVC-2026-0001",
+    "workflowStage": "None",
+    "createdDate": "2026-06-19",
+    "attachmentIds": [
+      "ATT-SRV-004",
+      "ATT-SRV-005",
+      "ATT-SRV-006"
+    ]
+  }
+]

@@ -190,5 +190,13 @@
     "referenceId": "TKT-7084",
     "performedBy": "Vendor User",
     "timestamp": "2026-06-15T11:12:48.605Z"
+  },
+  {
+    "auditId": "AUD-4273",
+    "vendorId": "VND-001",
+    "action": "PO Acknowledgement",
+    "referenceId": "PO-2026-0003",
+    "performedBy": "Vendor User",
+    "timestamp": "2026-06-19T05:02:05.524Z"
   }
 ]

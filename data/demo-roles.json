@@ -1,0 +1,93 @@
+[
+  {
+    "roleId": "ROLE-001",
+    "name": "Saurabh Anand",
+    "role": "Tenant Admin",
+    "portal": "Admin Portal",
+    "redirect": "/dashboard",
+    "redirectUrl": "/administrator/dashboard",
+    "username": "admin",
+    "password": "admin123",
+    "color": "blue",
+    "initials": "SA",
+    "displayOrder": 1
+  },
+  {
+    "roleId": "ROLE-003",
+    "name": "Rahul Verma",
+    "role": "Vendor Onboarding Officer",
+    "portal": "Onboarding Portal",
+    "redirect": "/vendors",
+    "redirectUrl": "/vendors",
+    "username": "onboarding",
+    "password": "onboarding123",
+    "color": "purple",
+    "initials": "RV",
+    "displayOrder": 2
+  },
+  {
+    "roleId": "ROLE-007",
+    "name": "Rohit Mehta",
+    "role": "Procurement Executive",
+    "portal": "Procurement Operations Portal",
+    "redirect": "/purchase-orders/dashboard",
+    "redirectUrl": "/purchase-orders/dashboard",
+    "username": "procurement_executive",
+    "password": "procurement123",
+    "color": "green",
+    "initials": "RM",
+    "displayOrder": 3
+  },
+  {
+    "roleId": "ROLE-002",
+    "name": "Priya Sharma",
+    "role": "Procurement Manager",
+    "portal": "Procurement Portal",
+    "redirect": "/catalogue/dashboard",
+    "redirectUrl": "/catalogue/dashboard",
+    "username": "procurement",
+    "password": "procurement123",
+    "color": "green",
+    "initials": "PS",
+    "displayOrder": 4
+  },
+  {
+    "roleId": "ROLE-006",
+    "name": "Neha Gupta",
+    "role": "Finance Executive",
+    "portal": "Finance Operations Portal",
+    "redirect": "/finance/dashboard",
+    "redirectUrl": "/finance/dashboard",
+    "username": "finance_executive",
+    "password": "finance123",
+    "color": "orange",
+    "initials": "NG",
+    "displayOrder": 5
+  },
+  {
+    "roleId": "ROLE-004",
+    "name": "Amit Gupta",
+    "role": "Finance Manager",
+    "portal": "Finance Portal",
+    "redirect": "/finance/dashboard",
+    "redirectUrl": "/finance/dashboard",
+    "username": "finance",
+    "password": "finance123",
+    "color": "orange",
+    "initials": "AG",
+    "displayOrder": 6
+  },
+  {
+    "roleId": "ROLE-005",
+    "name": "Acme Vendor",
+    "role": "Vendor Portal User",
+    "portal": "Vendor Portal",
+    "redirect": "/vendor/overview",
+    "redirectUrl": "/vendor/overview",
+    "username": "vendor",
+    "password": "vendor123",
+    "color": "teal",
+    "initials": "AV",
+    "displayOrder": 7
+  }
+]
