@@ -1,9 +1,9 @@
 {
-  "lastUpdated": "2026-06-18",
+  "lastUpdated": "2026-06-19",
   "summary": {
-    "totalVendors": 3,
+    "totalVendors": 4,
     "verified": 0,
-    "pending": 3,
+    "pending": 4,
     "inProgress": 0,
     "highRisk": 0,
     "reKycDue": 0
@@ -34,6 +34,17 @@
     {
       "vendorId": "VND-003",
       "vendorName": "New Age Software Solutions",
+      "category": "Private Limited Company",
+      "riskScore": 5,
+      "riskLevel": "Low",
+      "kycStatus": "Pending",
+      "lastVerified": "-",
+      "nextReview": "-",
+      "nextReviewDate": "-"
+    },
+    {
+      "vendorId": "VND-2026-49442",
+      "vendorName": "ABC Infotech Pvt Ltd",
       "category": "Private Limited Company",
       "riskScore": 5,
       "riskLevel": "Low",

@@ -710,5 +710,13 @@
     "details": "Bulk quotes imported for RFQ RFQ-2026-0005.",
     "performedBy": "Saurabh Anand",
     "status": "Success"
+  },
+  {
+    "id": "AUD-2026-0090",
+    "timestamp": "2026-06-19T04:08:36.174Z",
+    "action": "Vendor Added",
+    "details": "Vendor VND-2026-49442 (ABC Infotech Pvt Ltd) onboarding initiated.",
+    "performedBy": "Saurabh Anand",
+    "status": "Success"
   }
 ]

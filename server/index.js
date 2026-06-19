@@ -4,6 +4,7 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
+import cron from 'node-cron';
 import {
   readJsonFile,
   writeJsonFile,
@@ -304,6 +305,109 @@ async function ensureDirectories() {
     await fs.access(CAT_SERVICE_AUDIT_LOG_PATH);
   } catch {
     await fs.writeFile(CAT_SERVICE_AUDIT_LOG_PATH, '[]', 'utf8');
+  }
+
+  const ROOT_DATA_DIR = path.join(__dirname, '..', 'data');
+  await fs.mkdir(ROOT_DATA_DIR, { recursive: true });
+
+  const demoRolesFilePath = path.join(ROOT_DATA_DIR, 'demo-roles.json');
+  try {
+    await fs.access(demoRolesFilePath);
+  } catch {
+    const defaultDemoRoles = [
+      {
+        "roleId": "ROLE-001",
+        "name": "Saurabh Anand",
+        "role": "Tenant Admin",
+        "portal": "Admin Portal",
+        "redirect": "/dashboard",
+        "redirectUrl": "/administrator/dashboard",
+        "username": "admin",
+        "password": "admin123",
+        "color": "blue",
+        "initials": "SA"
+      },
+      {
+        "roleId": "ROLE-002",
+        "name": "Priya Sharma",
+        "role": "Procurement Manager",
+        "portal": "Procurement Portal",
+        "redirect": "/catalogue/dashboard",
+        "redirectUrl": "/catalogue/dashboard",
+        "username": "procurement",
+        "password": "procurement123",
+        "color": "green",
+        "initials": "PS"
+      },
+      {
+        "roleId": "ROLE-007",
+        "name": "Rohit Mehta",
+        "role": "Procurement Executive",
+        "portal": "Procurement Operations Portal",
+        "redirect": "/purchase-orders/dashboard",
+        "redirectUrl": "/purchase-orders/dashboard",
+        "username": "procurement_executive",
+        "password": "procurement123",
+        "color": "green",
+        "initials": "RM"
+      },
+      {
+        "roleId": "ROLE-003",
+        "name": "Rahul Verma",
+        "role": "Vendor Onboarding Officer",
+        "portal": "Onboarding Portal",
+        "redirect": "/vendors",
+        "redirectUrl": "/vendors",
+        "username": "onboarding",
+        "password": "onboarding123",
+        "color": "purple",
+        "initials": "RV"
+      },
+      {
+        "roleId": "ROLE-004",
+        "name": "Amit Gupta",
+        "role": "Finance Manager",
+        "portal": "Finance Portal",
+        "redirect": "/finance/dashboard",
+        "redirectUrl": "/finance/dashboard",
+        "username": "finance",
+        "password": "finance123",
+        "color": "orange",
+        "initials": "AG"
+      },
+      {
+        "roleId": "ROLE-006",
+        "name": "Neha Gupta",
+        "role": "Finance Executive",
+        "portal": "Finance Operations Portal",
+        "redirect": "/finance/dashboard",
+        "redirectUrl": "/finance/dashboard",
+        "username": "finance_executive",
+        "password": "finance123",
+        "color": "orange",
+        "initials": "NG"
+      },
+      {
+        "roleId": "ROLE-005",
+        "name": "Acme Vendor",
+        "role": "Vendor Portal User",
+        "portal": "Vendor Portal",
+        "redirect": "/vendor/overview",
+        "redirectUrl": "/vendor/overview",
+        "username": "vendor",
+        "password": "vendor123",
+        "color": "teal",
+        "initials": "AV"
+      }
+    ];
+    await fs.writeFile(demoRolesFilePath, JSON.stringify(defaultDemoRoles, null, 2), 'utf8');
+  }
+
+  const userSessionFilePath = path.join(ROOT_DATA_DIR, 'current-user-session.json');
+  try {
+    await fs.access(userSessionFilePath);
+  } catch {
+    await fs.writeFile(userSessionFilePath, '{}', 'utf8');
   }
 }
 ensureDirectories().catch(console.error);
@@ -1521,6 +1625,20 @@ app.post('/api/vendors', async (req, res) => {
     }
 
     vendorData.createdAt = vendorData.createdAt || new Date().toISOString();
+
+    // Log structural audit trail for Vendor Onboarding Officer
+    if (!vendorData.auditTrail) {
+      vendorData.auditTrail = [];
+    }
+    const isOfficer = vendorData.approvalWorkflow?.submittedBy === 'Vendor Onboarding Officer';
+    const isPending = vendorData.status === 'Pending Approval';
+    if (isOfficer && isPending) {
+      vendorData.auditTrail.push({
+        submittedBy: 'Vendor Onboarding Officer',
+        submittedDate: new Date().toISOString(),
+        status: 'Pending Approval'
+      });
+    }
     
     await appendJsonData(VENDORS_PATH, vendorData);
     await recalculateVmsSystem();
@@ -1557,7 +1675,29 @@ app.post('/api/vendors', async (req, res) => {
 
 app.put('/api/vendors/:id', async (req, res) => {
   try {
-    const updated = await updateJsonData(VENDORS_PATH, 'vendorId', req.params.id, req.body);
+    const vendors = await readJsonFile(VENDORS_PATH);
+    const vendor = vendors.find(v => v.vendorId === req.params.id);
+    if (!vendor) {
+      return res.status(404).json({ message: 'Vendor not found' });
+    }
+
+    const body = req.body;
+    let auditTrail = body.auditTrail || vendor.auditTrail || [];
+
+    const isOfficer = body.approvalWorkflow?.submittedBy === 'Vendor Onboarding Officer';
+    const isPending = body.status === 'Pending Approval';
+    if (isOfficer && isPending) {
+      auditTrail.push({
+        submittedBy: 'Vendor Onboarding Officer',
+        submittedDate: new Date().toISOString(),
+        status: 'Pending Approval'
+      });
+    }
+
+    const updated = await updateJsonData(VENDORS_PATH, 'vendorId', req.params.id, {
+      ...body,
+      auditTrail
+    });
     await recalculateVmsSystem();
     await logVmsAuditTrail('Vendor Updated', `Vendor ${req.params.id} (${updated.vendorName || updated.basicDetails?.legalName}) profile updated.`);
     
@@ -1620,6 +1760,22 @@ app.post('/api/vendors/:id/approve', async (req, res) => {
       approvedDate: new Date().toISOString()
     };
 
+    const isTenantAdmin = performedBy === 'Tenant Admin';
+    const extraAudits = [];
+    if (isTenantAdmin) {
+      const timestamp = new Date().toISOString();
+      extraAudits.push({
+        approvedBy: 'Tenant Admin',
+        approvedDate: timestamp,
+        status: 'Approved'
+      });
+      extraAudits.push({
+        empanelledBy: 'Tenant Admin',
+        empanelledDate: timestamp,
+        status: 'Empanelled'
+      });
+    }
+
     const updated = await updateJsonData(VENDORS_PATH, 'vendorId', req.params.id, {
       status: 'Active',
       approvalWorkflow: updatedWorkflow,
@@ -1630,7 +1786,8 @@ app.post('/api/vendors/:id/approve', async (req, res) => {
           performedBy: performedBy || 'Saurabh Anand',
           timestamp: new Date().toISOString(),
           remarks
-        }
+        },
+        ...extraAudits
       ]
     });
 
@@ -1901,6 +2058,16 @@ app.put('/api/invoices/:id/approve', async (req, res) => {
     if (idx === -1) return res.status(404).json({ message: 'Invoice not found' });
 
     const prevStage = list[idx].stage;
+    const isPaymentRelease = prevStage === 'Payment Processing';
+
+    if (!list[idx].auditTrail) {
+      list[idx].auditTrail = [];
+    }
+    list[idx].auditTrail.push({
+      action: isPaymentRelease ? "Payment Approved" : "Invoice Approved",
+      approvedBy: "Finance Manager",
+      approvedDate: new Date().toISOString()
+    });
 
     list[idx] = { ...list[idx], status: 'Approved', stage: 'Payment Processing', approvedBy: approvedBy || 'Finance Manager', approvedDate: new Date().toISOString(), remarks: remarks || '' };
     await writeJsonFile(ADMIN_INVOICES_PATH, list);
@@ -1921,6 +2088,14 @@ app.put('/api/invoices/:id/approve', async (req, res) => {
             status: 'Approved',
             timestamp: new Date().toISOString(),
             changedBy: approvedBy || 'Finance Manager'
+          });
+          if (!approvals[appIdx].auditTrail) {
+            approvals[appIdx].auditTrail = [];
+          }
+          approvals[appIdx].auditTrail.push({
+            action: "Payment Approved",
+            approvedBy: "Finance Manager",
+            approvedDate: new Date().toISOString()
           });
           await writeJsonFile(PAYMENT_APPROVALS_PATH, approvals);
         }
@@ -2181,6 +2356,14 @@ app.put('/api/tds/:id/approve', async (req, res) => {
     const list = await readJsonFile(TDS_PATH);
     const idx = list.findIndex(t => t.tdsId === req.params.id);
     if (idx === -1) return res.status(404).json({ message: 'TDS record not found' });
+    if (!list[idx].auditTrail) {
+      list[idx].auditTrail = [];
+    }
+    list[idx].auditTrail.push({
+      action: "TDS Approved",
+      approvedBy: "Finance Manager",
+      approvedDate: new Date().toISOString()
+    });
     list[idx] = { ...list[idx], status: 'Approved', approvedBy: approvedBy || 'Finance Manager', approvedDate: new Date().toISOString() };
     await writeJsonFile(TDS_PATH, list);
     res.json(list[idx]);
@@ -2651,10 +2834,11 @@ async function updateCatDashboardMetrics() {
       totalItems,
       totalServices,
       activeVendors,
-      pendingApprovals: pendingApprovalsCount,
+      pendingApprovals: 0,
+      publishedRecords: totalItems + totalServices,
       pendingVendorMapping,
       publishedServices,
-      compliancePending,
+      compliancePending: 0,
       rateConfigurationPending,
       criticalCategories,
       rateRevisionsDue,
@@ -2846,7 +3030,7 @@ app.post('/api/catalogue/services', async (req, res) => {
     const padded = String(nextNum).padStart(4, '0');
     serviceData.serviceId = `SVC-${year}-${padded}`;
 
-    const clientStatus = serviceData.status || 'Pending Approval';
+    const clientStatus = serviceData.status || 'Published';
     serviceData.status = clientStatus;
     serviceData.workflowStage = 'None';
     serviceData.createdDate = new Date().toISOString().split('T')[0];
@@ -2932,7 +3116,9 @@ app.post('/api/catalogue/services', async (req, res) => {
     await writeJsonFile(CAT_SERVICES_PATH, services);
 
     // Add to approvals queue if not Draft
-    if (serviceData.status === 'Pending Approval') {
+    if (serviceData.status === 'Published') {
+      await logCatActivity(serviceData.serviceId, 'Service Created & Published', serviceData.createdBy || 'Admin');
+    } else if (serviceData.status === 'Pending Approval') {
       await queueCatalogueApproval(serviceData.serviceId, 'Service', serviceData);
       await logCatActivity(serviceData.serviceId, 'Service Created & Submitted for Approval', serviceData.createdBy);
     } else {
@@ -2970,13 +3156,13 @@ app.post('/api/catalogue/items', async (req, res) => {
     const padded = String(nextNum).padStart(4, '0');
     itemData.itemId = `ITM-${year}-${padded}`;
 
-    const clientStatus = itemData.status || 'Pending Approval';
+    const clientStatus = itemData.status || 'Published';
     itemData.status = clientStatus;
     itemData.approvalWorkflow = {
       submittedBy: itemData.submittedBy || 'Admin',
       submittedDate: new Date().toISOString().split('T')[0],
-      approvalStatus: clientStatus === 'Draft' ? 'Draft' : 'Pending',
-      currentApprover: clientStatus === 'Draft' ? '' : 'Procurement Checker'
+      approvalStatus: clientStatus === 'Draft' ? 'Draft' : 'Published',
+      currentApprover: ''
     };
 
     // Save attachment metadata
@@ -3048,7 +3234,9 @@ app.post('/api/catalogue/items', async (req, res) => {
     await appendJsonData(CAT_ITEMS_PATH, itemData);
     
     // Add to approvals queue if not Draft
-    if (itemData.status === 'Pending Approval') {
+    if (itemData.status === 'Published') {
+      await logCatActivity(itemData.itemId, 'Item Created & Published', itemData.submittedBy || 'Admin');
+    } else if (itemData.status === 'Pending Approval') {
       await queueCatalogueApproval(itemData.itemId, 'Item', itemData);
       await logCatActivity(itemData.itemId, 'Item Created & Submitted for Approval', itemData.submittedBy);
     } else {
@@ -3062,14 +3250,174 @@ app.post('/api/catalogue/items', async (req, res) => {
   }
 });
 
+// POST /api/catalogue/import
+app.post('/api/catalogue/import', async (req, res) => {
+  try {
+    const { type, records } = req.body;
+    if (!Array.isArray(records)) {
+      return res.status(400).json({ success: false, message: 'Records must be an array.' });
+    }
+
+    const items = await readJsonFile(CAT_ITEMS_PATH);
+    const services = await readJsonFile(CAT_SERVICES_PATH);
+
+    let itemsImported = 0;
+    let servicesImported = 0;
+
+    const year = 2026;
+    // Helper to get max item ID
+    const getNextItemId = () => {
+      let maxNum = 0;
+      for (const i of items) {
+        if (i.itemId && i.itemId.startsWith(`ITM-${year}-`)) {
+          const parts = i.itemId.split('-');
+          if (parts.length === 3) {
+            const num = parseInt(parts[2], 10);
+            if (!isNaN(num) && num > maxNum) maxNum = num;
+          }
+        }
+      }
+      const nextNum = maxNum + 1;
+      const padded = String(nextNum).padStart(5, '0');
+      return `ITM-${year}-${padded}`;
+    };
+
+    // Helper to get max service ID
+    const getNextServiceId = () => {
+      let maxNum = 0;
+      for (const s of services) {
+        if (s.serviceId && (s.serviceId.startsWith(`SVC-${year}-`) || s.serviceId.startsWith(`SRV-${year}-`))) {
+          const parts = s.serviceId.split('-');
+          if (parts.length === 3) {
+            const num = parseInt(parts[2], 10);
+            if (!isNaN(num) && num > maxNum) maxNum = num;
+          }
+        }
+      }
+      const nextNum = maxNum + 1;
+      const padded = String(nextNum).padStart(5, '0');
+      return `SRV-${year}-${padded}`;
+    };
+
+    const normalizeFiles = (files) => {
+      const arr = Array.isArray(files) ? files : [];
+      return arr.map((file, idx) => ({
+        fileId: file.fileId || `FILE-${Math.floor(Math.random() * 90000) + 10000}`,
+        fileName: file.fileName || 'Specification.pdf',
+        fileType: file.fileType || 'application/pdf',
+        filePath: file.filePath || `/uploads/catalogue/${file.fileName || 'Specification.pdf'}`,
+        uploadedOn: file.uploadedOn || file.uploadedDate || new Date().toISOString().split('T')[0],
+        fileSize: file.fileSize || '1.0 MB',
+        uploadedBy: file.uploadedBy || 'Tenant Admin',
+        attachmentId: file.attachmentId || `ATT-IMP-${idx}-${Math.floor(Math.random() * 900) + 100}`
+      }));
+    };
+
+    for (const rec of records) {
+      // Determine type
+      let recType = (rec.type || '').toLowerCase();
+      if (!recType) {
+        // Fallback based on category
+        const cat = (rec.category || '').toLowerCase();
+        if (cat.includes('service') || cat === 'professional services' || cat === 'logistics' || type === 'Services') {
+          recType = 'service';
+        } else {
+          recType = 'item';
+        }
+      }
+
+      if (recType === 'service' || recType === 'services') {
+        // Process as Service
+        const serviceId = rec.serviceId || rec.itemId || getNextServiceId();
+        const preferredVendorName = typeof rec.preferredVendor === 'object' && rec.preferredVendor ? rec.preferredVendor.vendorName : (rec.preferredVendor || 'ABC Infotech Private Limited');
+        
+        const newService = {
+          serviceId,
+          serviceCode: rec.serviceCode || rec.itemCode || serviceId,
+          serviceName: rec.serviceName || rec.itemName || 'Unnamed Service',
+          serviceCategory: rec.serviceCategory || rec.category || 'IT Services',
+          category: rec.serviceCategory || rec.category || 'IT Services',
+          subCategory: rec.subCategory || 'General',
+          description: rec.description || rec.serviceName || rec.itemName || '',
+          department: rec.department || 'Procurement',
+          preferredVendor: preferredVendorName,
+          refRate: parseFloat(rec.refRate) || parseFloat(rec.rate) || 10000,
+          rate: parseFloat(rec.refRate) || parseFloat(rec.rate) || 10000,
+          status: rec.status || 'Published',
+          type: 'Service',
+          isService: true,
+          createdDate: new Date().toISOString().split('T')[0],
+          createdBy: 'Admin',
+          uploadedFiles: normalizeFiles(rec.uploadedFiles || rec.attachments || [])
+        };
+        
+        services.push(newService);
+        servicesImported++;
+      } else {
+        // Process as Item
+        const itemId = rec.itemId || rec.serviceId || getNextItemId();
+        
+        let prefVendorObj = { vendorId: 'VND-2025-00029', vendorName: 'ABC Infotech Private Limited' };
+        if (typeof rec.preferredVendor === 'object' && rec.preferredVendor) {
+          prefVendorObj = {
+            vendorId: rec.preferredVendor.vendorId || 'VND-2025-00029',
+            vendorName: rec.preferredVendor.vendorName || 'ABC Infotech Private Limited'
+          };
+        } else if (typeof rec.preferredVendor === 'string' && rec.preferredVendor) {
+          prefVendorObj = {
+            vendorId: 'VND-2025-00029',
+            vendorName: rec.preferredVendor
+          };
+        }
+
+        const newItem = {
+          itemId,
+          itemCode: rec.itemCode || rec.serviceCode || itemId,
+          itemName: rec.itemName || rec.serviceName || 'Unnamed Item',
+          category: rec.category || 'IT Hardware',
+          subCategory: rec.subCategory || 'General',
+          description: rec.description || rec.itemName || rec.serviceName || '',
+          brand: rec.brand || 'General',
+          minimumOrderQuantity: parseInt(rec.minimumOrderQuantity) || 1,
+          expectedLeadTime: rec.expectedLeadTime || '7 days',
+          preferredVendor: prefVendorObj,
+          alternateVendors: rec.alternateVendors || [],
+          hsnCode: rec.hsnCode || '84713010',
+          unitOfMeasurement: rec.unitOfMeasurement || 'Nos',
+          taxCode: rec.taxCode || 'GST 18%',
+          status: rec.status || 'Published',
+          type: 'Item',
+          refRate: parseFloat(rec.refRate) || parseFloat(rec.rate) || 5000,
+          rate: parseFloat(rec.refRate) || parseFloat(rec.rate) || 5000,
+          uploadedFiles: normalizeFiles(rec.uploadedFiles || rec.attachments || [])
+        };
+
+        items.push(newItem);
+        itemsImported++;
+      }
+    }
+
+    await writeJsonFile(CAT_ITEMS_PATH, items);
+    await writeJsonFile(CAT_SERVICES_PATH, services);
+    await updateCatDashboardMetrics();
+
+    res.json({
+      success: true,
+      message: 'Catalogue imported successfully.',
+      itemsImported,
+      servicesImported,
+      totalImported: itemsImported + servicesImported
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // 4. PUT /api/catalogue/items/:id
 app.put('/api/catalogue/items/:id', async (req, res) => {
   try {
     const updated = await updateJsonData(CAT_ITEMS_PATH, 'itemId', req.params.id, req.body);
-    await logCatActivity(req.params.id, 'Item Updated', req.body.submittedBy);
-    if (req.body.status === 'Pending Approval') {
-      await queueCatalogueApproval(req.params.id, 'Item', req.body);
-    }
+    await logCatActivity(req.params.id, req.body.status === 'Published' ? 'Item Updated & Published' : 'Item Updated', req.body.submittedBy);
     res.json(updated);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -3093,10 +3441,7 @@ app.delete('/api/catalogue/items/:id', async (req, res) => {
 app.put('/api/catalogue/services/:id', async (req, res) => {
   try {
     const updated = await updateJsonData(CAT_SERVICES_PATH, 'serviceId', req.params.id, req.body);
-    await logCatActivity(req.params.id, 'Service Updated', req.body.createdBy);
-    if (req.body.status === 'Pending Approval') {
-      await queueCatalogueApproval(req.params.id, 'Service', req.body);
-    }
+    await logCatActivity(req.params.id, req.body.status === 'Published' ? 'Service Updated & Published' : 'Service Updated', req.body.createdBy);
     await updateCatDashboardMetrics();
     res.json(updated);
   } catch (error) {
@@ -4487,7 +4832,9 @@ app.post('/api/contracts/:id/renew', async (req, res) => {
 app.post('/api/contracts/approve', async (req, res) => {
   try {
     const { contractId, remarks, performedBy } = req.body;
-    const userName = performedBy || 'Saurabh Anand';
+    const performer = performedBy || 'Saurabh Anand';
+    const isProcManager = performer === 'Priya Sharma' || performer === 'procurement' || req.body.role === 'PROCUREMENT' || req.body.role === 'Procurement Manager';
+    const approvedByVal = isProcManager ? 'Procurement Manager' : performer;
 
     const contracts = await readJsonFile(CONTRACTS_PATH);
     const cIndex = contracts.findIndex(c => c.contractId === contractId);
@@ -4498,6 +4845,14 @@ app.post('/api/contracts/approve', async (req, res) => {
     // Set contract status to Active
     contracts[cIndex].status = "Active";
     contracts[cIndex].approvalStatus = "Approved";
+    if (!contracts[cIndex].auditTrail) {
+      contracts[cIndex].auditTrail = [];
+    }
+    contracts[cIndex].auditTrail.push({
+      action: "Contract Approved",
+      approvedBy: approvedByVal,
+      approvedDate: new Date().toISOString()
+    });
     await writeJsonFile(CONTRACTS_PATH, contracts);
 
     // Update approval queue item to Approved
@@ -4507,6 +4862,14 @@ app.post('/api/contracts/approve', async (req, res) => {
       approvals[appIndex].status = "Approved";
       approvals[appIndex].remarks = remarks || "";
       approvals[appIndex].approvalDate = new Date().toISOString().split('T')[0];
+      if (!approvals[appIndex].auditTrail) {
+        approvals[appIndex].auditTrail = [];
+      }
+      approvals[appIndex].auditTrail.push({
+        action: "Contract Approved",
+        approvedBy: approvedByVal,
+        approvedDate: new Date().toISOString()
+      });
       await writeJsonFile(CONTRACT_APPROVALS_PATH, approvals);
     }
 
@@ -6494,6 +6857,26 @@ app.post('/api/auth/demo-login', async (req, res) => {
     user.lastLogin = timeStr;
     await writeJsonFile(AUTH_USERS_PATH, users);
 
+    // Update current-user-session.json with selected role details
+    try {
+      const ROOT_DATA_DIR = path.join(__dirname, '..', 'data');
+      const demoRolesFilePath = path.join(ROOT_DATA_DIR, 'demo-roles.json');
+      const demoRolesData = await fs.readFile(demoRolesFilePath, 'utf8');
+      const demoRoles = JSON.parse(demoRolesData);
+      const demoRole = demoRoles.find(r => r.username === username);
+      if (demoRole) {
+        const sessionObj = {
+          userId: demoRole.roleId,
+          userName: demoRole.name,
+          role: demoRole.role,
+          landingPage: demoRole.redirectUrl || demoRole.redirect
+        };
+        await fs.writeFile(path.join(ROOT_DATA_DIR, 'current-user-session.json'), JSON.stringify(sessionObj, null, 2), 'utf8');
+      }
+    } catch (e) {
+      console.error("Failed to write to current-user-session.json inside demo-login:", e);
+    }
+
     res.json({
       success: true,
       authenticated: true,
@@ -6527,6 +6910,14 @@ app.post('/api/auth/logout', async (req, res) => {
     if (session) {
       session.status = 'INACTIVE';
       await writeJsonFile(AUTH_SESSIONS_PATH, sessions);
+    }
+
+    // Clear current-user-session.json
+    try {
+      const ROOT_DATA_DIR = path.join(__dirname, '..', 'data');
+      await fs.writeFile(path.join(ROOT_DATA_DIR, 'current-user-session.json'), '{}', 'utf8');
+    } catch (e) {
+      console.error("Failed to clear current-user-session.json in logout:", e);
     }
 
     res.json({ success: true, message: 'Logged out successfully' });
@@ -6576,6 +6967,36 @@ app.get('/api/auth/session', async (req, res) => {
         email: user.email
       }
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// Endpoints for dynamic demo roles and current user session
+app.get('/data/demo-roles.json', async (req, res) => {
+  try {
+    const filePath = path.join(__dirname, '..', 'data', 'demo-roles.json');
+    const data = await fs.readFile(filePath, 'utf8');
+    res.json(JSON.parse(data));
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/data/current-user-session.json', async (req, res) => {
+  try {
+    const filePath = path.join(__dirname, '..', 'data', 'current-user-session.json');
+    const data = await fs.readFile(filePath, 'utf8');
+    res.json(JSON.parse(data));
+  } catch (error) {
+    res.json({});
+  }
+});
+
+app.post('/data/current-user-session.json', async (req, res) => {
+  try {
+    const filePath = path.join(__dirname, '..', 'data', 'current-user-session.json');
+    await fs.writeFile(filePath, JSON.stringify(req.body, null, 2), 'utf8');
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -6847,7 +7268,7 @@ app.get('/api/kyc/reviews/detail/:vendorId', async (req, res) => {
 // POST /api/kyc/reviews/action
 app.post('/api/kyc/reviews/action', async (req, res) => {
   try {
-    const { vendorId, action, comment } = req.body;
+    const { vendorId, action, comment, performedBy } = req.body;
     
     // Read databases
     const vendors = await readJsonFile(VENDORS_PATH);
@@ -6888,17 +7309,32 @@ app.post('/api/kyc/reviews/action', async (req, res) => {
     }
     vendors[vendorIndex].approvalWorkflow.approvalStatus = newApprovalStatus;
     vendors[vendorIndex].approvalWorkflow.approverRemarks = comment || '';
-    vendors[vendorIndex].approvalWorkflow.approvedBy = 'Compliance Team';
+    vendors[vendorIndex].approvalWorkflow.approvedBy = performedBy || 'Compliance Team';
     vendors[vendorIndex].approvalWorkflow.approvedDate = new Date().toISOString();
 
     // Log in vendor audit trail
     if (!vendors[vendorIndex].auditTrail) vendors[vendorIndex].auditTrail = [];
     vendors[vendorIndex].auditTrail.push({
       action: `KYC Review ${actionLog}`,
-      performedBy: 'Compliance Team',
+      performedBy: performedBy || 'Compliance Team',
       timestamp: new Date().toISOString(),
       remarks: comment || ''
     });
+
+    const isTenantAdmin = performedBy === 'Tenant Admin';
+    if (action === 'Approve' && isTenantAdmin) {
+      const timestamp = new Date().toISOString();
+      vendors[vendorIndex].auditTrail.push({
+        approvedBy: 'Tenant Admin',
+        approvedDate: timestamp,
+        status: 'Approved'
+      });
+      vendors[vendorIndex].auditTrail.push({
+        empanelledBy: 'Tenant Admin',
+        empanelledDate: timestamp,
+        status: 'Empanelled'
+      });
+    }
 
     // Write back vendors database
     await writeJsonFile(VENDORS_PATH, vendors);
@@ -9979,7 +10415,6 @@ app.get('/api/vendor-portal/audit-trail', async (req, res) => {
 });
 
 // ── Cron: daily doc-expiry + PO-unacknowledged alerts ─────────────────────
-import cron from 'node-cron';
 
 cron.schedule('0 8 * * *', async () => {
   console.log('[CRON] Running daily vendor alerts scan...');
@@ -10645,6 +11080,16 @@ app.post('/api/rfq-approvals/:approvalId/action', async (req, res) => {
     approvals[idx].remarks = remarks || '';
 
     if (action === 'Approve') {
+      const isProcManager = performer === 'Priya Sharma' || performer === 'procurement' || req.body.role === 'PROCUREMENT' || req.body.role === 'Procurement Manager';
+      const approvedByVal = isProcManager ? 'Procurement Manager' : performer;
+
+      if (!approvals[idx].auditTrail) approvals[idx].auditTrail = [];
+      approvals[idx].auditTrail.push({
+        action: "RFQ Approved",
+        approvedBy: approvedByVal,
+        approvedDate: new Date().toISOString()
+      });
+
       // Escalate through stages
       const stages = ['Procurement Manager Review', 'Tenant Admin Review'];
       const curIdx = stages.indexOf(approvals[idx].currentStage);
@@ -10656,7 +11101,15 @@ app.post('/api/rfq-approvals/:approvalId/action', async (req, res) => {
         const rfqId = approvals[idx].rfqId;
         const rfqs = await readJsonFile(RFQ_PATH).catch(() => []);
         const rfqIdx = rfqs.findIndex(r => r.rfqId === rfqId);
-        if (rfqIdx !== -1) rfqs[rfqIdx].status = 'Closed';
+        if (rfqIdx !== -1) {
+          rfqs[rfqIdx].status = 'Closed';
+          if (!rfqs[rfqIdx].auditTrail) rfqs[rfqIdx].auditTrail = [];
+          rfqs[rfqIdx].auditTrail.push({
+            action: "RFQ Approved",
+            approvedBy: approvedByVal,
+            approvedDate: new Date().toISOString()
+          });
+        }
         await writeJsonFile(RFQ_PATH, rfqs);
 
         // Update winning quote status

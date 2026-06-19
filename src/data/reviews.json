@@ -43,6 +43,20 @@
       "comments": []
     },
     {
+      "reviewId": "REV-2026-006",
+      "vendorId": "VND-2026-49442",
+      "vendorName": "ABC Infotech Pvt Ltd",
+      "category": "Private Limited Company",
+      "riskScore": 5,
+      "riskLevel": "Low",
+      "kycStatus": "Pending",
+      "screeningStatus": "Cleared",
+      "approvalStatus": "Pending Review",
+      "assignedTo": "Compliance Team",
+      "dueDate": "2026-07-19",
+      "comments": []
+    },
+    {
       "reviewId": "REV-2026-002",
       "vendorId": "VND-2026-88001",
       "vendorName": "HDFC Bank Limited",

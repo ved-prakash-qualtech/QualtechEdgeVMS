@@ -60,7 +60,6 @@ const NAV_ITEMS = [
       { name: 'Catalogue Dashboard', path: '/catalogue/dashboard' },
       { name: 'Item Master', path: '/catalogue/items' },
       { name: 'Service Master', path: '/catalogue/services' },
-      { name: 'Approvals', path: '/catalogue/approvals' },
     ],
   },
   {
@@ -107,7 +106,7 @@ const NAV_ITEMS = [
       { name: 'Payments Dashboard', path: '/payments/dashboard' },
       { name: 'Payment Processing', path: '/payments/processing' },
       { name: 'Payment Approvals', path: '/payments/approvals' },
-      { name: 'TDS Approvals', path: '/finance/tds' },
+      { name: 'TDS Approvals', path: '/payments/tds-approvals' },
       { name: 'Bank Reconciliation', path: '/finance/reconciliation' },
     ],
   },
@@ -165,7 +164,7 @@ const FINANCE_NAV_ITEMS = [
       { name: 'Payments Dashboard', path: '/payments/dashboard' },
       { name: 'Payment Processing', path: '/payments/processing' },
       { name: 'Payment Approvals', path: '/payments/approvals' },
-      { name: 'TDS Approvals', path: '/finance/tds' },
+      { name: 'TDS Approvals', path: '/payments/tds-approvals' },
       { name: 'Bank Reconciliation', path: '/finance/reconciliation' },
     ],
   },
@@ -230,7 +229,7 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
   });
 
   React.useEffect(() => {
-    const rawItems = user?.role === 'VENDOR' ? VENDOR_NAV_ITEMS : user?.role === 'FINANCE' ? FINANCE_NAV_ITEMS : NAV_ITEMS;
+    const rawItems = user?.role === 'VENDOR' ? VENDOR_NAV_ITEMS : (user?.role === 'FINANCE' || user?.role === 'FINANCE_EXECUTIVE') ? FINANCE_NAV_ITEMS : NAV_ITEMS;
     rawItems.forEach(item => {
       if (item.subItems && isParentActive(item.subItems)) {
         setExpandedMenus(prev => ({ ...prev, [item.name]: true }));
@@ -255,7 +254,7 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
     ? user.fullName.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
     : 'A';
 
-  const rawItems = user?.role === 'VENDOR' ? VENDOR_NAV_ITEMS : user?.role === 'FINANCE' ? FINANCE_NAV_ITEMS : NAV_ITEMS;
+  const rawItems = user?.role === 'VENDOR' ? VENDOR_NAV_ITEMS : (user?.role === 'FINANCE' || user?.role === 'FINANCE_EXECUTIVE') ? FINANCE_NAV_ITEMS : NAV_ITEMS;
   const filteredNavItems = rawItems.filter(item => {
     if (['ADMIN', 'PROCUREMENT', 'COMPLIANCE', 'ONBOARDING', 'FINANCE'].includes(user?.role || '')) {
       if (item.name === 'Vendor Portal') return false;
@@ -297,11 +296,13 @@ export const Sidebar: React.FC<Props> = ({ collapsed, onToggleCollapse, mobileOp
             <div className={styles.userRole}>
               {user?.role === 'ADMIN' && 'Tenant Admin'}
               {user?.role === 'PROCUREMENT' && 'Procurement Manager'}
+              {user?.role === 'PROCUREMENT_EXECUTIVE' && 'Procurement Executive'}
               {user?.role === 'FINANCE' && 'Finance Manager'}
+              {user?.role === 'FINANCE_EXECUTIVE' && 'Finance Executive'}
               {user?.role === 'ONBOARDING' && 'Vendor Onboarding Officer'}
               {user?.role === 'COMPLIANCE' && 'Vendor Onboarding Officer'}
               {user?.role === 'VENDOR' && 'Vendor Portal User'}
-              {!['ADMIN', 'PROCUREMENT', 'FINANCE', 'ONBOARDING', 'COMPLIANCE', 'VENDOR'].includes(user?.role || '') && (user?.role || 'Administrator')}
+              {!['ADMIN', 'PROCUREMENT', 'PROCUREMENT_EXECUTIVE', 'FINANCE', 'FINANCE_EXECUTIVE', 'ONBOARDING', 'COMPLIANCE', 'VENDOR'].includes(user?.role || '') && (user?.role || 'Administrator')}
             </div>
           </div>
         )}

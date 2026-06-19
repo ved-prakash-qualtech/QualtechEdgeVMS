@@ -31,7 +31,7 @@ export const PaymentProcessing: React.FC = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   React.useEffect(() => {
-    if (!hasActionPermission('RELEASE_PAYMENT')) {
+    if (!hasActionPermission('PAYMENT_PROCESSING') && !hasActionPermission('RELEASE_PAYMENT')) {
       navigate('/access-denied');
     }
   }, [hasActionPermission, navigate]);

@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "documentId": "DOC-001",
+    "catalogueId": "ITM-2026-0001",
+    "fileName": "catalogue_export_2026-06-19.xlsx",
+    "filePath": "/uploads/catalogue/catalogue_export_2026-06-19.xlsx",
+    "uploadedBy": "Admin",
+    "uploadedDate": "2026-06-19"
+  },
+  {
+    "documentId": "DOC-002",
+    "catalogueId": "ITM-2026-0001",
+    "fileName": "ChatGPT Image May 14, 2026, 05_06_16 PM.png",
+    "filePath": "/uploads/catalogue/ChatGPT-Image-May-14-2026-05_06_16-PM.png",
+    "uploadedBy": "Admin",
+    "uploadedDate": "2026-06-19"
+  },
+  {
+    "documentId": "DOC-003",
+    "catalogueId": "ITM-2026-0001",
+    "fileName": "ChatGPT Image May 19, 2026, 01_31_57 PM.png",
+    "filePath": "/uploads/catalogue/ChatGPT-Image-May-19-2026-01_31_57-PM.png",
+    "uploadedBy": "Admin",
+    "uploadedDate": "2026-06-19"
+  }
+]

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Search, ChevronRight, CheckCircle2, XCircle, Send, Bot, Scale, Loader2 } from 'lucide-react';
+import { Search, ChevronRight, CheckCircle2, XCircle, Send, Bot, Scale, Loader2, ShieldAlert } from 'lucide-react';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
 import { Badge } from '../../components/Badge/Badge';
@@ -30,7 +30,7 @@ interface Invoice {
 }
 
 export const InvoiceApprovals: React.FC = () => {
-  const { hasActionPermission } = useAuth();
+  const { hasActionPermission, user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -220,23 +220,40 @@ export const InvoiceApprovals: React.FC = () => {
                   </div>
                 </div>
 
-                {hasActionPermission('APPROVE_INVOICE') && (
-                  <>
-                    <h3 className={styles.actionTitle}>Authorized AP Action</h3>
-                    <div className={styles.actionButtons}>
-                      <Button className={styles.approveBtn} icon={<CheckCircle2 size={16} />} onClick={handleApprove}>
-                        Approve & Release Payment
-                      </Button>
-                      <Button className={styles.rejectBtn} icon={<XCircle size={16} />} onClick={handleReject}>
-                        Reject Invoice
-                      </Button>
-                      <Button className={styles.sendBackBtn} icon={<Send size={16} />}>
-                        Send Back to Vendor Portal
-                      </Button>
-                    </div>
-
-
-                  </>
+                {user?.role === 'FINANCE_EXECUTIVE' ? (
+                  <div style={{
+                    marginTop: '20px',
+                    padding: '16px',
+                    backgroundColor: '#fffbeb',
+                    border: '1px solid #fde68a',
+                    borderRadius: '8px',
+                    color: '#b45309',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <ShieldAlert size={18} />
+                    <span>View Only Access. Invoice approval rights are restricted to Finance Manager.</span>
+                  </div>
+                ) : (
+                  hasActionPermission('APPROVE_INVOICE') && (
+                    <>
+                      <h3 className={styles.actionTitle}>Authorized AP Action</h3>
+                      <div className={styles.actionButtons}>
+                        <Button className={styles.approveBtn} icon={<CheckCircle2 size={16} />} onClick={handleApprove}>
+                          Approve & Release Payment
+                        </Button>
+                        <Button className={styles.rejectBtn} icon={<XCircle size={16} />} onClick={handleReject}>
+                          Reject Invoice
+                        </Button>
+                        <Button className={styles.sendBackBtn} icon={<Send size={16} />}>
+                          Send Back to Vendor Portal
+                        </Button>
+                      </div>
+                    </>
+                  )
                 )}
               </>
             ) : (

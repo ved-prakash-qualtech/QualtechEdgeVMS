@@ -119,7 +119,12 @@ export const ApprovalDetail: React.FC = () => {
 
     setSubmittingAction(true);
     try {
-      const res = await submitApprovalAction(vendorId, action, commentText.trim());
+      const res = await submitApprovalAction(
+        vendorId,
+        action,
+        commentText.trim(),
+        user?.role === 'ADMIN' ? 'Tenant Admin' : 'Compliance Team'
+      );
       if (res.success) {
         toast.success(res.message);
         setCommentText('');
@@ -373,16 +378,18 @@ export const ApprovalDetail: React.FC = () => {
             </div>
 
             {/* Notes Input Box */}
-            <div className={styles.commentForm}>
-              <label className={styles.commentInputLabel}>Compliance Notes / Reviewer Remarks</label>
-              <textarea
-                className={styles.commentTextArea}
-                placeholder="Type internal remarks, clarification points, or approval justifications here..."
-                rows={3}
-                value={commentText}
-                onChange={e => setCommentText(e.target.value)}
-              />
-            </div>
+            {!(user?.role === 'ONBOARDING' || user?.role === 'COMPLIANCE') && (
+              <div className={styles.commentForm}>
+                <label className={styles.commentInputLabel}>Compliance Notes / Reviewer Remarks</label>
+                <textarea
+                  className={styles.commentTextArea}
+                  placeholder="Type internal remarks, clarification points, or approval justifications here..."
+                  rows={3}
+                  value={commentText}
+                  onChange={e => setCommentText(e.target.value)}
+                />
+              </div>
+            )}
           </Card>
 
           {/* Section 6: Workflow Decisions */}
@@ -421,21 +428,44 @@ export const ApprovalDetail: React.FC = () => {
               </p>
             </div>
             <div className={styles.decisionActions}>
-              {user?.role === 'ADMIN' ? (
+              {user?.role === 'ONBOARDING' || user?.role === 'COMPLIANCE' ? (
+                <div style={{
+                  padding: '16px 20px',
+                  backgroundColor: '#fffbeb',
+                  border: '1px solid #fde68a',
+                  borderRadius: '8px',
+                  color: '#b45309',
+                  fontSize: '13.5px',
+                  fontWeight: '600',
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '10px'
+                }}>
+                  <ShieldAlert size={20} style={{ color: '#d97706', marginTop: '2px', flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontWeight: '700', color: '#92400e' }}>View Only Access</div>
+                    <div style={{ fontSize: '12px', color: '#b45309', marginTop: '3px', fontWeight: '400' }}>
+                      Approval actions are restricted to Tenant Admin.
+                    </div>
+                  </div>
+                </div>
+              ) : user?.role === 'ADMIN' ? (
                 <>
                   <button
                     className={styles.approveActionBtn}
+                    style={{ backgroundColor: '#10b981', borderColor: '#10b981' }}
                     disabled={submittingAction}
                     onClick={() => handleWorkflowAction('Approve')}
                   >
-                    <ThumbsUp size={16} /> Approve Vendor
+                    <ThumbsUp size={16} /> Approved & Empanel
                   </button>
                   <button
                     className={styles.rejectActionBtn}
                     disabled={submittingAction}
                     onClick={() => handleWorkflowAction('Reject')}
                   >
-                    <ThumbsDown size={16} /> Reject Vendor
+                    <ThumbsDown size={16} /> Reject
                   </button>
                   <button
                     className={styles.sendBackActionBtn}

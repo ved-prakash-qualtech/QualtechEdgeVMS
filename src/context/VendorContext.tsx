@@ -124,7 +124,7 @@ interface VendorContextType {
   deleteVendor: (vendorId: string) => Promise<void>;
   completeScreening: (vendorId: string, checks: Check[], riskScore: number, riskLevel: string, performedBy: string, subScores: any) => void;
   acceptAdvisory: (vendorId: string, username: string, timestamp: string) => void;
-  submitDecision: (vendorId: string, decision: 'Approve' | 'Conditional Approval' | 'Hold' | 'Reject', remarks: string, authority: string) => Promise<void>;
+  submitDecision: (vendorId: string, decision: 'Approve' | 'Conditional Approval' | 'Hold' | 'Reject' | 'SendBack', remarks: string, authority: string) => Promise<void>;
 }
 
 const VendorContext = createContext<VendorContextType | undefined>(undefined);
@@ -632,7 +632,7 @@ export const VendorProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const submitDecision = async (
     vendorId: string,
-    decision: 'Approve' | 'Conditional Approval' | 'Hold' | 'Reject',
+    decision: 'Approve' | 'Conditional Approval' | 'Hold' | 'Reject' | 'SendBack',
     remarks: string,
     authority: string
   ) => {
@@ -725,6 +725,32 @@ export const VendorProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         actor: authority,
         action: `Placed on Hold ${kycStore.vendors[vIdx]?.vendorName}`
       });
+    } else if (decision === 'SendBack') {
+      if (vIdx !== -1) {
+        kycStore.vendors[vIdx].kycStatus = 'Pending Screening';
+        kycStore.vendors[vIdx].status = 'Pending Amendment';
+      }
+      if (aIdx !== -1) {
+        kycStore.approvals[aIdx].approvalStatus = 'Sent Back';
+        kycStore.approvals[aIdx].submittedBy = authority;
+        kycStore.approvals[aIdx].submittedOn = dateStr;
+        kycStore.approvals[aIdx].remarks = remarks;
+      }
+
+      kycStore.auditLogs.unshift({
+        timestamp: dateTimeStr,
+        actor: authority,
+        action: `Sent Back ${kycStore.vendors[vIdx]?.vendorName} for clarification`
+      });
+
+      try {
+        await axios.post(`/api/vendors/${vendorId}/sendback`, {
+          remarks,
+          performedBy: authority
+        });
+      } catch (e) {
+        console.error('Server sendback endpoint failed', e);
+      }
     }
 
     saveKycDataLocal(kycStore);

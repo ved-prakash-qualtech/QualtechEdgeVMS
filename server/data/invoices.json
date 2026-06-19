@@ -23,7 +23,7 @@
     "gstMatch": "Matched",
     "uploadedBy": "Priya Mehta",
     "approvedBy": "Finance Manager",
-    "approvedDate": "2026-06-18T07:02:00.406Z",
+    "approvedDate": "2026-06-19T05:04:40.901Z",
     "remarks": ""
   },
   {
@@ -41,16 +41,16 @@
     "tdsRate": 2,
     "tdsAmount": 9000,
     "netPayable": 522000,
-    "status": "Pending Match",
-    "stage": "3-Way Match",
+    "status": "Approved",
+    "stage": "Payment Processing",
     "riskScore": 45,
     "riskLevel": "Medium",
     "vendorType": "Non-MSME",
     "threeWayMatch": "Pending",
     "gstMatch": "Pending",
     "uploadedBy": "Rahul Singh",
-    "approvedBy": null,
-    "approvedDate": null,
+    "approvedBy": "Finance Manager",
+    "approvedDate": "2026-06-19T05:05:35.351Z",
     "remarks": ""
   },
   {
