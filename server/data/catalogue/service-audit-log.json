@@ -5,5 +5,12 @@
     "action": "Service Created",
     "user": "Admin",
     "timestamp": "2026-06-17 10:48:19"
+  },
+  {
+    "auditId": "AUD-SRV-002",
+    "serviceId": "SVC-2026-0001",
+    "action": "Service Created",
+    "user": "Admin",
+    "timestamp": "2026-06-19 13:06:58"
   }
 ]

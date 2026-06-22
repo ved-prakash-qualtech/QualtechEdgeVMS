@@ -1,0 +1,109 @@
+{
+  "Tenant Admin": {
+    "modules": ["*"],
+    "permissions": [
+      "approve_vendor",
+      "reject_vendor",
+      "empanel_vendor",
+      "approve_rfq",
+      "approve_contract",
+      "approve_invoice",
+      "approve_payment",
+      "approve_tds"
+    ]
+  },
+
+  "Vendor Onboarding Officer": {
+    "modules": [
+      "vendor_onboarding"
+    ],
+    "permissions": [
+      "create_vendor",
+      "edit_vendor",
+      "run_kyc",
+      "submit_for_approval",
+      "view_approvals"
+    ]
+  },
+
+  "Procurement Executive": {
+    "modules": [
+      "catalogue",
+      "contracts",
+      "purchase_orders"
+    ],
+    "permissions": [
+      "create_item",
+      "edit_item",
+      "create_service",
+      "edit_service",
+      "create_contract",
+      "edit_contract",
+      "create_requisition",
+      "create_rfq",
+      "view_rfq_approvals",
+      "view_contract_approvals"
+    ]
+  },
+
+  "Procurement Manager": {
+    "modules": [
+      "catalogue",
+      "contracts",
+      "purchase_orders"
+    ],
+    "permissions": [
+      "create_item",
+      "edit_item",
+      "create_service",
+      "edit_service",
+      "create_contract",
+      "edit_contract",
+      "create_requisition",
+      "create_rfq",
+      "award_vendor",
+      "approve_contract",
+      "reject_contract",
+      "approve_rfq",
+      "reject_rfq"
+    ]
+  },
+
+  "Finance Executive": {
+    "modules": [
+      "invoices",
+      "payments"
+    ],
+    "permissions": [
+      "upload_invoice",
+      "view_invoice_dashboard",
+      "execute_3way_match",
+      "view_invoice_approvals",
+      "payment_processing",
+      "create_payment_batch",
+      "schedule_payment",
+      "retry_failed_payment",
+      "bank_reconciliation",
+      "view_payment_approvals",
+      "view_tds_approvals"
+    ]
+  },
+
+  "Finance Manager": {
+    "modules": [
+      "invoices",
+      "payments"
+    ],
+    "permissions": [
+      "upload_invoice",
+      "approve_invoice",
+      "reject_invoice",
+      "approve_payment",
+      "reject_payment",
+      "release_payment",
+      "approve_tds",
+      "reject_tds",
+      "bank_reconciliation"
+    ]
+  }
+}

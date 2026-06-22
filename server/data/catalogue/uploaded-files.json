@@ -46,5 +46,41 @@
     "uploadedBy": "Admin",
     "uploadedOn": "2026-06-17",
     "size": "0.0 MB"
+  },
+  {
+    "fileId": "FILE-9708",
+    "linkedModule": "Service Master",
+    "linkedRecordId": "",
+    "fileName": "catalogue_export_2026-06-19.xlsx",
+    "originalName": "catalogue_export_2026-06-19.xlsx",
+    "fileType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "storagePath": "/uploads/catalogue/services/catalogue_export_2026-06-19.xlsx",
+    "uploadedBy": "Admin",
+    "uploadedOn": "2026-06-19",
+    "size": "0.0 MB"
+  },
+  {
+    "fileId": "FILE-1515",
+    "linkedModule": "Service Master",
+    "linkedRecordId": "",
+    "fileName": "ChatGPT Image May 14, 2026, 05_06_16 PM.png",
+    "originalName": "ChatGPT Image May 14, 2026, 05_06_16 PM.png",
+    "fileType": "image/png",
+    "storagePath": "/uploads/catalogue/services/ChatGPT-Image-May-14-2026-05_06_16-PM.png",
+    "uploadedBy": "Admin",
+    "uploadedOn": "2026-06-19",
+    "size": "1.4 MB"
+  },
+  {
+    "fileId": "FILE-5685",
+    "linkedModule": "Service Master",
+    "linkedRecordId": "",
+    "fileName": "ChatGPT Image May 19, 2026, 01_31_57 PM.png",
+    "originalName": "ChatGPT Image May 19, 2026, 01_31_57 PM.png",
+    "fileType": "image/png",
+    "storagePath": "/uploads/catalogue/services/ChatGPT-Image-May-19-2026-01_31_57-PM.png",
+    "uploadedBy": "Admin",
+    "uploadedOn": "2026-06-19",
+    "size": "1.4 MB"
   }
 ]

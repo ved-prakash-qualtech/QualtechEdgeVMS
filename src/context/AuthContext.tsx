@@ -36,34 +36,68 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Initialize session on mount
   useEffect(() => {
     async function initSession() {
-      const savedToken = getLocalToken();
-      const savedUser = getLocalUser();
-      const verified2fa = getLocal2faVerified();
-
-      if (savedToken && savedUser && verified2fa) {
-        setToken(savedToken);
-        setUser(savedUser);
-        try {
-          // Verify session on backend
-          const data = await validateSession();
-          if (data.success) {
-            setUser(data.user);
-            setLocalSession(data.user, savedToken, data.user.role);
-          } else {
-            handleLogoutCleanly();
-          }
-        } catch (error) {
-          console.error("Session verification failed:", error);
-          const err = error as any;
-          if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-            handleLogoutCleanly();
+      let fileSessionRecovered = false;
+      try {
+        const res = await fetch('/data/current-user-session.json');
+        if (res.ok) {
+          const session = await res.json();
+          if (session && session.userId && session.role) {
+            const roleIdMap: Record<string, string> = {
+              "Tenant Admin": "ADMIN",
+              "Procurement Manager": "PROCUREMENT",
+              "Procurement Executive": "PROCUREMENT_EXECUTIVE",
+              "Vendor Onboarding Officer": "ONBOARDING",
+              "Finance Manager": "FINANCE",
+              "Finance Executive": "FINANCE_EXECUTIVE",
+              "Vendor Portal User": "VENDOR"
+            };
+            const mappedRole = roleIdMap[session.role] || session.role;
+            const dummyUser = {
+              userId: session.userId,
+              username: session.userName.toLowerCase().replace(/\s+/g, '_'),
+              fullName: session.userName,
+              role: mappedRole,
+              email: `${session.userName.toLowerCase().replace(/\s+/g, '')}@axismaxlife.com`
+            };
+            setToken("JWT-DEMO-SESSION-FILE");
+            setUser(dummyUser);
+            setLocalSession(dummyUser, "JWT-DEMO-SESSION-FILE", mappedRole);
+            fileSessionRecovered = true;
           }
         }
-      } else {
-        handleLogoutCleanly();
+      } catch (err) {
+        console.warn("Failed to retrieve current user session from file:", err);
+      }
+
+      if (!fileSessionRecovered) {
+        const savedToken = getLocalToken();
+        const savedUser = getLocalUser();
+        const verified2fa = getLocal2faVerified();
+
+        if (savedToken && savedUser && verified2fa) {
+          setToken(savedToken);
+          setUser(savedUser);
+          try {
+            // Verify session on backend
+            const data = await validateSession();
+            if (data.success) {
+              setUser(data.user);
+              setLocalSession(data.user, savedToken, data.user.role);
+            } else {
+              handleLogoutCleanly();
+            }
+          } catch (error) {
+            console.error("Session verification failed:", error);
+            const err = error as any;
+            if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+              handleLogoutCleanly();
+            }
+          }
+        } else {
+          handleLogoutCleanly();
+        }
       }
       setLoading(false);
     }
@@ -176,9 +210,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       'My Payments': 'myPayments'
     };
 
-    // Finance Dashboard is exclusively for Finance Manager (FINANCE role)
+    // Finance Dashboard is exclusively for Finance Manager (FINANCE role) or Finance Executive
     if (moduleName === 'Finance Dashboard') {
-      return role === 'FINANCE';
+      return role === 'FINANCE' || role === 'FINANCE_EXECUTIVE';
     }
 
     // Role-based Dashboard visibility check
@@ -241,6 +275,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           'RELEASE_PAYMENT',
           'APPROVE_INVOICE',
           'APPROVE_PAYMENT'
+        ].includes(action);
+      case 'FINANCE_EXECUTIVE':
+        return [
+          'UPLOAD_INVOICE',
+          'VIEW_INVOICE_DASHBOARD',
+          'RUN_3WAY_MATCH',
+          'VIEW_INVOICE_APPROVALS',
+          'PAYMENT_PROCESSING',
+          'CREATE_PAYMENT_BATCH',
+          'SCHEDULE_PAYMENT',
+          'RETRY_FAILED_PAYMENT',
+          'BANK_RECONCILIATION'
         ].includes(action);
       case 'ONBOARDING':
       case 'COMPLIANCE':

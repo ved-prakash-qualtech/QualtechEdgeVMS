@@ -1,7 +1,7 @@
 {
   "totalActiveContracts": 2,
   "expiringSoon": 0,
-  "pendingLegalReviews": 1,
+  "pendingLegalReviews": 2,
   "slaBreaches": 0,
   "lifecycleDistribution": [
     {
@@ -16,7 +16,7 @@
     },
     {
       "name": "Under Review",
-      "value": 1,
+      "value": 2,
       "color": "#F59E0B"
     },
     {

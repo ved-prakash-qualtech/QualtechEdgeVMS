@@ -1,0 +1,14 @@
+[
+  {
+    "rfqId": "RFQ-2026-0001",
+    "selectedVendors": [
+      "VND-002",
+      "VND-001"
+    ],
+    "selectedVendorNames": [
+      "ABC Infotech Pvt Ltd",
+      "HDFC Bank Limited"
+    ],
+    "timestamp": "2026-06-19T13:19:17.345Z"
+  }
+]

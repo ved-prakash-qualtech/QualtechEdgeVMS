@@ -45,7 +45,7 @@ export const ServiceMaster: React.FC = () => {
   const [vendors, setVendors] = useState<VendorSelection[]>([]);
 
   // SUCCESS STATUS
-  const [successService, setSuccessService] = useState<{ serviceId: string; serviceName: string } | null>(null);
+  const [successService, setSuccessService] = useState<{ serviceId: string; serviceName: string; status?: string } | null>(null);
 
   // STEP 1 — BASIC SERVICE DETAILS
   const [serviceName, setServiceName] = useState('');
@@ -212,8 +212,8 @@ export const ServiceMaster: React.FC = () => {
     }
   };
 
-  const handleSave = async (statusType: 'Draft' | 'Pending Approval') => {
-    if (statusType === 'Pending Approval') {
+  const handleSave = async (statusType: 'Draft' | 'Published') => {
+    if (statusType === 'Published') {
       // Step 1 Validation
       if (!serviceName || !serviceCode || !serviceCategory || !serviceSubCategory || !description || !department || !businessFunction || !serviceOwner || !serviceType) {
         alert("Please fill in all required Step 1 details (marked with *).");
@@ -311,10 +311,11 @@ export const ServiceMaster: React.FC = () => {
       if (res.success) {
         setSuccessService({
           serviceId: res.service.serviceId || '',
-          serviceName: res.service.serviceName
+          serviceName: res.service.serviceName,
+          status: res.service.status
         });
       } else {
-        alert(`Failed to ${statusType === 'Draft' ? 'save draft' : 'submit'} service master.`);
+        alert(`Failed to ${statusType === 'Draft' ? 'save draft' : 'publish'} service master.`);
       }
     } catch (err: any) {
       console.error("Error creating service master:", err);
@@ -388,15 +389,15 @@ export const ServiceMaster: React.FC = () => {
               <span className={styles.successDetailVal}>{successService.serviceId}</span>
             </div>
             <div className={styles.successDetailRow}>
-              <span className={styles.successDetailLabel}>Workflow Status</span>
-              <span className={styles.successDetailVal}>{successService.status || 'Pending Approval'}</span>
+              <span className={styles.successDetailLabel}>Status</span>
+              <span className={styles.successDetailVal}>{successService.status || 'Published'}</span>
             </div>
           </div>
           
           <p className={styles.successRoutingMsg}>
             {successService.status === 'Draft' 
               ? 'The service has been successfully saved as a draft.' 
-              : 'The service has been successfully submitted for maker-checker approval.'}
+              : 'The service has been successfully created and published across the catalogue.'}
           </p>
           
           <div className={styles.successActions}>
@@ -914,10 +915,10 @@ export const ServiceMaster: React.FC = () => {
                 <Button 
                   variant="primary" 
                   icon={<Save size={16} />} 
-                  onClick={() => handleSave('Pending Approval')}
+                  onClick={() => handleSave('Published')}
                   disabled={isSubmitting || loadingInitial}
                 >
-                  {isSubmitting ? "Submitting..." : "Submit for Approval"}
+                  {isSubmitting ? "Publishing..." : "Save & Publish"}
                 </Button>
               </>
             )}

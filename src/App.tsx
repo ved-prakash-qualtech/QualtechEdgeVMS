@@ -35,11 +35,12 @@ import { ContractApprovals } from './pages/Contracts/ContractApprovals';
 import { Renewals } from './pages/Contracts/Renewals';
 
 import { PODashboard } from './pages/PurchaseOrders/PODashboard';
-import { POList } from './pages/PurchaseOrders/POList';
 import { CreatePO } from './pages/PurchaseOrders/CreatePO';
-import { POApprovals } from './pages/PurchaseOrders/POApprovals';
 import { POReceipt } from './pages/PurchaseOrders/POReceipt';
 import { POThreeWayMatch } from './pages/PurchaseOrders/POThreeWayMatch';
+import { RFQManagement } from './pages/PurchaseOrders/RFQManagement';
+import { VendorQuotations } from './pages/PurchaseOrders/VendorQuotations';
+import { RFQApprovals } from './pages/PurchaseOrders/RFQApprovals';
 
 import { InvoiceDashboard } from './pages/Invoices/InvoiceDashboard';
 import { UploadInvoice } from './pages/Invoices/UploadInvoice';
@@ -99,21 +100,22 @@ function App() {
                   <Route element={<Layout />}>
                     <Route path="/access-denied" element={<AccessDenied />} />
 
-                    {/* Internal modules: ADMIN, PROCUREMENT, COMPLIANCE, FINANCE */}
-                    <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'PROCUREMENT', 'COMPLIANCE', 'FINANCE']} />}>
+                    {/* Internal modules: ADMIN, PROCUREMENT, COMPLIANCE, FINANCE, FINANCE_EXECUTIVE, PROCUREMENT_EXECUTIVE */}
+                    <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'PROCUREMENT', 'COMPLIANCE', 'FINANCE', 'FINANCE_EXECUTIVE', 'PROCUREMENT_EXECUTIVE']} />}>
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/administrator/dashboard" element={<Dashboard />} />
                       <Route path="/procurement/dashboard" element={<Dashboard />} />
                       <Route path="/compliance/dashboard" element={<Dashboard />} />
 
-                      {/* Finance — Dashboard restricted to FINANCE role only */}
-                      <Route element={<ProtectedRoute allowedRoles={['FINANCE']} />}>
+                      {/* Finance — Dashboard restricted to FINANCE & FINANCE_EXECUTIVE roles */}
+                      <Route element={<ProtectedRoute allowedRoles={['FINANCE', 'FINANCE_EXECUTIVE']} />}>
                         <Route path="/finance" element={<Navigate to="/finance/dashboard" replace />} />
                         <Route path="/finance/dashboard" element={<FinanceDashboard />} />
                       </Route>
 
                       {/* Finance — TDS & Reconciliation accessible to all internal roles */}
                       <Route path="/finance/tds" element={<TDSApprovals />} />
+                      <Route path="/payments/tds-approvals" element={<TDSApprovals />} />
                       <Route path="/finance/reconciliation" element={<BankReconciliation />} />
 
                       {/* Vendors */}
@@ -153,8 +155,8 @@ function App() {
                       <Route path="/catalogue/dashboard" element={<CatalogueDashboard />} />
                       <Route path="/catalogue/items" element={<ItemMaster />} />
                       <Route path="/catalogue/services" element={<ServiceMaster />} />
-                      <Route path="/catalogue/approvals" element={<CatalogueApprovals />} />
-                      <Route path="/catalogue/approval-workflow" element={<CatalogueApprovals />} />
+                      <Route path="/catalogue/approvals" element={<Navigate to="/catalogue/dashboard" replace />} />
+                      <Route path="/catalogue/approval-workflow" element={<Navigate to="/catalogue/dashboard" replace />} />
                       <Route path="/catalogue/published" element={<PublishCatalogue />} />
                       <Route path="/catalogue/publish" element={<PublishCatalogue />} />
 
@@ -171,8 +173,11 @@ function App() {
                       <Route path="/purchase-orders" element={<Navigate to="/purchase-orders/dashboard" replace />} />
                       <Route path="/purchase-orders/dashboard" element={<PODashboard />} />
                       <Route path="/purchase-orders/create" element={<CreatePO />} />
-                      <Route path="/purchase-orders/list" element={<POList />} />
-                      <Route path="/purchase-orders/approvals" element={<POApprovals />} />
+
+                      {/* RFQ Module — NEW */}
+                      <Route path="/purchase-orders/rfq" element={<RFQManagement />} />
+                      <Route path="/purchase-orders/vendor-quotations" element={<VendorQuotations />} />
+                      <Route path="/purchase-orders/rfq-approvals" element={<RFQApprovals />} />
 
                       {/* Invoices */}
                       <Route path="/invoices" element={<Navigate to="/invoices/dashboard" replace />} />

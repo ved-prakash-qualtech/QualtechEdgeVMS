@@ -307,35 +307,54 @@ export const ContractApprovals: React.FC = () => {
               </div>
 
               {/* Remarks Textarea */}
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontSize: '11px', color: '#64748b', display: 'block', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 600 }}>
-                  Reviewer Remarks <span style={{ color: '#ef4444' }}>*</span>
-                </label>
-                <textarea
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    borderRadius: '6px',
-                    border: '1px solid #cbd5e1',
-                    fontSize: '13px',
-                    fontFamily: 'inherit',
-                    outline: 'none',
-                    resize: 'vertical'
-                  }}
-                  rows={3}
-                  placeholder="Enter remarks for approval or rejection/clarification..."
-                  value={remarks}
-                  onChange={(e) => setRemarks(e.target.value)}
-                />
-              </div>
+              {user?.role !== 'PROCUREMENT_EXECUTIVE' && (
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ fontSize: '11px', color: '#64748b', display: 'block', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 600 }}>
+                    Reviewer Remarks <span style={{ color: '#ef4444' }}>*</span>
+                  </label>
+                  <textarea
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px',
+                      borderRadius: '6px',
+                      border: '1px solid #cbd5e1',
+                      fontSize: '13px',
+                      fontFamily: 'inherit',
+                      outline: 'none',
+                      resize: 'vertical'
+                    }}
+                    rows={3}
+                    placeholder="Enter remarks for approval or rejection/clarification..."
+                    value={remarks}
+                    onChange={(e) => setRemarks(e.target.value)}
+                  />
+                </div>
+              )}
 
-              <h3 className={styles.actionTitle}>
-                {user?.role === 'ADMIN' ? 'Review Action (Final Approver)' : 'Review Action (Maker/Reviewer)'}
-              </h3>
+              {user?.role === 'PROCUREMENT_EXECUTIVE' ? (
+                <div style={{
+                  marginTop: '20px',
+                  padding: '16px',
+                  backgroundColor: '#fffbeb',
+                  border: '1px solid #fde68a',
+                  borderRadius: '8px',
+                  color: '#b45309',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <ShieldAlert size={18} />
+                  <span>View Only Access. Approval rights are restricted to Procurement Manager.</span>
+                </div>
+              ) : (
+                <>
+                  <h3 className={styles.actionTitle}>
+                    {user?.role === 'ADMIN' ? 'Review Action (Final Approver)' : 'Review Action (Procurement Manager)'}
+                  </h3>
 
-              <div className={styles.actionButtons}>
-                {user?.role === 'ADMIN' ? (
-                  <>
+                  <div className={styles.actionButtons}>
                     <Button
                       className={styles.approveBtn}
                       icon={<CheckCircle2 size={16} />}
@@ -350,7 +369,7 @@ export const ContractApprovals: React.FC = () => {
                       onClick={() => handleResolution('Reject')}
                       disabled={actionLoading}
                     >
-                      Reject
+                      Reject Contract
                     </Button>
                     <Button
                       className={styles.sendBackBtn}
@@ -358,36 +377,11 @@ export const ContractApprovals: React.FC = () => {
                       onClick={() => handleResolution('Send Back')}
                       disabled={actionLoading}
                     >
-                      Send Back for Changes
+                      Send Back Contract
                     </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      className={styles.approveBtn}
-                      icon={<CheckCircle2 size={16} />}
-                      onClick={() => {
-                        toast.success("Contract recommendation submitted to Tenant Admin successfully.");
-                        setRemarks('');
-                        loadApprovalsQueue();
-                      }}
-                    >
-                      Recommend Approval
-                    </Button>
-                    <Button
-                      className={styles.sendBackBtn}
-                      icon={<Send size={16} />}
-                      onClick={() => {
-                        toast.success("Contract sent back for revisions.");
-                        setRemarks('');
-                        loadApprovalsQueue();
-                      }}
-                    >
-                      Send Back for Changes
-                    </Button>
-                  </>
-                )}
-              </div>
+                  </div>
+                </>
+              )}
 
 
 

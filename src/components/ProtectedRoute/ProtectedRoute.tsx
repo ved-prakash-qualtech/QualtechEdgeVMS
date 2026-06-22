@@ -58,8 +58,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // Normalize allowedRoles to support role transition (COMPLIANCE -> ONBOARDING)
   const userRole = user.role;
 
-  // Finance Dashboard is restricted exclusively to the FINANCE role
-  if (location.pathname === '/finance/dashboard' && userRole !== 'FINANCE') {
+  // Finance Dashboard is restricted exclusively to the FINANCE & FINANCE_EXECUTIVE roles
+  if (location.pathname === '/finance/dashboard' && userRole !== 'FINANCE' && userRole !== 'FINANCE_EXECUTIVE') {
     return <Navigate to="/access-denied" replace />;
   }
 
@@ -68,6 +68,15 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     const restrictedPaths = ['/vendors/add', '/kyc/screening', '/kyc/reviews'];
     if (restrictedPaths.includes(location.pathname)) {
       return <Navigate to="/vendors" replace />;
+    }
+  }
+
+  // Blocked paths for Vendor Onboarding Officer
+  if (userRole === 'ONBOARDING' || userRole === 'COMPLIANCE') {
+    const cleanPath = location.pathname.replace(/\/$/, '');
+    const blockedPrefixes = ['/catalogue', '/contracts', '/purchase-orders', '/invoices', '/payments', '/reports', '/settings', '/documents'];
+    if (blockedPrefixes.some(prefix => cleanPath.startsWith(prefix))) {
+      return <Navigate to="/access-denied" replace />;
     }
   }
   const matchesAllowedRole = allowedRoles ? allowedRoles.some(r => {

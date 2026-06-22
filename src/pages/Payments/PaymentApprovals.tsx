@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Search, ChevronRight, CheckCircle2, Bot, Scale, Loader2 } from 'lucide-react';
+import { Search, ChevronRight, CheckCircle2, Bot, Scale, Loader2, ShieldAlert } from 'lucide-react';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
 import { Badge } from '../../components/Badge/Badge';
@@ -30,6 +30,7 @@ interface PaymentBatch {
 
 export const PaymentApprovals: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [batches, setBatches] = useState<PaymentBatch[]>([]);
   const [selectedBatchId, setSelectedBatchId] = useState<string | null>(null);
   const [remarks, setRemarks] = useState('');
@@ -205,18 +206,39 @@ export const PaymentApprovals: React.FC = () => {
                   </div>
                 </div>
 
-                <h4 className={styles.actionTitle}>Checker Authorization Actions</h4>
-                <div className={styles.actionButtons}>
-                  <Button className={styles.approveBtn} onClick={handleApprove}>
-                    Approve & Release Funds
-                  </Button>
-                  <Button className={styles.sendBackBtn} onClick={() => handleAction('Returned to Maker')}>
-                    Send Back to Maker
-                  </Button>
-                  <Button className={styles.rejectBtn} onClick={() => handleAction('Rejected')}>
-                    Reject Payout Batch
-                  </Button>
-                </div>
+                {user?.role === 'FINANCE_EXECUTIVE' ? (
+                  <div style={{
+                    marginTop: '20px',
+                    padding: '16px',
+                    backgroundColor: '#fffbeb',
+                    border: '1px solid #fde68a',
+                    borderRadius: '8px',
+                    color: '#b45309',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <ShieldAlert size={18} />
+                    <span>View Only Access. Payment approval rights are restricted to Finance Manager.</span>
+                  </div>
+                ) : (
+                  <>
+                    <h4 className={styles.actionTitle}>Checker Authorization Actions</h4>
+                    <div className={styles.actionButtons}>
+                      <Button className={styles.approveBtn} onClick={handleApprove}>
+                        Approve & Release Funds
+                      </Button>
+                      <Button className={styles.sendBackBtn} onClick={() => handleAction('Returned to Maker')}>
+                        Send Back to Maker
+                      </Button>
+                      <Button className={styles.rejectBtn} onClick={() => handleAction('Rejected')}>
+                        Reject Payout Batch
+                      </Button>
+                    </div>
+                  </>
+                )}
 
 
 

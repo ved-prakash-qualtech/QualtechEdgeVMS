@@ -25,5 +25,14 @@
     "checker": "Saurabh Anand",
     "remarks": "",
     "approvalDate": "2026-06-17"
+  },
+  {
+    "approvalId": "CAP-8769",
+    "contractId": "CTR-2026-50508",
+    "status": "Pending Approval",
+    "submittedBy": "Procurement Manager",
+    "checker": "Saurabh Anand",
+    "remarks": "",
+    "approvalDate": null
   }
 ]

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Loader2, CheckCircle2, FileText, Clock, CheckCheck, Search, Filter, Download, X } from 'lucide-react';
+import { Loader2, CheckCircle2, FileText, Clock, CheckCheck, Search, Filter, Download, X, ShieldAlert } from 'lucide-react';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
 import { Badge } from '../../components/Badge/Badge';
+import { useAuth } from '../../context/AuthContext';
 import styles from '../Invoices/InvoiceDashboard.module.css';
 
 interface TDSRecord {
@@ -27,6 +28,7 @@ interface TDSRecord {
 type TabKey = 'All' | 'Pending Approval' | 'Approved';
 
 export const TDSApprovals: React.FC = () => {
+  const { user } = useAuth();
   const [records, setRecords] = useState<TDSRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabKey>('All');
@@ -89,6 +91,25 @@ export const TDSApprovals: React.FC = () => {
           <p className={styles.subtitle}>Review and approve Tax Deducted at Source (TDS) deductions</p>
         </div>
       </header>
+
+      {user?.role === 'FINANCE_EXECUTIVE' && (
+        <div style={{
+          marginBottom: '20px',
+          padding: '16px',
+          backgroundColor: '#fffbeb',
+          border: '1px solid #fde68a',
+          borderRadius: '8px',
+          color: '#b45309',
+          fontSize: '14px',
+          fontWeight: 500,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <ShieldAlert size={18} />
+          <span>View Only Access. TDS approval rights are restricted to Finance Manager.</span>
+        </div>
+      )}
 
       {/* Summary Cards — click to filter */}
       <div className={styles.kpiGrid} style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
@@ -213,9 +234,13 @@ export const TDSApprovals: React.FC = () => {
                       </td>
                       <td>
                         {r.status === 'Pending Approval' ? (
-                          <Button onClick={() => handleApprove(r.tdsId)} style={{ fontSize: '0.75rem', padding: '4px 12px' }}>
-                            Approve
-                          </Button>
+                          user?.role === 'FINANCE_EXECUTIVE' ? (
+                            <span style={{ color: '#b45309', fontSize: '0.8rem', fontWeight: 500 }}>Awaiting Approval</span>
+                          ) : (
+                            <Button onClick={() => handleApprove(r.tdsId)} style={{ fontSize: '0.75rem', padding: '4px 12px' }}>
+                              Approve
+                            </Button>
+                          )
                         ) : (
                           <span style={{ color: '#16a34a', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: 4 }}>
                             <CheckCircle2 size={14} /> Approved

@@ -15,13 +15,9 @@
       "role": "Procurement Manager",
       "defaultRoute": "/catalogue/dashboard",
       "modules": [
-        "vendors",
-        "documents",
         "catalogue",
         "contracts",
-        "purchaseOrders",
-        "invoices",
-        "payments"
+        "purchaseOrders"
       ],
       "showDashboard": false
     },
@@ -32,8 +28,7 @@
       "defaultRoute": "/finance/dashboard",
       "modules": [
         "invoices",
-        "payments",
-        "purchaseOrders"
+        "payments"
       ],
       "showDashboard": true
     },
@@ -44,7 +39,6 @@
       "defaultRoute": "/vendors",
       "modules": [
         "vendors",
-        "documents",
         "due-diligence-kyc"
       ],
       "showDashboard": false
@@ -63,6 +57,29 @@
         "myPayments"
       ],
       "showDashboard": true
+    },
+    {
+      "id": "FINANCE_EXECUTIVE",
+      "name": "Finance Executive",
+      "role": "Finance Executive",
+      "defaultRoute": "/finance/dashboard",
+      "modules": [
+        "invoices",
+        "payments"
+      ],
+      "showDashboard": true
+    },
+    {
+      "id": "PROCUREMENT_EXECUTIVE",
+      "name": "Procurement Executive",
+      "role": "Procurement Executive",
+      "defaultRoute": "/purchase-orders/dashboard",
+      "modules": [
+        "catalogue",
+        "contracts",
+        "purchaseOrders"
+      ],
+      "showDashboard": false
     }
   ]
 }

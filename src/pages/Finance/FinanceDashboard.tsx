@@ -6,6 +6,7 @@ import { FileText, AlertCircle, Scale, Users, TrendingUp, Loader2, CheckCircle2,
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
 import { Badge } from '../../components/Badge/Badge';
+import { useAuth } from '../../context/AuthContext';
 import styles from '../Invoices/InvoiceDashboard.module.css';
 
 interface DashboardStats {
@@ -55,6 +56,7 @@ interface ReconRecord {
 
 export const FinanceDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [aging, setAging] = useState<AgingRecord[]>([]);
   const [tds, setTds] = useState<TDSRecord[]>([]);
@@ -119,7 +121,9 @@ export const FinanceDashboard: React.FC = () => {
     <div className={styles.container}>
       <header className={styles.pageHeader}>
         <div>
-          <h1 className={styles.title}>Finance Manager Dashboard</h1>
+          <h1 className={styles.title}>
+            {user?.role === 'FINANCE_EXECUTIVE' ? 'Finance Operations Dashboard' : 'Finance Manager Dashboard'}
+          </h1>
           <p className={styles.subtitle}>Accounts Payable, TDS, Reconciliation &amp; Cash Flow</p>
         </div>
       </header>
@@ -128,7 +132,7 @@ export const FinanceDashboard: React.FC = () => {
       <div className={styles.kpiGrid}>
         {([
           { label: 'Pending Invoice Approvals', icon: <FileText size={16} />,   bg: '#eff6ff', color: '#1d4ed8', value: stats?.pendingInvoices ?? 0,                   sub: 'Awaiting Finance Approval',  onClick: () => navigate('/invoices/approvals') },
-          { label: 'Pending TDS Approvals',     icon: <Scale size={16} />,      bg: '#f3e8ff', color: '#7c3aed', value: stats?.pendingTDS ?? 0,                         sub: 'Requires Finance sign-off',  onClick: () => navigate('/finance/tds') },
+          { label: 'Pending TDS Approvals',     icon: <Scale size={16} />,      bg: '#f3e8ff', color: '#7c3aed', value: stats?.pendingTDS ?? 0,                         sub: 'Requires Finance sign-off',  onClick: () => navigate('/payments/tds-approvals') },
           { label: 'Unreconciled Items',        icon: <AlertCircle size={16} />,bg: '#fee2e2', color: '#dc2626', value: stats?.unreconciledItems ?? 0,                   sub: 'Pending bank matching',      onClick: () => navigate('/finance/reconciliation') },
           { label: 'MSME Payables',             icon: <Users size={16} />,      bg: '#fffbeb', color: '#f59e0b', value: fmt(stats?.msmePayables ?? 0),                  sub: '45-day statutory deadline',  onClick: undefined },
           { label: 'Cash Flow This Month',      icon: <TrendingUp size={16} />, bg: '#dcfce7', color: '#16a34a', value: fmt(stats?.cashFlowThisMonth ?? 0),             sub: 'Total paid invoices',        onClick: undefined },
@@ -229,7 +233,7 @@ export const FinanceDashboard: React.FC = () => {
         <Card className={styles.tableCard}>
           <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>TDS Pending Approvals</h3>
-            <Button variant="ghost" onClick={() => navigate('/finance/tds')}>View All</Button>
+            <Button variant="ghost" onClick={() => navigate('/payments/tds-approvals')}>View All</Button>
           </div>
           <div style={{ padding: '8px 0' }}>
             {tds.length === 0 ? (
@@ -248,9 +252,11 @@ export const FinanceDashboard: React.FC = () => {
                         Sec {t.section} • {t.quarter} • TDS: ₹{t.tdsAmount.toLocaleString('en-IN')}
                       </div>
                     </div>
-                    <Button onClick={() => handleApproveTDS(t.tdsId)} style={{ fontSize: '0.75rem', padding: '4px 10px' }}>
-                      Approve
-                    </Button>
+                    {user?.role !== 'FINANCE_EXECUTIVE' && (
+                      <Button onClick={() => handleApproveTDS(t.tdsId)} style={{ fontSize: '0.75rem', padding: '4px 10px' }}>
+                        Approve
+                      </Button>
+                    )}
                   </div>
                 </div>
               ))
@@ -306,9 +312,11 @@ export const FinanceDashboard: React.FC = () => {
                         </Badge>
                       </td>
                       <td>
-                        <Button onClick={() => handleApproveRecon(r.reconId)} style={{ fontSize: '0.75rem', padding: '4px 10px' }}>
-                          Reconcile
-                        </Button>
+                        {user?.role !== 'FINANCE_EXECUTIVE' && (
+                          <Button onClick={() => handleApproveRecon(r.reconId)} style={{ fontSize: '0.75rem', padding: '4px 10px' }}>
+                            Reconcile
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ))

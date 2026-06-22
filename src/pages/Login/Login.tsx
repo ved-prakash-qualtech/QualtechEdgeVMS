@@ -58,16 +58,24 @@ export const Login: React.FC = () => {
 
   useEffect(() => {
     const fallback = [
-      { id: 'USR-001', name: 'Saurabh Anand',  role: 'Tenant Admin',              portal: 'Admin Portal',       username: 'admin',       password: 'admin123',       redirectUrl: '/administrator/dashboard', color: 'blue',   initials: 'SA' },
-      { id: 'USR-002', name: 'Priya Sharma',    role: 'Procurement Manager',       portal: 'Procurement Portal', username: 'procurement', password: 'procurement123', redirectUrl: '/catalogue/dashboard',     color: 'green',  initials: 'PS' },
-      { id: 'USR-003', name: 'Rahul Verma',     role: 'Vendor Onboarding Officer', portal: 'Onboarding Portal',  username: 'onboarding',  password: 'onboarding123',  redirectUrl: '/vendors',                 color: 'purple', initials: 'RV' },
-      { id: 'USR-004', name: 'Amit Gupta',      role: 'Finance Manager',           portal: 'Finance Portal',     username: 'finance',     password: 'finance123',     redirectUrl: '/finance/dashboard',       color: 'orange', initials: 'AG' },
-      { id: 'USR-005', name: 'Acme Vendor',     role: 'Vendor Portal User',        portal: 'Vendor Portal',      username: 'vendor',      password: 'vendor123',      redirectUrl: '/vendor/overview',         color: 'teal',   initials: 'AV' },
+      { id: 'USR-001', roleId: 'ROLE-001', name: 'Saurabh Anand',  role: 'Tenant Admin',              portal: 'Admin Portal',       username: 'admin',       password: 'admin123', redirectUrl: '/dashboard',                  color: 'blue',   initials: 'SA', displayOrder: 1 },
+      { id: 'USR-003', roleId: 'ROLE-003', name: 'Rahul Verma',     role: 'Vendor Onboarding Officer', portal: 'Onboarding Portal',  username: 'onboarding',  password: 'onboarding123',  redirectUrl: '/vendors',                 color: 'purple', initials: 'RV', displayOrder: 2 },
+      { id: 'USR-007', roleId: 'ROLE-007', name: 'Rohit Mehta',     role: 'Procurement Executive',     portal: 'Procurement Operations Portal', username: 'procurement_executive', password: 'procurement123', redirectUrl: '/purchase-orders/dashboard', color: 'green', initials: 'RM', displayOrder: 3 },
+      { id: 'USR-002', roleId: 'ROLE-002', name: 'Priya Sharma',    role: 'Procurement Manager',       portal: 'Procurement Portal', username: 'procurement', password: 'procurement123', redirectUrl: '/catalogue/dashboard',     color: 'green',  initials: 'PS', displayOrder: 4 },
+      { id: 'USR-006', roleId: 'ROLE-006', name: 'Neha Gupta',      role: 'Finance Executive',         portal: 'Finance Operations Portal', username: 'finance_executive', password: 'finance123', redirectUrl: '/finance/dashboard', color: 'orange', initials: 'NG', displayOrder: 5 },
+      { id: 'USR-004', roleId: 'ROLE-004', name: 'Amit Gupta',      role: 'Finance Manager',           portal: 'Finance Portal',     username: 'finance',     password: 'finance123',     redirectUrl: '/finance/dashboard',       color: 'orange', initials: 'AG', displayOrder: 6 },
+      { id: 'USR-005', roleId: 'ROLE-005', name: 'Acme Vendor',     role: 'Vendor Portal User',        portal: 'Vendor Portal',      username: 'vendor',      password: 'vendor123',      redirectUrl: '/vendor/overview',         color: 'teal',   initials: 'AV', displayOrder: 7 },
     ];
-    fetch('/api/auth/demo-users')
+    fetch('/data/demo-roles.json')
       .then(r => r.json())
-      .then(setDemoUsers)
-      .catch(() => setDemoUsers(fallback));
+      .then(data => {
+        const sorted = [...data].sort((a, b) => (a.displayOrder || 99) - (b.displayOrder || 99));
+        setDemoUsers(sorted);
+      })
+      .catch(() => {
+        const sortedFallback = [...fallback].sort((a, b) => (a.displayOrder || 99) - (b.displayOrder || 99));
+        setDemoUsers(sortedFallback);
+      });
   }, []);
 
   useEffect(() => {
@@ -542,7 +550,7 @@ export const Login: React.FC = () => {
 
             <ul className={styles.demoUsersGrid} role="list">
               {demoUsers.map(u => (
-                <li key={u.id} className={`${styles.demoCard} ${styles[u.color || 'blue']}`} role="listitem">
+                <li key={u.roleId || u.id} className={`${styles.demoCard} ${styles[u.color || 'blue']}`} role="listitem">
                   <button
                     type="button"
                     className={styles.demoCardBtn}

@@ -22,6 +22,17 @@
     "initials": "PS"
   },
   {
+    "id": "USR-007",
+    "name": "Rohit Mehta",
+    "role": "Procurement Executive",
+    "portal": "Procurement Operations Portal",
+    "username": "procurement_executive",
+    "password": "procurement123",
+    "redirectUrl": "/purchase-orders/dashboard",
+    "color": "green",
+    "initials": "RM"
+  },
+  {
     "id": "USR-003",
     "name": "Rahul Verma",
     "role": "Vendor Onboarding Officer",
@@ -42,6 +53,17 @@
     "redirectUrl": "/finance/dashboard",
     "color": "orange",
     "initials": "AG"
+  },
+  {
+    "id": "USR-006",
+    "name": "Neha Gupta",
+    "role": "Finance Executive",
+    "portal": "Finance Operations Portal",
+    "username": "finance_executive",
+    "password": "finance123",
+    "redirectUrl": "/finance/dashboard",
+    "color": "orange",
+    "initials": "NG"
   },
   {
     "id": "USR-005",

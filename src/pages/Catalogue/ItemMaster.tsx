@@ -63,7 +63,7 @@ export const ItemMaster: React.FC = () => {
   const [uploadingFile, setUploadingFile] = useState(false);
   const [uploadedFileMeta, setUploadedFileMeta] = useState<UploadedFile | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successItem, setSuccessItem] = useState<{ itemId: string; itemName: string } | null>(null);
+  const [successItem, setSuccessItem] = useState<{ itemId: string; itemName: string; status?: string } | null>(null);
 
   // Load masters
   useEffect(() => {
@@ -125,8 +125,8 @@ export const ItemMaster: React.FC = () => {
 
   const showDuplicateWarning = itemName.toLowerCase().includes('dell latitude 5420');
 
-  const handleSave = async (statusType: 'Draft' | 'Pending Approval') => {
-    if (statusType === 'Pending Approval') {
+  const handleSave = async (statusType: 'Draft' | 'Published') => {
+    if (statusType === 'Published') {
       if (!itemName || !itemCode || !category || !subcategory || !description || !moq || !leadTime || !preferredVendor || !hsnCode || !uom || !taxCategory) {
         alert("Please fill in all required fields (marked with *).");
         return;
@@ -179,10 +179,11 @@ export const ItemMaster: React.FC = () => {
       if (res.success) {
         setSuccessItem({
           itemId: res.item.itemId || '',
-          itemName: res.item.itemName
+          itemName: res.item.itemName,
+          status: res.item.status
         });
       } else {
-        alert(`Failed to ${statusType === 'Draft' ? 'save draft' : 'submit'} item master.`);
+        alert(`Failed to ${statusType === 'Draft' ? 'save draft' : 'publish'} item master.`);
       }
     } catch (err: any) {
       console.error("Error creating item master:", err);
@@ -240,15 +241,15 @@ export const ItemMaster: React.FC = () => {
               <span className={styles.successDetailVal}>{successItem.itemId}</span>
             </div>
             <div className={styles.successDetailRow}>
-              <span className={styles.successDetailLabel}>Workflow Status</span>
-              <span className={styles.successDetailVal}>{successItem.status || 'Pending Approval'}</span>
+              <span className={styles.successDetailLabel}>Status</span>
+              <span className={styles.successDetailVal}>{successItem.status || 'Published'}</span>
             </div>
           </div>
           
           <p className={styles.successRoutingMsg}>
             {successItem.status === 'Draft' 
               ? 'The item has been successfully saved as a draft.' 
-              : 'The item has been successfully submitted for maker-checker approval.'}
+              : 'The item has been successfully created and published across the catalogue.'}
           </p>
           
           <div className={styles.successActions}>
@@ -629,10 +630,10 @@ export const ItemMaster: React.FC = () => {
                 <Button 
                   variant="primary" 
                   icon={<Save size={16} />} 
-                  onClick={() => handleSave('Pending Approval')}
+                  onClick={() => handleSave('Published')}
                   disabled={isSubmitting || loadingInitial}
                 >
-                  {isSubmitting ? "Submitting..." : "Submit for Approval"}
+                  {isSubmitting ? "Publishing..." : "Save & Publish"}
                 </Button>
               </>
             )}

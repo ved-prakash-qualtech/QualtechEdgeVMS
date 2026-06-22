@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Search, Eye, ThumbsUp, Filter, X
+  Search, Eye, ThumbsUp, Filter, X, ShieldAlert
 } from 'lucide-react';
 import { Card } from '../../components/Card/Card';
 import { Button } from '../../components/Button/Button';
@@ -125,19 +125,24 @@ export const ReviewsApprovals: React.FC = () => {
     }
   };
 
-  const handleSubmitDecision = async (actionType: 'Approve' | 'Reject') => {
+  const handleSubmitDecision = async (actionType: 'Approve' | 'Reject' | 'SendBack') => {
     if (!expandedVendorId || !kycStore) return;
 
     const vendor = kycStore.vendors.find((v: any) => v.vendorId === expandedVendorId);
     if (!vendor) return;
 
+    const finalAuthority = user?.role === 'ADMIN' ? 'Tenant Admin' : authority;
+
     try {
       if (actionType === 'Approve') {
-        await submitDecision(expandedVendorId, decision as any, remarks, authority);
-        toast.success(`${vendor.vendorName} approved and empanelled successfully.`);
-      } else {
-        await submitDecision(expandedVendorId, 'Reject', remarks, authority);
+        await submitDecision(expandedVendorId, decision as any, remarks, finalAuthority);
+        toast.success(`${vendor.vendorName} decision processed successfully.`);
+      } else if (actionType === 'Reject') {
+        await submitDecision(expandedVendorId, 'Reject', remarks, finalAuthority);
         toast.success(`${vendor.vendorName} rejected.`);
+      } else if (actionType === 'SendBack') {
+        await submitDecision(expandedVendorId, 'SendBack', remarks, finalAuthority);
+        toast.success(`${vendor.vendorName} sent back for clarification.`);
       }
     } catch (e) {
       console.error("Failed to submit decision:", e);
@@ -383,128 +388,154 @@ export const ReviewsApprovals: React.FC = () => {
                               </div>
                             </div>
 
-                            <div className={styles.decisionCard}>
-                              {/* Final Approver Badge */}
-                              <div style={{
-                                marginBottom: '16px',
-                                padding: '12px 16px',
-                                backgroundColor: '#eff6ff',
-                                border: '1px solid #bfdbfe',
-                                borderRadius: '8px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between'
-                              }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                  <span style={{ fontSize: '11px', fontWeight: 600, color: '#1e3a8a', textTransform: 'uppercase' }}>Final Approver:</span>
-                                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#0369a1', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                    <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e' }}></span>
-                                    Saurabh Anand
-                                  </span>
+                            {user?.role === 'ONBOARDING' || user?.role === 'COMPLIANCE' ? (
+                              <div className={styles.decisionCard} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '280px' }}>
+                                <div>
+                                  {/* Final Approver Badge */}
+                                  <div style={{
+                                    marginBottom: '16px',
+                                    padding: '12px 16px',
+                                    backgroundColor: '#eff6ff',
+                                    border: '1px solid #bfdbfe',
+                                    borderRadius: '8px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between'
+                                  }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                      <span style={{ fontSize: '11px', fontWeight: 600, color: '#1e3a8a', textTransform: 'uppercase' }}>Final Approver:</span>
+                                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#0369a1', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e' }}></span>
+                                        Saurabh Anand
+                                      </span>
+                                    </div>
+                                    <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Tenant Admin</span>
+                                  </div>
+
+                                  <h4 className={styles.cardSectionTitle}>Compliance Decision</h4>
+                                  <div style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.6', marginBottom: '20px' }}>
+                                    <div style={{ margin: '0 0 10px 0' }}>
+                                      <strong style={{ color: '#475569' }}>Workflow Stage:</strong> <Badge variant="info">{app.approvalStatus}</Badge>
+                                    </div>
+                                    <div style={{ margin: '0 0 10px 0' }}>
+                                      <strong style={{ color: '#475569' }}>Remarks:</strong> <span style={{ color: '#334155' }}>{app.remarks || 'No remarks provided.'}</span>
+                                    </div>
+                                    <div style={{ margin: 0 }}>
+                                      <strong style={{ color: '#475569' }}>Submitted On:</strong> <span style={{ color: '#334155' }}>{app.submittedOn || 'N/A'}</span>
+                                    </div>
+                                  </div>
                                 </div>
-                                <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Tenant Admin</span>
+
+                                <div style={{
+                                  padding: '16px 20px',
+                                  backgroundColor: '#fffbeb',
+                                  border: '1px solid #fde68a',
+                                  borderRadius: '8px',
+                                  color: '#b45309',
+                                  fontSize: '13.5px',
+                                  fontWeight: '600',
+                                  display: 'flex',
+                                  alignItems: 'flex-start',
+                                  gap: '10px'
+                                }}>
+                                  <ShieldAlert size={20} style={{ color: '#d97706', marginTop: '2px', flexShrink: 0 }} />
+                                  <div>
+                                    <div style={{ fontWeight: '700', color: '#92400e' }}>View Only Access</div>
+                                    <div style={{ fontSize: '12px', color: '#b45309', marginTop: '3px', fontWeight: '400' }}>
+                                      Approval actions are restricted to Tenant Admin.
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
+                            ) : (
+                              <div className={styles.decisionCard}>
+                                {/* Final Approver Badge */}
+                                <div style={{
+                                  marginBottom: '16px',
+                                  padding: '12px 16px',
+                                  backgroundColor: '#eff6ff',
+                                  border: '1px solid #bfdbfe',
+                                  borderRadius: '8px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between'
+                                }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{ fontSize: '11px', fontWeight: 600, color: '#1e3a8a', textTransform: 'uppercase' }}>Final Approver:</span>
+                                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#0369a1', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                      <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22c55e' }}></span>
+                                      Saurabh Anand
+                                    </span>
+                                  </div>
+                                  <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Tenant Admin</span>
+                                </div>
 
-                              <h4 className={styles.cardSectionTitle}>
-                                {user?.role === 'ADMIN' ? 'Decision Form (Final Approver)' : 'Recommendation Form (Maker/Reviewer)'}
-                              </h4>
 
-                              <div className={styles.formGrid}>
+
                                 <div className={styles.formGroup}>
-                                  <label className={styles.formLabel}>Decision</label>
+                                  <label className={styles.formLabel}>Remarks</label>
+                                  <textarea
+                                    className={styles.formTextarea}
+                                    value={remarks}
+                                    onChange={(e) => setRemarks(e.target.value)}
+                                    rows={3}
+                                  />
+                                </div>
+
+                                <div className={styles.btnGroup}>
                                   {user?.role === 'ADMIN' ? (
-                                    <select
-                                      className={styles.formSelect}
-                                      value={decision}
-                                      onChange={(e) => handleDecisionChange(e.target.value)}
-                                    >
-                                      <option value="Approve">Approve</option>
-                                      <option value="Conditional Approval">Conditional Approval</option>
-                                      <option value="Hold">Hold</option>
-                                      <option value="Reject">Reject</option>
-                                    </select>
+                                    <>
+                                      <Button
+                                        onClick={() => {
+                                          setDecision('Approve');
+                                          handleSubmitDecision('Approve');
+                                        }}
+                                        variant="primary"
+                                        style={{ backgroundColor: '#16a34a', borderColor: '#16a34a', color: '#fff' }}
+                                      >
+                                        Approved & Empanel
+                                      </Button>
+                                      <Button
+                                        onClick={() => handleSubmitDecision('Reject')}
+                                        variant="outline"
+                                        style={{ color: '#dc2626', borderColor: '#dc2626' }}
+                                      >
+                                        Reject
+                                      </Button>
+                                      <Button
+                                        onClick={() => handleSubmitDecision('SendBack')}
+                                        variant="outline"
+                                        style={{ color: '#d97706', borderColor: '#d97706' }}
+                                      >
+                                        Send Back
+                                      </Button>
+                                    </>
                                   ) : (
-                                    <select
-                                      className={styles.formSelect}
-                                      value={decision === 'Approve' ? 'Recommend Approve' : decision}
-                                      onChange={(e) => setDecision(e.target.value)}
-                                    >
-                                      <option value="Recommend Approve">Recommend Approval</option>
-                                      <option value="Hold">Hold / Clarification Required</option>
-                                    </select>
+                                    <>
+                                      <Button
+                                        onClick={() => {
+                                          toast.success("Recommendation submitted to Tenant Admin (Saurabh Anand) successfully.");
+                                          setExpandedVendorId(null);
+                                        }}
+                                        variant="primary"
+                                        style={{ backgroundColor: '#185FA5', borderColor: '#185FA5', color: '#fff' }}
+                                      >
+                                        Recommend Approval
+                                      </Button>
+                                      <Button
+                                        onClick={() => {
+                                          toast.success("Clarification request sent to maker.");
+                                          setExpandedVendorId(null);
+                                        }}
+                                        variant="outline"
+                                      >
+                                        Request Clarification
+                                      </Button>
+                                    </>
                                   )}
                                 </div>
-
-                                <div className={styles.formGroup}>
-                                  <label className={styles.formLabel}>Approving Authority</label>
-                                  <select
-                                    className={styles.formSelect}
-                                    value={user?.role === 'ADMIN' ? authority : 'Admin'}
-                                    onChange={(e) => setAuthority(e.target.value)}
-                                    disabled={user?.role !== 'ADMIN'}
-                                  >
-                                    <option value="Procurement Manager">Procurement Manager</option>
-                                    <option value="Compliance Officer">Compliance Officer</option>
-                                    <option value="Admin">Admin</option>
-                                  </select>
-                                </div>
                               </div>
-
-                              <div className={styles.formGroup}>
-                                <label className={styles.formLabel}>Remarks</label>
-                                <textarea
-                                  className={styles.formTextarea}
-                                  value={remarks}
-                                  onChange={(e) => setRemarks(e.target.value)}
-                                  rows={3}
-                                />
-                              </div>
-
-                              <div className={styles.btnGroup}>
-                                {user?.role === 'ADMIN' ? (
-                                  <>
-                                    <Button
-                                      onClick={() => handleSubmitDecision('Approve')}
-                                      variant="primary"
-                                      style={{ backgroundColor: '#16a34a', borderColor: '#16a34a', color: '#fff' }}
-                                    >
-                                      Approve & Empanel
-                                    </Button>
-                                    <Button
-                                      onClick={() => handleSubmitDecision('Reject')}
-                                      variant="outline"
-                                      style={{ color: '#dc2626', borderColor: '#dc2626' }}
-                                    >
-                                      Reject
-                                    </Button>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Button
-                                      onClick={() => {
-                                        toast.success("Recommendation submitted to Tenant Admin (Saurabh Anand) successfully.");
-                                        setExpandedVendorId(null);
-                                      }}
-                                      variant="primary"
-                                      style={{ backgroundColor: '#185FA5', borderColor: '#185FA5', color: '#fff' }}
-                                    >
-                                      Recommend Approval
-                                    </Button>
-                                    <Button
-                                      onClick={() => {
-                                        toast.success("Clarification request sent to maker.");
-                                        setExpandedVendorId(null);
-                                      }}
-                                      variant="outline"
-                                    >
-                                      Request Clarification
-                                    </Button>
-                                  </>
-                                )}
-                              </div>
-
-
-                            </div>
+                            )}
                           </div>
                         </td>
                       </tr>

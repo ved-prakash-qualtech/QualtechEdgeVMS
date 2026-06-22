@@ -4,6 +4,7 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
+import cron from 'node-cron';
 import {
   readJsonFile,
   writeJsonFile,
@@ -305,6 +306,109 @@ async function ensureDirectories() {
   } catch {
     await fs.writeFile(CAT_SERVICE_AUDIT_LOG_PATH, '[]', 'utf8');
   }
+
+  const ROOT_DATA_DIR = path.join(__dirname, '..', 'data');
+  await fs.mkdir(ROOT_DATA_DIR, { recursive: true });
+
+  const demoRolesFilePath = path.join(ROOT_DATA_DIR, 'demo-roles.json');
+  try {
+    await fs.access(demoRolesFilePath);
+  } catch {
+    const defaultDemoRoles = [
+      {
+        "roleId": "ROLE-001",
+        "name": "Saurabh Anand",
+        "role": "Tenant Admin",
+        "portal": "Admin Portal",
+        "redirect": "/dashboard",
+        "redirectUrl": "/administrator/dashboard",
+        "username": "admin",
+        "password": "admin123",
+        "color": "blue",
+        "initials": "SA"
+      },
+      {
+        "roleId": "ROLE-002",
+        "name": "Priya Sharma",
+        "role": "Procurement Manager",
+        "portal": "Procurement Portal",
+        "redirect": "/catalogue/dashboard",
+        "redirectUrl": "/catalogue/dashboard",
+        "username": "procurement",
+        "password": "procurement123",
+        "color": "green",
+        "initials": "PS"
+      },
+      {
+        "roleId": "ROLE-007",
+        "name": "Rohit Mehta",
+        "role": "Procurement Executive",
+        "portal": "Procurement Operations Portal",
+        "redirect": "/purchase-orders/dashboard",
+        "redirectUrl": "/purchase-orders/dashboard",
+        "username": "procurement_executive",
+        "password": "procurement123",
+        "color": "green",
+        "initials": "RM"
+      },
+      {
+        "roleId": "ROLE-003",
+        "name": "Rahul Verma",
+        "role": "Vendor Onboarding Officer",
+        "portal": "Onboarding Portal",
+        "redirect": "/vendors",
+        "redirectUrl": "/vendors",
+        "username": "onboarding",
+        "password": "onboarding123",
+        "color": "purple",
+        "initials": "RV"
+      },
+      {
+        "roleId": "ROLE-004",
+        "name": "Amit Gupta",
+        "role": "Finance Manager",
+        "portal": "Finance Portal",
+        "redirect": "/finance/dashboard",
+        "redirectUrl": "/finance/dashboard",
+        "username": "finance",
+        "password": "finance123",
+        "color": "orange",
+        "initials": "AG"
+      },
+      {
+        "roleId": "ROLE-006",
+        "name": "Neha Gupta",
+        "role": "Finance Executive",
+        "portal": "Finance Operations Portal",
+        "redirect": "/finance/dashboard",
+        "redirectUrl": "/finance/dashboard",
+        "username": "finance_executive",
+        "password": "finance123",
+        "color": "orange",
+        "initials": "NG"
+      },
+      {
+        "roleId": "ROLE-005",
+        "name": "Acme Vendor",
+        "role": "Vendor Portal User",
+        "portal": "Vendor Portal",
+        "redirect": "/vendor/overview",
+        "redirectUrl": "/vendor/overview",
+        "username": "vendor",
+        "password": "vendor123",
+        "color": "teal",
+        "initials": "AV"
+      }
+    ];
+    await fs.writeFile(demoRolesFilePath, JSON.stringify(defaultDemoRoles, null, 2), 'utf8');
+  }
+
+  const userSessionFilePath = path.join(ROOT_DATA_DIR, 'current-user-session.json');
+  try {
+    await fs.access(userSessionFilePath);
+  } catch {
+    await fs.writeFile(userSessionFilePath, '{}', 'utf8');
+  }
 }
 ensureDirectories().catch(console.error);
 
@@ -331,6 +435,42 @@ async function logVmsAuditTrail(action, details, performedBy = 'Saurabh Anand', 
     console.log(`VMS Audit logged: ${action} - ${details}`);
   } catch (err) {
     console.error('Error logging VMS audit:', err);
+  }
+}
+
+async function logLifecycleAudit(action, referenceId, performedBy = 'Saurabh Anand') {
+  try {
+    const logs = await readJsonFile(LIFECYCLE_AUDIT_LOG_PATH).catch(() => []);
+    const newLog = {
+      action,
+      referenceId,
+      performedBy: performedBy || 'Saurabh Anand',
+      timestamp: new Date().toISOString()
+    };
+    logs.push(newLog);
+    await writeJsonFile(LIFECYCLE_AUDIT_LOG_PATH, logs);
+  } catch (err) {
+    console.error('Error logging VMS lifecycle audit:', err);
+  }
+}
+
+async function saveAttachmentMetadata(attachmentId, entityType, entityId, fileName, filePath) {
+  try {
+    const list = await readJsonFile(ATTACHMENTS_PATH).catch(() => []);
+    const exists = list.some(a => a.attachmentId === attachmentId && a.entityId === entityId);
+    if (!exists) {
+      list.push({
+        attachmentId,
+        entityType,
+        entityId,
+        fileName: fileName || "",
+        filePath: filePath || "",
+        uploadedOn: new Date().toISOString().split('T')[0]
+      });
+      await writeJsonFile(ATTACHMENTS_PATH, list);
+    }
+  } catch (e) {
+    console.error('Error saving attachment metadata:', e);
   }
 }
 
@@ -1485,6 +1625,20 @@ app.post('/api/vendors', async (req, res) => {
     }
 
     vendorData.createdAt = vendorData.createdAt || new Date().toISOString();
+
+    // Log structural audit trail for Vendor Onboarding Officer
+    if (!vendorData.auditTrail) {
+      vendorData.auditTrail = [];
+    }
+    const isOfficer = vendorData.approvalWorkflow?.submittedBy === 'Vendor Onboarding Officer';
+    const isPending = vendorData.status === 'Pending Approval';
+    if (isOfficer && isPending) {
+      vendorData.auditTrail.push({
+        submittedBy: 'Vendor Onboarding Officer',
+        submittedDate: new Date().toISOString(),
+        status: 'Pending Approval'
+      });
+    }
     
     await appendJsonData(VENDORS_PATH, vendorData);
     await recalculateVmsSystem();
@@ -1521,7 +1675,29 @@ app.post('/api/vendors', async (req, res) => {
 
 app.put('/api/vendors/:id', async (req, res) => {
   try {
-    const updated = await updateJsonData(VENDORS_PATH, 'vendorId', req.params.id, req.body);
+    const vendors = await readJsonFile(VENDORS_PATH);
+    const vendor = vendors.find(v => v.vendorId === req.params.id);
+    if (!vendor) {
+      return res.status(404).json({ message: 'Vendor not found' });
+    }
+
+    const body = req.body;
+    let auditTrail = body.auditTrail || vendor.auditTrail || [];
+
+    const isOfficer = body.approvalWorkflow?.submittedBy === 'Vendor Onboarding Officer';
+    const isPending = body.status === 'Pending Approval';
+    if (isOfficer && isPending) {
+      auditTrail.push({
+        submittedBy: 'Vendor Onboarding Officer',
+        submittedDate: new Date().toISOString(),
+        status: 'Pending Approval'
+      });
+    }
+
+    const updated = await updateJsonData(VENDORS_PATH, 'vendorId', req.params.id, {
+      ...body,
+      auditTrail
+    });
     await recalculateVmsSystem();
     await logVmsAuditTrail('Vendor Updated', `Vendor ${req.params.id} (${updated.vendorName || updated.basicDetails?.legalName}) profile updated.`);
     
@@ -1584,6 +1760,22 @@ app.post('/api/vendors/:id/approve', async (req, res) => {
       approvedDate: new Date().toISOString()
     };
 
+    const isTenantAdmin = performedBy === 'Tenant Admin';
+    const extraAudits = [];
+    if (isTenantAdmin) {
+      const timestamp = new Date().toISOString();
+      extraAudits.push({
+        approvedBy: 'Tenant Admin',
+        approvedDate: timestamp,
+        status: 'Approved'
+      });
+      extraAudits.push({
+        empanelledBy: 'Tenant Admin',
+        empanelledDate: timestamp,
+        status: 'Empanelled'
+      });
+    }
+
     const updated = await updateJsonData(VENDORS_PATH, 'vendorId', req.params.id, {
       status: 'Active',
       approvalWorkflow: updatedWorkflow,
@@ -1594,7 +1786,8 @@ app.post('/api/vendors/:id/approve', async (req, res) => {
           performedBy: performedBy || 'Saurabh Anand',
           timestamp: new Date().toISOString(),
           remarks
-        }
+        },
+        ...extraAudits
       ]
     });
 
@@ -1865,6 +2058,16 @@ app.put('/api/invoices/:id/approve', async (req, res) => {
     if (idx === -1) return res.status(404).json({ message: 'Invoice not found' });
 
     const prevStage = list[idx].stage;
+    const isPaymentRelease = prevStage === 'Payment Processing';
+
+    if (!list[idx].auditTrail) {
+      list[idx].auditTrail = [];
+    }
+    list[idx].auditTrail.push({
+      action: isPaymentRelease ? "Payment Approved" : "Invoice Approved",
+      approvedBy: "Finance Manager",
+      approvedDate: new Date().toISOString()
+    });
 
     list[idx] = { ...list[idx], status: 'Approved', stage: 'Payment Processing', approvedBy: approvedBy || 'Finance Manager', approvedDate: new Date().toISOString(), remarks: remarks || '' };
     await writeJsonFile(ADMIN_INVOICES_PATH, list);
@@ -1885,6 +2088,14 @@ app.put('/api/invoices/:id/approve', async (req, res) => {
             status: 'Approved',
             timestamp: new Date().toISOString(),
             changedBy: approvedBy || 'Finance Manager'
+          });
+          if (!approvals[appIdx].auditTrail) {
+            approvals[appIdx].auditTrail = [];
+          }
+          approvals[appIdx].auditTrail.push({
+            action: "Payment Approved",
+            approvedBy: "Finance Manager",
+            approvedDate: new Date().toISOString()
           });
           await writeJsonFile(PAYMENT_APPROVALS_PATH, approvals);
         }
@@ -2145,6 +2356,14 @@ app.put('/api/tds/:id/approve', async (req, res) => {
     const list = await readJsonFile(TDS_PATH);
     const idx = list.findIndex(t => t.tdsId === req.params.id);
     if (idx === -1) return res.status(404).json({ message: 'TDS record not found' });
+    if (!list[idx].auditTrail) {
+      list[idx].auditTrail = [];
+    }
+    list[idx].auditTrail.push({
+      action: "TDS Approved",
+      approvedBy: "Finance Manager",
+      approvedDate: new Date().toISOString()
+    });
     list[idx] = { ...list[idx], status: 'Approved', approvedBy: approvedBy || 'Finance Manager', approvedDate: new Date().toISOString() };
     await writeJsonFile(TDS_PATH, list);
     res.json(list[idx]);
@@ -2615,10 +2834,11 @@ async function updateCatDashboardMetrics() {
       totalItems,
       totalServices,
       activeVendors,
-      pendingApprovals: pendingApprovalsCount,
+      pendingApprovals: 0,
+      publishedRecords: totalItems + totalServices,
       pendingVendorMapping,
       publishedServices,
-      compliancePending,
+      compliancePending: 0,
       rateConfigurationPending,
       criticalCategories,
       rateRevisionsDue,
@@ -2810,7 +3030,7 @@ app.post('/api/catalogue/services', async (req, res) => {
     const padded = String(nextNum).padStart(4, '0');
     serviceData.serviceId = `SVC-${year}-${padded}`;
 
-    const clientStatus = serviceData.status || 'Pending Approval';
+    const clientStatus = serviceData.status || 'Published';
     serviceData.status = clientStatus;
     serviceData.workflowStage = 'None';
     serviceData.createdDate = new Date().toISOString().split('T')[0];
@@ -2896,7 +3116,9 @@ app.post('/api/catalogue/services', async (req, res) => {
     await writeJsonFile(CAT_SERVICES_PATH, services);
 
     // Add to approvals queue if not Draft
-    if (serviceData.status === 'Pending Approval') {
+    if (serviceData.status === 'Published') {
+      await logCatActivity(serviceData.serviceId, 'Service Created & Published', serviceData.createdBy || 'Admin');
+    } else if (serviceData.status === 'Pending Approval') {
       await queueCatalogueApproval(serviceData.serviceId, 'Service', serviceData);
       await logCatActivity(serviceData.serviceId, 'Service Created & Submitted for Approval', serviceData.createdBy);
     } else {
@@ -2934,13 +3156,13 @@ app.post('/api/catalogue/items', async (req, res) => {
     const padded = String(nextNum).padStart(4, '0');
     itemData.itemId = `ITM-${year}-${padded}`;
 
-    const clientStatus = itemData.status || 'Pending Approval';
+    const clientStatus = itemData.status || 'Published';
     itemData.status = clientStatus;
     itemData.approvalWorkflow = {
       submittedBy: itemData.submittedBy || 'Admin',
       submittedDate: new Date().toISOString().split('T')[0],
-      approvalStatus: clientStatus === 'Draft' ? 'Draft' : 'Pending',
-      currentApprover: clientStatus === 'Draft' ? '' : 'Procurement Checker'
+      approvalStatus: clientStatus === 'Draft' ? 'Draft' : 'Published',
+      currentApprover: ''
     };
 
     // Save attachment metadata
@@ -3012,7 +3234,9 @@ app.post('/api/catalogue/items', async (req, res) => {
     await appendJsonData(CAT_ITEMS_PATH, itemData);
     
     // Add to approvals queue if not Draft
-    if (itemData.status === 'Pending Approval') {
+    if (itemData.status === 'Published') {
+      await logCatActivity(itemData.itemId, 'Item Created & Published', itemData.submittedBy || 'Admin');
+    } else if (itemData.status === 'Pending Approval') {
       await queueCatalogueApproval(itemData.itemId, 'Item', itemData);
       await logCatActivity(itemData.itemId, 'Item Created & Submitted for Approval', itemData.submittedBy);
     } else {
@@ -3026,14 +3250,174 @@ app.post('/api/catalogue/items', async (req, res) => {
   }
 });
 
+// POST /api/catalogue/import
+app.post('/api/catalogue/import', async (req, res) => {
+  try {
+    const { type, records } = req.body;
+    if (!Array.isArray(records)) {
+      return res.status(400).json({ success: false, message: 'Records must be an array.' });
+    }
+
+    const items = await readJsonFile(CAT_ITEMS_PATH);
+    const services = await readJsonFile(CAT_SERVICES_PATH);
+
+    let itemsImported = 0;
+    let servicesImported = 0;
+
+    const year = 2026;
+    // Helper to get max item ID
+    const getNextItemId = () => {
+      let maxNum = 0;
+      for (const i of items) {
+        if (i.itemId && i.itemId.startsWith(`ITM-${year}-`)) {
+          const parts = i.itemId.split('-');
+          if (parts.length === 3) {
+            const num = parseInt(parts[2], 10);
+            if (!isNaN(num) && num > maxNum) maxNum = num;
+          }
+        }
+      }
+      const nextNum = maxNum + 1;
+      const padded = String(nextNum).padStart(5, '0');
+      return `ITM-${year}-${padded}`;
+    };
+
+    // Helper to get max service ID
+    const getNextServiceId = () => {
+      let maxNum = 0;
+      for (const s of services) {
+        if (s.serviceId && (s.serviceId.startsWith(`SVC-${year}-`) || s.serviceId.startsWith(`SRV-${year}-`))) {
+          const parts = s.serviceId.split('-');
+          if (parts.length === 3) {
+            const num = parseInt(parts[2], 10);
+            if (!isNaN(num) && num > maxNum) maxNum = num;
+          }
+        }
+      }
+      const nextNum = maxNum + 1;
+      const padded = String(nextNum).padStart(5, '0');
+      return `SRV-${year}-${padded}`;
+    };
+
+    const normalizeFiles = (files) => {
+      const arr = Array.isArray(files) ? files : [];
+      return arr.map((file, idx) => ({
+        fileId: file.fileId || `FILE-${Math.floor(Math.random() * 90000) + 10000}`,
+        fileName: file.fileName || 'Specification.pdf',
+        fileType: file.fileType || 'application/pdf',
+        filePath: file.filePath || `/uploads/catalogue/${file.fileName || 'Specification.pdf'}`,
+        uploadedOn: file.uploadedOn || file.uploadedDate || new Date().toISOString().split('T')[0],
+        fileSize: file.fileSize || '1.0 MB',
+        uploadedBy: file.uploadedBy || 'Tenant Admin',
+        attachmentId: file.attachmentId || `ATT-IMP-${idx}-${Math.floor(Math.random() * 900) + 100}`
+      }));
+    };
+
+    for (const rec of records) {
+      // Determine type
+      let recType = (rec.type || '').toLowerCase();
+      if (!recType) {
+        // Fallback based on category
+        const cat = (rec.category || '').toLowerCase();
+        if (cat.includes('service') || cat === 'professional services' || cat === 'logistics' || type === 'Services') {
+          recType = 'service';
+        } else {
+          recType = 'item';
+        }
+      }
+
+      if (recType === 'service' || recType === 'services') {
+        // Process as Service
+        const serviceId = rec.serviceId || rec.itemId || getNextServiceId();
+        const preferredVendorName = typeof rec.preferredVendor === 'object' && rec.preferredVendor ? rec.preferredVendor.vendorName : (rec.preferredVendor || 'ABC Infotech Private Limited');
+        
+        const newService = {
+          serviceId,
+          serviceCode: rec.serviceCode || rec.itemCode || serviceId,
+          serviceName: rec.serviceName || rec.itemName || 'Unnamed Service',
+          serviceCategory: rec.serviceCategory || rec.category || 'IT Services',
+          category: rec.serviceCategory || rec.category || 'IT Services',
+          subCategory: rec.subCategory || 'General',
+          description: rec.description || rec.serviceName || rec.itemName || '',
+          department: rec.department || 'Procurement',
+          preferredVendor: preferredVendorName,
+          refRate: parseFloat(rec.refRate) || parseFloat(rec.rate) || 10000,
+          rate: parseFloat(rec.refRate) || parseFloat(rec.rate) || 10000,
+          status: rec.status || 'Published',
+          type: 'Service',
+          isService: true,
+          createdDate: new Date().toISOString().split('T')[0],
+          createdBy: 'Admin',
+          uploadedFiles: normalizeFiles(rec.uploadedFiles || rec.attachments || [])
+        };
+        
+        services.push(newService);
+        servicesImported++;
+      } else {
+        // Process as Item
+        const itemId = rec.itemId || rec.serviceId || getNextItemId();
+        
+        let prefVendorObj = { vendorId: 'VND-2025-00029', vendorName: 'ABC Infotech Private Limited' };
+        if (typeof rec.preferredVendor === 'object' && rec.preferredVendor) {
+          prefVendorObj = {
+            vendorId: rec.preferredVendor.vendorId || 'VND-2025-00029',
+            vendorName: rec.preferredVendor.vendorName || 'ABC Infotech Private Limited'
+          };
+        } else if (typeof rec.preferredVendor === 'string' && rec.preferredVendor) {
+          prefVendorObj = {
+            vendorId: 'VND-2025-00029',
+            vendorName: rec.preferredVendor
+          };
+        }
+
+        const newItem = {
+          itemId,
+          itemCode: rec.itemCode || rec.serviceCode || itemId,
+          itemName: rec.itemName || rec.serviceName || 'Unnamed Item',
+          category: rec.category || 'IT Hardware',
+          subCategory: rec.subCategory || 'General',
+          description: rec.description || rec.itemName || rec.serviceName || '',
+          brand: rec.brand || 'General',
+          minimumOrderQuantity: parseInt(rec.minimumOrderQuantity) || 1,
+          expectedLeadTime: rec.expectedLeadTime || '7 days',
+          preferredVendor: prefVendorObj,
+          alternateVendors: rec.alternateVendors || [],
+          hsnCode: rec.hsnCode || '84713010',
+          unitOfMeasurement: rec.unitOfMeasurement || 'Nos',
+          taxCode: rec.taxCode || 'GST 18%',
+          status: rec.status || 'Published',
+          type: 'Item',
+          refRate: parseFloat(rec.refRate) || parseFloat(rec.rate) || 5000,
+          rate: parseFloat(rec.refRate) || parseFloat(rec.rate) || 5000,
+          uploadedFiles: normalizeFiles(rec.uploadedFiles || rec.attachments || [])
+        };
+
+        items.push(newItem);
+        itemsImported++;
+      }
+    }
+
+    await writeJsonFile(CAT_ITEMS_PATH, items);
+    await writeJsonFile(CAT_SERVICES_PATH, services);
+    await updateCatDashboardMetrics();
+
+    res.json({
+      success: true,
+      message: 'Catalogue imported successfully.',
+      itemsImported,
+      servicesImported,
+      totalImported: itemsImported + servicesImported
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // 4. PUT /api/catalogue/items/:id
 app.put('/api/catalogue/items/:id', async (req, res) => {
   try {
     const updated = await updateJsonData(CAT_ITEMS_PATH, 'itemId', req.params.id, req.body);
-    await logCatActivity(req.params.id, 'Item Updated', req.body.submittedBy);
-    if (req.body.status === 'Pending Approval') {
-      await queueCatalogueApproval(req.params.id, 'Item', req.body);
-    }
+    await logCatActivity(req.params.id, req.body.status === 'Published' ? 'Item Updated & Published' : 'Item Updated', req.body.submittedBy);
     res.json(updated);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -3057,10 +3441,7 @@ app.delete('/api/catalogue/items/:id', async (req, res) => {
 app.put('/api/catalogue/services/:id', async (req, res) => {
   try {
     const updated = await updateJsonData(CAT_SERVICES_PATH, 'serviceId', req.params.id, req.body);
-    await logCatActivity(req.params.id, 'Service Updated', req.body.createdBy);
-    if (req.body.status === 'Pending Approval') {
-      await queueCatalogueApproval(req.params.id, 'Service', req.body);
-    }
+    await logCatActivity(req.params.id, req.body.status === 'Published' ? 'Service Updated & Published' : 'Service Updated', req.body.createdBy);
     await updateCatDashboardMetrics();
     res.json(updated);
   } catch (error) {
@@ -3738,8 +4119,8 @@ ensureVendorDirs().catch(console.error);
 // PURCHASE ORDERS PATHS & DIRECTORIES SETUP
 // ==========================================
 const PO_DIR = path.join(__dirname, 'data', 'purchase-orders');
-const PO_REQUISITIONS_PATH = path.join(PO_DIR, 'requisitions.json');
-const PO_PURCHASE_ORDERS_PATH = path.join(PO_DIR, 'purchase-orders.json');
+const PO_REQUISITIONS_PATH = path.join(__dirname, 'data', 'requisitions.json');
+const PO_PURCHASE_ORDERS_PATH = path.join(__dirname, 'data', 'purchase-orders.json');
 const PO_DASHBOARD_PATH = path.join(PO_DIR, 'po-dashboard.json');
 const PO_APPROVALS_PATH = path.join(PO_DIR, 'po-approvals.json');
 const PO_RFQ_VENDORS_PATH = path.join(PO_DIR, 'rfq-vendors.json');
@@ -3770,6 +4151,32 @@ async function ensurePODirs() {
   await fs.mkdir(PO_INVOICES_DIR, { recursive: true });
   await fs.mkdir(PO_GRN_DIR, { recursive: true });
   await fs.mkdir(PO_TEMP_DIR, { recursive: true });
+
+  // Copy seed data for requisitions.json
+  try {
+    await fs.access(PO_REQUISITIONS_PATH);
+  } catch {
+    try {
+      const oldReqs = path.join(PO_DIR, 'requisitions.json');
+      const data = await fs.readFile(oldReqs, 'utf8');
+      await fs.writeFile(PO_REQUISITIONS_PATH, data, 'utf8');
+    } catch {
+      await fs.writeFile(PO_REQUISITIONS_PATH, '[]', 'utf8');
+    }
+  }
+
+  // Copy seed data for purchase-orders.json
+  try {
+    await fs.access(PO_PURCHASE_ORDERS_PATH);
+  } catch {
+    try {
+      const oldPOs = path.join(PO_DIR, 'purchase-orders.json');
+      const data = await fs.readFile(oldPOs, 'utf8');
+      await fs.writeFile(PO_PURCHASE_ORDERS_PATH, data, 'utf8');
+    } catch {
+      await fs.writeFile(PO_PURCHASE_ORDERS_PATH, '[]', 'utf8');
+    }
+  }
 }
 ensurePODirs().catch(console.error);
 
@@ -4425,7 +4832,9 @@ app.post('/api/contracts/:id/renew', async (req, res) => {
 app.post('/api/contracts/approve', async (req, res) => {
   try {
     const { contractId, remarks, performedBy } = req.body;
-    const userName = performedBy || 'Saurabh Anand';
+    const performer = performedBy || 'Saurabh Anand';
+    const isProcManager = performer === 'Priya Sharma' || performer === 'procurement' || req.body.role === 'PROCUREMENT' || req.body.role === 'Procurement Manager';
+    const approvedByVal = isProcManager ? 'Procurement Manager' : performer;
 
     const contracts = await readJsonFile(CONTRACTS_PATH);
     const cIndex = contracts.findIndex(c => c.contractId === contractId);
@@ -4436,6 +4845,14 @@ app.post('/api/contracts/approve', async (req, res) => {
     // Set contract status to Active
     contracts[cIndex].status = "Active";
     contracts[cIndex].approvalStatus = "Approved";
+    if (!contracts[cIndex].auditTrail) {
+      contracts[cIndex].auditTrail = [];
+    }
+    contracts[cIndex].auditTrail.push({
+      action: "Contract Approved",
+      approvedBy: approvedByVal,
+      approvedDate: new Date().toISOString()
+    });
     await writeJsonFile(CONTRACTS_PATH, contracts);
 
     // Update approval queue item to Approved
@@ -4445,6 +4862,14 @@ app.post('/api/contracts/approve', async (req, res) => {
       approvals[appIndex].status = "Approved";
       approvals[appIndex].remarks = remarks || "";
       approvals[appIndex].approvalDate = new Date().toISOString().split('T')[0];
+      if (!approvals[appIndex].auditTrail) {
+        approvals[appIndex].auditTrail = [];
+      }
+      approvals[appIndex].auditTrail.push({
+        action: "Contract Approved",
+        approvedBy: approvedByVal,
+        approvedDate: new Date().toISOString()
+      });
       await writeJsonFile(CONTRACT_APPROVALS_PATH, approvals);
     }
 
@@ -5488,6 +5913,56 @@ app.post('/api/requisitions', async (req, res) => {
     reqs.unshift(requisitionsData);
     await writeJsonFile(PO_REQUISITIONS_PATH, reqs);
 
+    // Auto-generate RFQ from submitted Requisition
+    const rfqs = await readJsonFile(RFQ_PATH).catch(() => []);
+    const rfqNumSeq = String(rfqs.length + 1).padStart(4, '0');
+    const newRfqId = `RFQ-${year}-${rfqNumSeq}`;
+
+    const parsedVendorIds = requisitionsData.vendorSelection?.selectedVendorId 
+      ? requisitionsData.vendorSelection.selectedVendorId.split(',').map(s => s.trim()) 
+      : [];
+
+    const newRfq = {
+      rfqId: newRfqId,
+      requisitionId: requisitionId,
+      title: requisitionsData.itemDetails?.itemDescription || requisitionsData.title || "Request for Quotation",
+      department: requisitionsData.requester?.department || "IT Services",
+      costCenter: requisitionsData.costCenter?.costCenterCode || "CC-IT-OPS",
+      category: requisitionsData.category || "IT Services",
+      itemService: requisitionsData.itemDetails?.itemDescription || "",
+      description: requisitionsData.itemDetails?.itemDescription || "",
+      quantity: Number(requisitionsData.itemDetails?.quantity) || 1,
+      uom: requisitionsData.itemDetails?.unitOfMeasure || "Units",
+      budget: Number(requisitionsData.vendorSelection?.quotedPrice || requisitionsData.budgetDetails?.currentRequisitionValue || requisitionsData.estimatedCost) || 0,
+      deliveryLocation: "Head Office, Mumbai",
+      requiredDeliveryDate: requisitionsData.deliveryDate || "",
+      vendorsInvited: parsedVendorIds.length,
+      vendorIds: parsedVendorIds,
+      quotesReceived: 0,
+      closingDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      status: "Open",
+      publishedOn: new Date().toISOString().split('T')[0],
+      createdBy: requisitionsData.requester?.requesterName || "Saurabh Anand",
+      attachments: (requisitionsData.uploadedDocuments || []).map(doc => ({
+        fileId: doc.fileId,
+        fileName: doc.fileName,
+        fileType: doc.fileType || "application/pdf",
+        uploadDate: doc.uploadedOn || new Date().toISOString().split('T')[0],
+        uploadedBy: doc.uploadedBy || "Saurabh Anand",
+        path: doc.filePath || ""
+      }))
+    };
+    rfqs.push(newRfq);
+    await writeJsonFile(RFQ_PATH, rfqs);
+
+    // Save attachment metadata to attachments.json
+    if (requisitionsData.uploadedDocuments && requisitionsData.uploadedDocuments.length > 0) {
+      for (const doc of requisitionsData.uploadedDocuments) {
+        await saveAttachmentMetadata(doc.fileId, 'Requisition', requisitionId, doc.fileName, doc.filePath);
+        await saveAttachmentMetadata(doc.fileId, 'RFQ', newRfqId, doc.fileName, doc.filePath);
+      }
+    }
+
     // Create entry in po-approvals.json
     const approvalItem = {
       approvalId: `APP-PO-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -5530,6 +6005,9 @@ app.post('/api/requisitions', async (req, res) => {
       details: `Requisition with ID ${requisitionId} created and routed for Department Head Approval.`
     };
     await appendJsonData(PO_AUDIT_LOG_PATH, auditLog);
+
+    await logLifecycleAudit("Requisition Submitted", requisitionId, requisitionsData.requester?.requesterName);
+    await logLifecycleAudit("RFQ Generated", newRfqId, requisitionsData.requester?.requesterName);
 
     await updatePODashboardMetrics();
 
@@ -6379,6 +6857,26 @@ app.post('/api/auth/demo-login', async (req, res) => {
     user.lastLogin = timeStr;
     await writeJsonFile(AUTH_USERS_PATH, users);
 
+    // Update current-user-session.json with selected role details
+    try {
+      const ROOT_DATA_DIR = path.join(__dirname, '..', 'data');
+      const demoRolesFilePath = path.join(ROOT_DATA_DIR, 'demo-roles.json');
+      const demoRolesData = await fs.readFile(demoRolesFilePath, 'utf8');
+      const demoRoles = JSON.parse(demoRolesData);
+      const demoRole = demoRoles.find(r => r.username === username);
+      if (demoRole) {
+        const sessionObj = {
+          userId: demoRole.roleId,
+          userName: demoRole.name,
+          role: demoRole.role,
+          landingPage: demoRole.redirectUrl || demoRole.redirect
+        };
+        await fs.writeFile(path.join(ROOT_DATA_DIR, 'current-user-session.json'), JSON.stringify(sessionObj, null, 2), 'utf8');
+      }
+    } catch (e) {
+      console.error("Failed to write to current-user-session.json inside demo-login:", e);
+    }
+
     res.json({
       success: true,
       authenticated: true,
@@ -6412,6 +6910,14 @@ app.post('/api/auth/logout', async (req, res) => {
     if (session) {
       session.status = 'INACTIVE';
       await writeJsonFile(AUTH_SESSIONS_PATH, sessions);
+    }
+
+    // Clear current-user-session.json
+    try {
+      const ROOT_DATA_DIR = path.join(__dirname, '..', 'data');
+      await fs.writeFile(path.join(ROOT_DATA_DIR, 'current-user-session.json'), '{}', 'utf8');
+    } catch (e) {
+      console.error("Failed to clear current-user-session.json in logout:", e);
     }
 
     res.json({ success: true, message: 'Logged out successfully' });
@@ -6461,6 +6967,36 @@ app.get('/api/auth/session', async (req, res) => {
         email: user.email
       }
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// Endpoints for dynamic demo roles and current user session
+app.get('/data/demo-roles.json', async (req, res) => {
+  try {
+    const filePath = path.join(__dirname, '..', 'data', 'demo-roles.json');
+    const data = await fs.readFile(filePath, 'utf8');
+    res.json(JSON.parse(data));
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/data/current-user-session.json', async (req, res) => {
+  try {
+    const filePath = path.join(__dirname, '..', 'data', 'current-user-session.json');
+    const data = await fs.readFile(filePath, 'utf8');
+    res.json(JSON.parse(data));
+  } catch (error) {
+    res.json({});
+  }
+});
+
+app.post('/data/current-user-session.json', async (req, res) => {
+  try {
+    const filePath = path.join(__dirname, '..', 'data', 'current-user-session.json');
+    await fs.writeFile(filePath, JSON.stringify(req.body, null, 2), 'utf8');
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -6732,7 +7268,7 @@ app.get('/api/kyc/reviews/detail/:vendorId', async (req, res) => {
 // POST /api/kyc/reviews/action
 app.post('/api/kyc/reviews/action', async (req, res) => {
   try {
-    const { vendorId, action, comment } = req.body;
+    const { vendorId, action, comment, performedBy } = req.body;
     
     // Read databases
     const vendors = await readJsonFile(VENDORS_PATH);
@@ -6773,17 +7309,32 @@ app.post('/api/kyc/reviews/action', async (req, res) => {
     }
     vendors[vendorIndex].approvalWorkflow.approvalStatus = newApprovalStatus;
     vendors[vendorIndex].approvalWorkflow.approverRemarks = comment || '';
-    vendors[vendorIndex].approvalWorkflow.approvedBy = 'Compliance Team';
+    vendors[vendorIndex].approvalWorkflow.approvedBy = performedBy || 'Compliance Team';
     vendors[vendorIndex].approvalWorkflow.approvedDate = new Date().toISOString();
 
     // Log in vendor audit trail
     if (!vendors[vendorIndex].auditTrail) vendors[vendorIndex].auditTrail = [];
     vendors[vendorIndex].auditTrail.push({
       action: `KYC Review ${actionLog}`,
-      performedBy: 'Compliance Team',
+      performedBy: performedBy || 'Compliance Team',
       timestamp: new Date().toISOString(),
       remarks: comment || ''
     });
+
+    const isTenantAdmin = performedBy === 'Tenant Admin';
+    if (action === 'Approve' && isTenantAdmin) {
+      const timestamp = new Date().toISOString();
+      vendors[vendorIndex].auditTrail.push({
+        approvedBy: 'Tenant Admin',
+        approvedDate: timestamp,
+        status: 'Approved'
+      });
+      vendors[vendorIndex].auditTrail.push({
+        empanelledBy: 'Tenant Admin',
+        empanelledDate: timestamp,
+        status: 'Empanelled'
+      });
+    }
 
     // Write back vendors database
     await writeJsonFile(VENDORS_PATH, vendors);
@@ -9864,7 +10415,6 @@ app.get('/api/vendor-portal/audit-trail', async (req, res) => {
 });
 
 // ── Cron: daily doc-expiry + PO-unacknowledged alerts ─────────────────────
-import cron from 'node-cron';
 
 cron.schedule('0 8 * * *', async () => {
   console.log('[CRON] Running daily vendor alerts scan...');
@@ -10047,6 +10597,681 @@ app.get('/api/dashboard/approval-counts', async (req, res) => {
         : 0,
     });
   } catch (error) { res.status(500).json({ error: error.message }); }
+});
+
+// ============================================================
+// RFQ MODULE ROUTES
+// ============================================================
+
+const RFQ_PATH = path.join(__dirname, 'data', 'rfq-management.json');
+const VENDOR_QUOTES_PATH = path.join(__dirname, 'data', 'vendor-quotations.json');
+const RFQ_APPROVALS_PATH = path.join(__dirname, 'data', 'rfq-approvals.json');
+const LIFECYCLE_AUDIT_LOG_PATH = path.join(__dirname, 'data', 'audit-log.json');
+const VENDOR_SELECTION_PATH = path.join(__dirname, 'data', 'vendor-selection.json');
+const RFQ_VENDOR_SELECTION_PATH = path.join(__dirname, 'data', 'rfq-vendor-selection.json');
+const ATTACHMENTS_PATH = path.join(__dirname, 'data', 'attachments.json');
+const QUOTATION_FILES_PATH = path.join(__dirname, 'data', 'quotation-files.json');
+const QUOTATION_UI_STATE_PATH = path.join(__dirname, 'data', 'vendor-quotation-ui-state.json');
+const RFQ_UPLOADS_DIR = path.join(UPLOADS_DIR, 'rfq');
+const VENDOR_QUOTATIONS_UPLOADS_DIR = path.join(UPLOADS_DIR, 'vendor-quotations');
+
+// Ensure RFQ files exist on startup
+(async () => {
+  try {
+    await fs.mkdir(RFQ_UPLOADS_DIR, { recursive: true });
+    await fs.mkdir(VENDOR_QUOTATIONS_UPLOADS_DIR, { recursive: true });
+    // Copy seed data from rfqs.json to rfq-management.json if missing
+    try {
+      await fs.access(RFQ_PATH);
+    } catch {
+      try {
+        const oldRfqPath = path.join(__dirname, 'data', 'rfqs.json');
+        const data = await fs.readFile(oldRfqPath, 'utf8');
+        await fs.writeFile(RFQ_PATH, data, 'utf8');
+      } catch {
+        await fs.writeFile(RFQ_PATH, '[]', 'utf8');
+      }
+    }
+    
+    // Copy seed data from vendor-quotes.json to vendor-quotations.json if missing
+    try {
+      await fs.access(VENDOR_QUOTES_PATH);
+    } catch {
+      try {
+        const oldQuotesPath = path.join(__dirname, 'data', 'vendor-quotes.json');
+        const data = await fs.readFile(oldQuotesPath, 'utf8');
+        await fs.writeFile(VENDOR_QUOTES_PATH, data, 'utf8');
+      } catch {
+        await fs.writeFile(VENDOR_QUOTES_PATH, '[]', 'utf8');
+      }
+    }
+
+    try { await fs.access(RFQ_APPROVALS_PATH); } catch { await fs.writeFile(RFQ_APPROVALS_PATH, '[]', 'utf8'); }
+    try { await fs.access(VENDOR_SELECTION_PATH); } catch { await fs.writeFile(VENDOR_SELECTION_PATH, '[]', 'utf8'); }
+    try { await fs.access(RFQ_VENDOR_SELECTION_PATH); } catch { await fs.writeFile(RFQ_VENDOR_SELECTION_PATH, '[]', 'utf8'); }
+    try { await fs.access(ATTACHMENTS_PATH); } catch { await fs.writeFile(ATTACHMENTS_PATH, '[]', 'utf8'); }
+    try { await fs.access(QUOTATION_FILES_PATH); } catch { await fs.writeFile(QUOTATION_FILES_PATH, '[]', 'utf8'); }
+    try { await fs.access(QUOTATION_UI_STATE_PATH); } catch { await fs.writeFile(QUOTATION_UI_STATE_PATH, '{"activeFilter":"Total Quotes"}', 'utf8'); }
+    try { await fs.access(LIFECYCLE_AUDIT_LOG_PATH); } catch { await fs.writeFile(LIFECYCLE_AUDIT_LOG_PATH, '[]', 'utf8'); }
+  } catch (e) { console.error('RFQ init error:', e); }
+})();
+
+// Multer for RFQ file uploads
+const rfqStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, RFQ_UPLOADS_DIR),
+  filename: (req, file, cb) => {
+    const ts = Date.now();
+    const ext = path.extname(file.originalname);
+    cb(null, `rfq-${ts}${ext}`);
+  }
+});
+const rfqUpload = multer({ storage: rfqStorage, limits: { fileSize: 10 * 1024 * 1024 } });
+
+// GET /api/rfq — all RFQs
+app.get('/api/rfq', async (req, res) => {
+  try {
+    const rfqs = await readJsonFile(RFQ_PATH);
+    res.json(rfqs);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/rfq/stats — dashboard stats for PO Dashboard
+app.get('/api/rfq/stats', async (req, res) => {
+  try {
+    const [rfqs, rfqApprovals] = await Promise.all([
+      readJsonFile(RFQ_PATH).catch(() => []),
+      readJsonFile(RFQ_APPROVALS_PATH).catch(() => [])
+    ]);
+    const arr = Array.isArray(rfqs) ? rfqs : [];
+    res.json({
+      totalRfqs: arr.length,
+      openRfqs: arr.filter(r => r.status === 'Open').length,
+      quotationsReceived: arr.reduce((sum, r) => sum + (r.quotesReceived || 0), 0),
+      pendingApproval: Array.isArray(rfqApprovals) ? rfqApprovals.filter(a => a.status === 'Pending Approval').length : 0,
+      awardedRfqs: arr.filter(r => r.status === 'Awarded').length
+    });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/rfq/:rfqId — single RFQ
+app.get('/api/rfq/:rfqId', async (req, res) => {
+  try {
+    const rfqs = await readJsonFile(RFQ_PATH);
+    const rfq = rfqs.find(r => r.rfqId === req.params.rfqId);
+    if (!rfq) return res.status(404).json({ message: 'RFQ not found' });
+    res.json(rfq);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/rfq — create RFQ
+app.post('/api/rfq', async (req, res) => {
+  try {
+    const rfqs = await readJsonFile(RFQ_PATH);
+    const newId = `RFQ-2026-${String(rfqs.length + 1).padStart(4, '0')}`;
+    const newRfq = {
+      rfqId: newId,
+      rfqNumber: newId,
+      ...req.body,
+      quotesReceived: 0,
+      status: req.body.status || 'Draft',
+      publishedOn: req.body.status === 'Open' ? new Date().toISOString().split('T')[0] : '',
+      createdBy: req.body.createdBy || 'Saurabh Anand',
+      attachments: req.body.attachments || []
+    };
+    rfqs.push(newRfq);
+    await writeJsonFile(RFQ_PATH, rfqs);
+    await logVmsAuditTrail('RFQ Created', `RFQ ${newId} (${newRfq.title}) created.`);
+    res.json({ success: true, rfq: newRfq });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// PUT /api/rfq/:rfqId — update RFQ
+app.put('/api/rfq/:rfqId', async (req, res) => {
+  try {
+    const rfqs = await readJsonFile(RFQ_PATH);
+    const idx = rfqs.findIndex(r => r.rfqId === req.params.rfqId);
+    if (idx === -1) return res.status(404).json({ message: 'RFQ not found' });
+    rfqs[idx] = { ...rfqs[idx], ...req.body };
+    await writeJsonFile(RFQ_PATH, rfqs);
+    await logVmsAuditTrail('RFQ Updated', `RFQ ${req.params.rfqId} updated.`);
+    res.json({ success: true, rfq: rfqs[idx] });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/rfq/:rfqId/close — close RFQ
+app.post('/api/rfq/:rfqId/close', async (req, res) => {
+  try {
+    const rfqs = await readJsonFile(RFQ_PATH);
+    const idx = rfqs.findIndex(r => r.rfqId === req.params.rfqId);
+    if (idx === -1) return res.status(404).json({ message: 'RFQ not found' });
+    rfqs[idx].status = 'Closed';
+    await writeJsonFile(RFQ_PATH, rfqs);
+    await logVmsAuditTrail('RFQ Closed', `RFQ ${req.params.rfqId} manually closed.`);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/rfq/upload — upload RFQ attachment
+app.post('/api/rfq/upload', rfqUpload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    const fileMeta = {
+      fileId: `FILE-RFQ-${Date.now()}`,
+      fileName: req.file.originalname,
+      fileType: req.file.mimetype,
+      uploadDate: new Date().toISOString().split('T')[0],
+      uploadedBy: req.body.uploadedBy || 'Saurabh Anand',
+      path: `/uploads/rfq/${req.file.filename}`
+    };
+    res.json({ success: true, file: fileMeta });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/vendor-quotes — all vendor quotes
+app.get('/api/vendor-quotes', async (req, res) => {
+  try {
+    const quotes = await readJsonFile(VENDOR_QUOTES_PATH);
+    const rfqId = req.query.rfqId;
+    res.json(rfqId ? quotes.filter(q => q.rfqId === rfqId) : quotes);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/vendor-quotes/:quoteId — single quote
+app.get('/api/vendor-quotes/:quoteId', async (req, res) => {
+  try {
+    const quotes = await readJsonFile(VENDOR_QUOTES_PATH);
+    const q = quotes.find(q => q.quoteId === req.params.quoteId);
+    if (!q) return res.status(404).json({ message: 'Quote not found' });
+    res.json(q);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/vendor-quotes — create quote
+app.post('/api/vendor-quotes', async (req, res) => {
+  try {
+    const quotes = await readJsonFile(VENDOR_QUOTES_PATH);
+    const newId = `QT-2026-${String(quotes.length + 1).padStart(4, '0')}`;
+    const newQuote = { quoteId: newId, ...req.body, status: req.body.status || 'Submitted', attachments: req.body.attachments || [] };
+    quotes.push(newQuote);
+    await writeJsonFile(VENDOR_QUOTES_PATH, quotes);
+
+    // Update quotesReceived count on the parent RFQ
+    const rfqs = await readJsonFile(RFQ_PATH);
+    const rfqIdx = rfqs.findIndex(r => r.rfqId === req.body.rfqId);
+    if (rfqIdx !== -1) {
+      rfqs[rfqIdx].quotesReceived = quotes.filter(q => q.rfqId === req.body.rfqId).length;
+      await writeJsonFile(RFQ_PATH, rfqs);
+    }
+
+    await logVmsAuditTrail('Quote Submitted', `Quote ${newId} submitted for RFQ ${req.body.rfqId}.`);
+    await logLifecycleAudit("Quotation Submitted", newId, newQuote.vendorName || newQuote.vendorId);
+    res.json({ success: true, quote: newQuote });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// PUT /api/vendor-quotes/:quoteId/status — update quote status
+app.put('/api/vendor-quotes/:quoteId/status', async (req, res) => {
+  try {
+    const quotes = await readJsonFile(VENDOR_QUOTES_PATH);
+    const idx = quotes.findIndex(q => q.quoteId === req.params.quoteId);
+    if (idx === -1) return res.status(404).json({ message: 'Quote not found' });
+    quotes[idx].status = req.body.status;
+    await writeJsonFile(VENDOR_QUOTES_PATH, quotes);
+    res.json({ success: true, quote: quotes[idx] });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Multer for vendor quotations bulk imports
+const quoteImportStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, VENDOR_QUOTATIONS_UPLOADS_DIR),
+  filename: (req, file, cb) => {
+    const ts = Date.now();
+    const ext = path.extname(file.originalname);
+    cb(null, `quote-${ts}${ext}`);
+  }
+});
+const quoteImportUpload = multer({ storage: quoteImportStorage, limits: { fileSize: 10 * 1024 * 1024 } });
+
+// POST /api/vendor-quotes/import — import bulk quotes
+app.post('/api/vendor-quotes/import', quoteImportUpload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    
+    // Save metadata in quotation-files.json
+    const quotationFiles = await readJsonFile(QUOTATION_FILES_PATH).catch(() => []);
+    const fileId = `FILE-${String(quotationFiles.length + 1).padStart(3, '0')}`;
+    const quoteId = `QT-2026-${String(Math.floor(1000 + Math.random() * 9000))}`;
+    const newFileEntry = {
+      fileId,
+      quoteId,
+      fileName: req.file.originalname,
+      filePath: `/uploads/vendor-quotations/${req.file.filename}`,
+      uploadedOn: new Date().toISOString().split('T')[0]
+    };
+    quotationFiles.push(newFileEntry);
+    await writeJsonFile(QUOTATION_FILES_PATH, quotationFiles);
+
+    const quotes = await readJsonFile(VENDOR_QUOTES_PATH).catch(() => []);
+    const hasQuotes = quotes.some(q => q.rfqId === 'RFQ-2026-0005');
+    if (!hasQuotes) {
+      const startIdx = quotes.length + 1;
+      const importedQuotes = [
+        {
+          quoteId: `QT-2026-${String(startIdx).padStart(4, '0')}`,
+          rfqId: 'RFQ-2026-0005',
+          vendorId: 'VND-001',
+          vendorName: 'ABC Infotech Pvt Ltd',
+          vendorCategory: 'IT Services',
+          quotedAmount: 1720000,
+          deliveryDays: 14,
+          warranty: '1 Year Support & hypercare',
+          technicalCompliance: 'Full Compliance',
+          submittedDate: new Date().toISOString().split('T')[0],
+          validityDate: '2026-09-30',
+          notes: `Imported bulk quotation from ${req.file.originalname}.`,
+          status: 'Submitted',
+          attachments: [
+            {
+              fileId,
+              fileName: req.file.originalname,
+              fileType: req.file.mimetype,
+              uploadDate: new Date().toISOString().split('T')[0],
+              uploadedBy: 'ABC Infotech',
+              path: `/uploads/vendor-quotations/${req.file.filename}`
+            }
+          ]
+        },
+        {
+          quoteId: `QT-2026-${String(startIdx + 1).padStart(4, '0')}`,
+          rfqId: 'RFQ-2026-0005',
+          vendorId: 'VND-002',
+          vendorName: 'HDFC Bank Limited',
+          vendorCategory: 'IT Services',
+          quotedAmount: 1650000,
+          deliveryDays: 20,
+          warranty: '2 Years Support',
+          technicalCompliance: 'Full Compliance',
+          submittedDate: new Date().toISOString().split('T')[0],
+          validityDate: '2026-09-30',
+          notes: 'Imported bulk quotation for secure payment gateway module.',
+          status: 'Submitted',
+          attachments: []
+        }
+      ];
+      quotes.push(...importedQuotes);
+      await writeJsonFile(VENDOR_QUOTES_PATH, quotes);
+      const rfqs = await readJsonFile(RFQ_PATH).catch(() => []);
+      const rfqIdx = rfqs.findIndex(r => r.rfqId === 'RFQ-2026-0005');
+      if (rfqIdx !== -1) {
+        rfqs[rfqIdx].quotesReceived = quotes.filter(q => q.rfqId === 'RFQ-2026-0005').length;
+        await writeJsonFile(RFQ_PATH, rfqs);
+      }
+      for (const q of importedQuotes) {
+        await logLifecycleAudit("Quotation Submitted", q.quoteId, q.vendorName);
+      }
+      await logVmsAuditTrail('Bulk Quotes Imported', `Bulk quotes imported for RFQ RFQ-2026-0005.`);
+    } else {
+      const startIdx = quotes.length + 1;
+      const extraQuote = {
+        quoteId: `QT-2026-${String(startIdx).padStart(4, '0')}`,
+        rfqId: 'RFQ-2026-0005',
+        vendorId: 'VND-003',
+        vendorName: 'New Age Software Solutions',
+        vendorCategory: 'IT Services',
+        quotedAmount: 1800000 + Math.floor(Math.random() * 200000),
+        deliveryDays: 15,
+        warranty: '1 Year Warranty',
+        technicalCompliance: 'Full Compliance',
+        submittedDate: new Date().toISOString().split('T')[0],
+        validityDate: '2026-09-30',
+        notes: `Additional bulk quotation from ${req.file.originalname}.`,
+        status: 'Submitted',
+        attachments: [
+          {
+            fileId,
+            fileName: req.file.originalname,
+            fileType: req.file.mimetype,
+            uploadDate: new Date().toISOString().split('T')[0],
+            uploadedBy: 'New Age',
+            path: `/uploads/vendor-quotations/${req.file.filename}`
+          }
+        ]
+      };
+      quotes.push(extraQuote);
+      await writeJsonFile(VENDOR_QUOTES_PATH, quotes);
+      const rfqs = await readJsonFile(RFQ_PATH).catch(() => []);
+      const rfqIdx = rfqs.findIndex(r => r.rfqId === 'RFQ-2026-0005');
+      if (rfqIdx !== -1) {
+        rfqs[rfqIdx].quotesReceived = quotes.filter(q => q.rfqId === 'RFQ-2026-0005').length;
+        await writeJsonFile(RFQ_PATH, rfqs);
+      }
+      await logLifecycleAudit("Quotation Submitted", extraQuote.quoteId, extraQuote.vendorName);
+      await logVmsAuditTrail('Bulk Quote Added', `Additional quotation ${extraQuote.quoteId} imported for RFQ RFQ-2026-0005.`);
+    }
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/vendor-quotation-ui-state — retrieve KPI filter state
+app.get('/api/vendor-quotation-ui-state', async (req, res) => {
+  try {
+    const state = await readJsonFile(QUOTATION_UI_STATE_PATH).catch(() => ({ activeFilter: 'Total Quotes' }));
+    res.json(state);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/vendor-quotation-ui-state — save KPI filter state
+app.post('/api/vendor-quotation-ui-state', async (req, res) => {
+  try {
+    const { activeFilter } = req.body;
+    await writeJsonFile(QUOTATION_UI_STATE_PATH, { activeFilter });
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/rfq-approvals — all RFQ approvals
+app.get('/api/rfq-approvals', async (req, res) => {
+  try {
+    const approvals = await readJsonFile(RFQ_APPROVALS_PATH);
+    res.json(approvals);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/rfq-approvals/:approvalId — single approval
+app.get('/api/rfq-approvals/:approvalId', async (req, res) => {
+  try {
+    const approvals = await readJsonFile(RFQ_APPROVALS_PATH);
+    const a = approvals.find(a => a.approvalId === req.params.approvalId);
+    if (!a) return res.status(404).json({ message: 'RFQ approval not found' });
+    res.json(a);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/rfq-approvals — submit RFQ for approval
+app.post('/api/rfq-approvals', async (req, res) => {
+  try {
+    const approvals = await readJsonFile(RFQ_APPROVALS_PATH);
+    const newId = `RFQAPP-${String(approvals.length + 1).padStart(4, '0')}`;
+    const newApproval = {
+      approvalId: newId,
+      rfqId: req.body.rfqId,
+      vendorId: req.body.selectedVendorId,
+      vendorName: req.body.selectedVendorName,
+      awardValue: req.body.awardValue,
+      approvalStatus: 'Pending Approval',
+      status: 'Pending Approval',
+      currentStage: 'Procurement Manager Review',
+      submittedOn: new Date().toISOString().replace('T', ' ').split('.')[0],
+      ...req.body,
+      workflowHistory: [
+        {
+          stage: 'Maker',
+          action: 'Submitted',
+          performedBy: req.body.submittedBy || 'Saurabh Anand',
+          timestamp: new Date().toISOString(),
+          remarks: 'Submitted for approval.'
+        }
+      ]
+    };
+    newApproval.approvalStatus = 'Pending Approval'; // enforce format
+    newApproval.status = 'Pending Approval'; // enforce format
+    
+    approvals.push(newApproval);
+    await writeJsonFile(RFQ_APPROVALS_PATH, approvals);
+
+    // Update parent RFQ status to 'Awarded'
+    const rfqs = await readJsonFile(RFQ_PATH);
+    const rfqIdx = rfqs.findIndex(r => r.rfqId === req.body.rfqId);
+    if (rfqIdx !== -1) {
+      rfqs[rfqIdx].status = 'Awarded';
+      await writeJsonFile(RFQ_PATH, rfqs);
+    }
+
+    // Update selected quote status to 'Shortlisted'
+    const quotes = await readJsonFile(VENDOR_QUOTES_PATH);
+    const quoteIdx = quotes.findIndex(q => q.rfqId === req.body.rfqId && q.vendorId === req.body.selectedVendorId);
+    if (quoteIdx !== -1) {
+      quotes[quoteIdx].status = 'Shortlisted';
+      await writeJsonFile(VENDOR_QUOTES_PATH, quotes);
+    }
+
+    // Save attachment references under this RFQ Approval
+    const rfqAttachments = await readJsonFile(ATTACHMENTS_PATH).catch(() => []);
+    const rfqFiles = rfqAttachments.filter(a => a.entityId === req.body.rfqId);
+    for (const file of rfqFiles) {
+      await saveAttachmentMetadata(file.attachmentId, 'RFQ Approval', newId, file.fileName, file.filePath);
+    }
+
+    // Propagate shortlisted vendor quote attachments to attachments.json
+    const shortlistedQuote = quotes.find(q => q.rfqId === req.body.rfqId && q.vendorId === req.body.selectedVendorId);
+    if (shortlistedQuote && Array.isArray(shortlistedQuote.attachments)) {
+      for (const qAtt of shortlistedQuote.attachments) {
+        const attId = qAtt.fileId || `FILE-QT-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        await saveAttachmentMetadata(attId, 'Vendor Quotation', shortlistedQuote.quoteId, qAtt.fileName, qAtt.path || qAtt.filePath);
+        await saveAttachmentMetadata(attId, 'RFQ Approval', newId, qAtt.fileName, qAtt.path || qAtt.filePath);
+      }
+    }
+
+    await logLifecycleAudit("Vendor Awarded", req.body.rfqId, req.body.submittedBy || 'Saurabh Anand');
+    res.json({ success: true, approval: newApproval });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/rfq-approvals/:approvalId/action — approve / reject / send-back
+app.post('/api/rfq-approvals/:approvalId/action', async (req, res) => {
+  try {
+    const { action, remarks, performedBy } = req.body;
+    const approvals = await readJsonFile(RFQ_APPROVALS_PATH);
+    const idx = approvals.findIndex(a => a.approvalId === req.params.approvalId);
+    if (idx === -1) return res.status(404).json({ message: 'RFQ approval not found' });
+
+    const performer = performedBy || 'Saurabh Anand';
+    const historyEntry = {
+      stage: approvals[idx].currentStage,
+      action,
+      performedBy: performer,
+      timestamp: new Date().toISOString(),
+      remarks: remarks || ''
+    };
+
+    approvals[idx].workflowHistory = [...(approvals[idx].workflowHistory || []), historyEntry];
+    approvals[idx].remarks = remarks || '';
+
+    if (action === 'Approve') {
+      const isProcManager = performer === 'Priya Sharma' || performer === 'procurement' || req.body.role === 'PROCUREMENT' || req.body.role === 'Procurement Manager';
+      const approvedByVal = isProcManager ? 'Procurement Manager' : performer;
+
+      if (!approvals[idx].auditTrail) approvals[idx].auditTrail = [];
+      approvals[idx].auditTrail.push({
+        action: "RFQ Approved",
+        approvedBy: approvedByVal,
+        approvedDate: new Date().toISOString()
+      });
+
+      // Escalate through stages
+      const stages = ['Procurement Manager Review', 'Tenant Admin Review'];
+      const curIdx = stages.indexOf(approvals[idx].currentStage);
+      if (curIdx >= stages.length - 1 || approvals[idx].currentStage === 'Tenant Admin Review') {
+        approvals[idx].status = 'Approved';
+        approvals[idx].currentStage = 'Approved';
+
+        // Auto-generate PO from approved RFQ
+        const rfqId = approvals[idx].rfqId;
+        const rfqs = await readJsonFile(RFQ_PATH).catch(() => []);
+        const rfqIdx = rfqs.findIndex(r => r.rfqId === rfqId);
+        if (rfqIdx !== -1) {
+          rfqs[rfqIdx].status = 'Closed';
+          if (!rfqs[rfqIdx].auditTrail) rfqs[rfqIdx].auditTrail = [];
+          rfqs[rfqIdx].auditTrail.push({
+            action: "RFQ Approved",
+            approvedBy: approvedByVal,
+            approvedDate: new Date().toISOString()
+          });
+        }
+        await writeJsonFile(RFQ_PATH, rfqs);
+
+        // Update winning quote status
+        const quotes = await readJsonFile(VENDOR_QUOTES_PATH).catch(() => []);
+        quotes.forEach((q, qi) => {
+          if (q.rfqId === rfqId && q.vendorId === approvals[idx].selectedVendorId) {
+            quotes[qi].status = 'Awarded';
+          } else if (q.rfqId === rfqId) {
+            if (q.status === 'Shortlisted' || q.status === 'Submitted') quotes[qi].status = 'Rejected';
+          }
+        });
+        await writeJsonFile(VENDOR_QUOTES_PATH, quotes);
+
+        // Generate PO record
+        const pos = await readJsonFile(PO_PURCHASE_ORDERS_PATH).catch(() => []);
+        const year = new Date().getFullYear();
+        const poSeq = String(pos.length + 1).padStart(4, '0');
+        const newPoId = `PO-${year}-${poSeq}`;
+        const newPo = {
+          poId: newPoId,
+          poNumber: newPoId,
+          rfqId: rfqId,
+          rfqReference: rfqId,
+          vendorId: approvals[idx].selectedVendorId,
+          vendorName: approvals[idx].selectedVendorName,
+          category: approvals[idx].category || 'IT Services',
+          department: approvals[idx].department || 'IT Services',
+          poValue: approvals[idx].awardValue,
+          status: 'Pending Approval',
+          deliveryStatus: 'Pending',
+          createdDate: new Date().toISOString().split('T')[0],
+          approvedDate: '',
+          approvedBy: '',
+          lineItems: []
+        };
+        pos.push(newPo);
+        await writeJsonFile(PO_PURCHASE_ORDERS_PATH, pos);
+
+        // Propagate attachments to PO
+        const rfqAppAttachments = await readJsonFile(ATTACHMENTS_PATH).catch(() => []);
+        const appFiles = rfqAppAttachments.filter(a => a.entityId === req.params.approvalId || a.entityId === approvals[idx].approvalId);
+        for (const file of appFiles) {
+          await saveAttachmentMetadata(file.attachmentId, 'Purchase Order', newPoId, file.fileName, file.filePath);
+        }
+        const rfqFiles = rfqAppAttachments.filter(a => a.entityId === rfqId);
+        for (const file of rfqFiles) {
+          await saveAttachmentMetadata(file.attachmentId, 'Purchase Order', newPoId, file.fileName, file.filePath);
+        }
+
+        await logVmsAuditTrail('PO Generated from RFQ', `PO ${newPoId} generated from approved RFQ ${rfqId}.`);
+        await logLifecycleAudit("RFQ Approved", rfqId, performer);
+        await logLifecycleAudit("PO Created", newPoId, performer);
+        await updatePODashboardMetrics();
+      } else {
+        approvals[idx].currentStage = stages[curIdx + 1];
+        approvals[idx].status = 'Pending Approval';
+      }
+    } else if (action === 'Reject') {
+      approvals[idx].status = 'Rejected';
+      approvals[idx].currentStage = 'Rejected';
+      const rfqs = await readJsonFile(RFQ_PATH).catch(() => []);
+      const rfqIdx = rfqs.findIndex(r => r.rfqId === approvals[idx].rfqId);
+      if (rfqIdx !== -1) { rfqs[rfqIdx].status = 'Cancelled'; await writeJsonFile(RFQ_PATH, rfqs); }
+    } else if (action === 'Send Back') {
+      approvals[idx].status = 'Pending Approval';
+      approvals[idx].currentStage = 'Maker Review';
+    }
+
+    await writeJsonFile(RFQ_APPROVALS_PATH, approvals);
+    await logVmsAuditTrail(`RFQ Approval ${action}`, `RFQ Approval ${req.params.approvalId} ${action}d by ${performer}.`);
+    res.json({ success: true, approval: approvals[idx] });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/rfq/vendors/eligible — vendors eligible for RFQ (Active + KYC Approved)
+app.get('/api/rfq/vendors/eligible', async (req, res) => {
+  try {
+    const vendors = await readJsonFile(VENDORS_PATH);
+    const eligible = vendors.filter(v => {
+      const status = (v.status || '').toLowerCase();
+      const kycStatus = (v.kycStatus || v.status || '').toLowerCase();
+      return status === 'active' || status === 'approved' || kycStatus === 'verified' || kycStatus === 'approved';
+    }).map(v => ({
+      vendorId: v.vendorId,
+      vendorName: v.vendorName || v.basicDetails?.legalName || v.basicDetails?.tradeName || 'Unnamed Vendor',
+      category: v.category || v.basicDetails?.businessType || 'General',
+      riskRating: v.riskLevel || v.risk?.level || 'Low',
+      kycStatus: v.kycStatus || 'Verified',
+      isPreferred: v.isPreferred || false,
+      status: v.status || 'Active'
+    }));
+    res.json(eligible);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/vendor-selection — active and approved vendors for requisition RFQ step
+app.get('/api/vendor-selection', async (req, res) => {
+  try {
+    const list = await readJsonFile(VENDORS_PATH);
+    const eligible = Array.isArray(list) ? list.filter(v => v.status === 'Active' && v.kycStatus === 'Approved') : [];
+    res.json(eligible);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// GET /api/rfq-vendor-selection — retrieve selections
+app.get('/api/rfq-vendor-selection', async (req, res) => {
+  try {
+    const selections = await readJsonFile(RFQ_VENDOR_SELECTION_PATH);
+    const rfqId = req.query.rfqId;
+    if (rfqId) {
+      const selection = selections.find(s => s.rfqId === rfqId);
+      res.json(selection ? selection.selectedVendors : []);
+    } else {
+      res.json(selections);
+    }
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/rfq-vendor-selection — persist selections
+app.post('/api/rfq-vendor-selection', async (req, res) => {
+  try {
+    const { rfqId, selectedVendors, selectedVendorNames, timestamp } = req.body;
+    if (!rfqId || !Array.isArray(selectedVendors)) {
+      return res.status(400).json({ error: 'rfqId and selectedVendors array are required' });
+    }
+    const selections = await readJsonFile(RFQ_VENDOR_SELECTION_PATH);
+    const idx = selections.findIndex(s => s.rfqId === rfqId);
+    const selectionEntry = {
+      rfqId,
+      selectedVendors,
+      selectedVendorNames: selectedVendorNames || [],
+      timestamp: timestamp || new Date().toISOString()
+    };
+    if (idx !== -1) {
+      selections[idx] = selectionEntry;
+    } else {
+      selections.push(selectionEntry);
+    }
+    await writeJsonFile(RFQ_VENDOR_SELECTION_PATH, selections);
+    res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/rfq-attachments — log file upload references
+app.post('/api/rfq-attachments', async (req, res) => {
+  try {
+    const { rfqId, attachmentId, fileName, filePath } = req.body;
+    if (!rfqId || !attachmentId) {
+      return res.status(400).json({ error: 'rfqId and attachmentId are required' });
+    }
+    const attachments = await readJsonFile(ATTACHMENTS_PATH).catch(() => []);
+    const newAttachment = {
+      rfqId,
+      attachmentId,
+      fileName: fileName || '',
+      filePath: filePath || '',
+      uploadedAt: new Date().toISOString()
+    };
+    attachments.push(newAttachment);
+    await writeJsonFile(ATTACHMENTS_PATH, attachments);
+    res.json({ success: true, attachment: newAttachment });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.listen(PORT, () => {
